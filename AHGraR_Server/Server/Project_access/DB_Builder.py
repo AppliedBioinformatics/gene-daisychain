@@ -84,6 +84,7 @@ class DBBuilder:
             with open(file + "_head.gff3", "w") as head_gff3_file:
                 for line in head:
                     head_gff3_file.write(line)
+            print(file+ "_head.gff3")
             gff3_parser = Parser.GFF3_parser_gffutils.GFF3Parser(file+ "_head.gff3", 0, 0)
             gff3_parser.set_annotation_mapper(annotation_mapping)
             gff3_parser.set_feature_hierarchy(feature_hierarchy)
