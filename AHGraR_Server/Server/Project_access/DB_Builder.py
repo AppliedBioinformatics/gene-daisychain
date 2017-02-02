@@ -84,7 +84,7 @@ class DBBuilder:
             with open(file + "_head.gff3", "w") as head_gff3_file:
                 for line in head:
                     head_gff3_file.write(line)
-            gff3_parser = Parser.GFF3_parser_gffutils.GFF3Parser(os.path.join(file , "_head.gff3"), 0, 0)
+            gff3_parser = Parser.GFF3_parser_gffutils.GFF3Parser(file+ "_head.gff3", 0, 0)
             gff3_parser.set_annotation_mapper(annotation_mapping)
             gff3_parser.set_feature_hierarchy(feature_hierarchy)
             gff3_parser.parse_gff3_file()
@@ -98,7 +98,7 @@ class DBBuilder:
                 protein_node = "Error"
             results.append("\t".join(os.path.basename(file), gene_node, protein_node))
             # Delete head of file
-            os.remove(os.path.join(file , "_head.gff3"))
+            os.remove(file+ "_head.gff3")
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
         self.task_mngr.add_task_results(proj_id, task_id, "\n".join(results))
 
