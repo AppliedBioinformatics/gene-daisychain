@@ -96,7 +96,7 @@ class DBBuilder:
                 protein_node = ", ".join(gff3_parser.get_protein_list()[0])
             except IndexError:
                 protein_node = "Error"
-            results.append("\t".join(os.path.basename(file), gene_node, protein_node))
+            results.append("\t".join([os.path.basename(file), gene_node, protein_node]))
             # Delete head of file
             os.remove(file+ "_head.gff3")
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
