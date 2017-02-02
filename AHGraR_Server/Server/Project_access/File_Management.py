@@ -202,6 +202,7 @@ class FileManagement:
             # Remove whitespaces
             line = "".join(line.split(" "))
             new_file_desc = line.strip().split(",")
+            if len(new_file_desc) != 4: continue
             new_file_path = os.path.join("Import", new_file_desc[3])
             # Check if next file has valid file_type
             if new_file_desc[2] not in ["gff3", "nt", "prot"]:
