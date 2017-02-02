@@ -50,7 +50,7 @@ class DBBuilder:
                 "AND file.filetype = 'gff3' AND file.hidden = 'False' RETURN file.filename",
                 {"proj_id": proj_id, "file_list": file_names})
         # Add relative path to file_list
-        file_list = [os.path.join("Projects", str(proj_id), item) for item in file_list]
+        file_list = [os.path.join("Projects", str(proj_id), item[0]) for item in file_list]
         # First, test whether the annotation_mapping and the feature_hierarchy fulfill or formal requirements
         # For this, initialize an GFF3_parser instance
         # Do not provide a file path here as this class is used only to verify
