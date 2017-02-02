@@ -3,6 +3,8 @@
 # Functions directly accessible by user query always return a string via socket connection
 import Parser.GFF3_parser_gffutils
 import os
+from itertools import islice
+
 
 class DBBuilder:
     def __init__(self, main_db_connection, task_manager, send_data):
@@ -50,7 +52,7 @@ class DBBuilder:
                 "AND file.filetype = 'gff3' AND file.hidden = 'False' RETURN file.filename",
                 {"proj_id": proj_id, "file_list": file_names})
         # Add relative path to file_list
-        file_list = [os.path.join("Projects", str(proj_id), item[0]) for item in file_list]
+        file_list = [os.path.join("Projects", str(proj_id), "Files", item[0]) for item in file_list]
         # First, test whether the annotation_mapping and the feature_hierarchy fulfill or formal requirements
         # For this, initialize an GFF3_parser instance
         # Do not provide a file path here as this class is used only to verify
@@ -74,9 +76,9 @@ class DBBuilder:
         # Make a copy of all gff3-files, copying only the first 100 lines
         for file in file_list:
             with open(file, "r") as original_gff3_file:
-                with open(file+"_head.gff3", "w") as head_gff3_file:
-                    line_count = 0
-                    while (line_count < 100):
-                        head_gff3_file.write(original_gff3_file.read())
-                        line_count +=1
+                    head = list(islice(original_gff3_file, 100))
+            with open(file + "_head.gff3", "w") as head_gff3_file:
+                for line in head:
+                    head_gff3_file.write(line)
+
 
