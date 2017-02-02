@@ -1,0 +1,27 @@
+project list                            PMINFO
+project create "project_name"           PMCREA_ProjectName
+project delete "project_id"             PMDELE_ProjectID
+project status "project_id"             PMINFO_ProjectID
+
+
+
+access project "project_id"
+    status                              PMINFO_ProjectID
+    file list                           PAFILE_LIST_ProjectID
+         upload
+         download                       PAFILE_DWNF_ProjectID_species_variant_filetype_url
+         import                         PAFILE_IMPO_ProjectID_ImportFileName
+         remove                         PAFILE_DELF_ProjectID_filename
+         hide                           PAFILE_HIDF_ProjectID_filename
+         unhide                         PAFILE_UHIF_ProjectID_filename
+         sleep                          PAFILE_SLEE_ProjectID
+    build
+        set GFF3 annoMap hier filename  PABULD_GFF3_ProjectID_annotationmapping_featurehierarchy_file1_file2
+    query                               PAQURY_ProjectID_Query
+    job list                            PATASK_STAT_ProjectID_TaskID1_TaskID2
+        status                          PATASK_STAT_ProjectID_TaskID
+        result                          PATASK_RESU_ProjectID_TaskID
+        clear                           PATASK_DELE_ProjectID_TaskID
+
+
+

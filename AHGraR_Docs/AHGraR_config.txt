@@ -1,0 +1,17 @@
+[AHGraR_Server]
+mcl_path = 
+neo4j_path = /home/oliver/Dokumente/Internship Perth/Pycharm_WD/Server/neo4j-community-3.1.0
+project_folder = Projects
+import_folder = Import
+ip = localhost
+port = 5000
+blast+_path =
+proj_db_port = 5001
+proj_db_login = neo4j
+proj_db_pw = main_db
+proj_graph_db_ports = 5550-5560
+
+[AHGraR_Gateway]
+ip = localhostcp
+port = 3000
+
