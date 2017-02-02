@@ -72,19 +72,36 @@ class DBBuilder:
                     "AND file.filetype = 'gff3' AND file.hidden = 'False' "
                     "SET file.anno_mapping = {anno_map} SET file.feat_hierarchie = {feat_hier} ",
                     {"proj_id": proj_id, "file_list": file_list, "anno_map": annotation_mapping, "feat_hier": feature_hierarchy})
+        self.task_mngr.set_task_status(proj_id, task_id, "Added annotation to main-db")
         # Test the parsing of each GFF3 file
         # Make a copy of all gff3-files, copying only the first 100 lines
+        # For each file, try to retrieve one gene and one protein node
+        # Append these nodes to final result list
+        results = []
         for file in file_list:
             with open(file, "r") as original_gff3_file:
                     head = list(islice(original_gff3_file, 100))
             with open(file + "_head.gff3", "w") as head_gff3_file:
                 for line in head:
                     head_gff3_file.write(line)
-            gff3_parser = Parser.GFF3_parser_gffutils.GFF3Parser(file + "_head.gff3", 0, 0)
+            gff3_parser = Parser.GFF3_parser_gffutils.GFF3Parser(os.path.join(file , "_head.gff3"), 0, 0)
             gff3_parser.set_annotation_mapper(annotation_mapping)
             gff3_parser.set_feature_hierarchy(feature_hierarchy)
             gff3_parser.parse_gff3_file()
-            print(gff3_parser.get_gene_list()[0])
-            print(gff3_parser.get_protein_list()[0])
+            try:
+                gene_node = ", ".join(gff3_parser.get_gene_list()[0])
+            except IndexError:
+                gene_node = "Error"
+            try:
+                protein_node = ", ".join(gff3_parser.get_protein_list()[0])
+            except IndexError:
+                protein_node = "Error"
+            results.append("\t".join(os.path.basename(file), gene_node, protein_node))
+            # Delete head of file
+            os.remove(os.path.join(file , "_head.gff3"))
+        self.task_mngr.set_task_status(proj_id, task_id, "Finished")
+        self.task_mngr.add_task_results(proj_id, task_id, "\n".join(results))
+
+
 
 
