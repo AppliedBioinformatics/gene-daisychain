@@ -89,11 +89,11 @@ class DBBuilder:
             gff3_parser.set_feature_hierarchy(feature_hierarchy)
             gff3_parser.parse_gff3_file()
             try:
-                gene_node = ", ".join(gff3_parser.get_gene_list()[0])
+                gene_node = ", ".join(str(item) for item in gff3_parser.get_gene_list()[0])
             except IndexError:
                 gene_node = "Error"
             try:
-                protein_node = ", ".join(gff3_parser.get_protein_list()[0])
+                protein_node = ", ".join(str(item) for item in gff3_parser.get_protein_list()[0])
             except IndexError:
                 protein_node = "Error"
             results.append("\t".join([os.path.basename(file), gene_node, protein_node]))
