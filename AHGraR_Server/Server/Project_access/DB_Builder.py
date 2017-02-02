@@ -80,5 +80,11 @@ class DBBuilder:
             with open(file + "_head.gff3", "w") as head_gff3_file:
                 for line in head:
                     head_gff3_file.write(line)
+            gff3_parser = Parser.GFF3_parser_gffutils.GFF3Parser(file + "_head.gff3", 0, 0)
+            gff3_parser.set_annotation_mapper(annotation_mapping)
+            gff3_parser.set_feature_hierarchy(feature_hierarchy)
+            gff3_parser.parse_gff3_file()
+            print(gff3_parser.get_gene_list()[0])
+            print(gff3_parser.get_protein_list()[0])
 
 
