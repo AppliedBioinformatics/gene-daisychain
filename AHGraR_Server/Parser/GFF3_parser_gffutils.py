@@ -13,36 +13,35 @@ import os
 
 
 class GFF3Parser:
-    # Gene annotations are stored in a list
-    gene_list = []
-    # Protein annotations and their reference to a gene node are stored in a list
-    protein_list = []
-    # Annotation mapper: Describes where each annotation field is found in the GFF3
-    # Annotation fields are: Gene name, contig, start, stop, strand, phase, protein name, protein description
-    # Annotation is either stored in columns 1-8 or in attribute column 9
-    # To retrieve information from column 1-8, column index (starting at 1) needs to be specified
-    # For retrieval from column 9 the key has to be specified
-    # In addition, the feature name (e.g. Gene, mRNA etc.) needs to be specified
-    # Example:
-    # Gene::(Start:4),(Stop:5),(Contig:1),(Gene_name:Name),(Phase:8),(Strand:7);mRNA::(Protein_name:Name),(Protein_desc:Product)
-    annotation_mapper = {}
-    # GFF3-files contain a hierarchical structure, the ordering of the features looked at needs to be provided as well:
-    # Example:
-    # Gene,mRNA
-    feature_hierarchy = []
-    # Some features may not fit in the hierarchical structure, they are accessed separately
-    non_hierarchic_features = []
-    # gffutils parses GFF3-file into a dict-like structure
-    gff3_db = []
 
     def __init__(self, gff3_file_path, gene_node_id, protein_node_id):
         self.gff3_file_path = gff3_file_path
-        print(self.gff3_file_path)
         # Organism/species name
         self.species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
         # Each protein and gene node gets an unique id
         self.gene_node_id = int(gene_node_id)
         self.protein_node_id = int(protein_node_id)
+        # Gene annotations are stored in a list
+        self.gene_list = []
+        # Protein annotations and their reference to a gene node are stored in a list
+        self.protein_list = []
+        # Annotation mapper: Describes where each annotation field is found in the GFF3
+        # Annotation fields are: Gene name, contig, start, stop, strand, phase, protein name, protein description
+        # Annotation is either stored in columns 1-8 or in attribute column 9
+        # To retrieve information from column 1-8, column index (starting at 1) needs to be specified
+        # For retrieval from column 9 the key has to be specified
+        # In addition, the feature name (e.g. Gene, mRNA etc.) needs to be specified
+        # Example:
+        # Gene::(Start:4),(Stop:5),(Contig:1),(Gene_name:Name),(Phase:8),(Strand:7);mRNA::(Protein_name:Name),(Protein_desc:Product)
+        self.annotation_mapper = {}
+        # GFF3-files contain a hierarchical structure, the ordering of the features looked at needs to be provided as well:
+        # Example:
+        # Gene,mRNA
+        self.feature_hierarchy = []
+        # Some features may not fit in the hierarchical structure, they are accessed separately
+        self.non_hierarchic_features = []
+        # gffutils parses GFF3-file into a dict-like structure
+        self.gff3_db = []
 
     # Retrieve annotation data from columns 1-9 of a GFF3-file
     # 1-8 are found by their index, 9 by attribute key
@@ -215,8 +214,10 @@ class GFF3Parser:
         # Ensure that gene and protein list contain only unique entries
         self.gene_list = list(set(self.gene_list))
         self.protein_list = list(set(self.protein_list))
-        # Sort the gene_list
+        # Sort the gene_list by contig, start and stop. Only one species per file, so no need to sort by species
         self.gene_list = sorted(self.gene_list, key=lambda x: (x[2], x[3], x[4]))
+        # Sort the protein_list by protein_id
+        self.protein_list = sorted(self.protein_list, key=lambda x: x[0])
         # Clean up: Remove the temporary database created by gffutils
         os.remove("gff3utils.db")
 
