@@ -83,7 +83,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
             file_manager.evaluate_user_request(user_request[1:])
             # Close file manager connection to main-db
             file_manager.close_connection()
-        if user_request[0] == "BULD" and len(user_request) >=5:
+        if user_request[0] == "BULD":
             # Initialize build manager
             build_manager = DBBuilder(self.get_db_conn(), task_manager, self.send_data)
             # Evaluate user request
