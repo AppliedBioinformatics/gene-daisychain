@@ -60,15 +60,25 @@ class DBBuilder:
             file_dict[(file[2],file[3])] = []
         for file in file_list:
             file_dict[(file[2],file[3])].append((file[0],file[1]))
-        print(file_dict)
         # Check if each entry in the database consists of exactly two files, one fasta and one annotation file
         # If not, remove that entry from the database
+        # Also, search for gff3+nt combinations
+        # The nt-fasta needs to be translated to prot-fasta guided by the GFF3-file
+        # TODO: Implement this
+        # Until then: Just delete these file combinations
         for file in file_list:
-            if len(file_dict[(file[2],file[3])]) != 2:
+            file_combination = file_dict[(file[2],file[3])]
+            if len(file_combination) != 2:
                 del file_dict[(file[2],file[3])]
+                continue
+            if sorted([file_combination[0][1],file_combination[1][1]]) \
+                    not in [["gff3","prot"],("gff3","nt"), ["cvs","prot"]]:
+                del file_dict[(file[2], file[3])]
+                continue
+            if sorted([file_combination[0][1], file_combination[1][1]]) == ["gff3","nt"]:
+                del file_dict[(file[2], file[3])]
+                continue
         print(file_dict)
-
-
 
     # For one GFF3 file (or all GFF3 files) in a project, set the annotation mapper and the feature hierarchy
     # Function initializes an instance of the GFF3-parser to check the validity of the annotation mapper string
