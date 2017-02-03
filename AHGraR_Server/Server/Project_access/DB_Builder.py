@@ -4,6 +4,7 @@
 import Parser.GFF3_parser_gffutils
 import os
 from itertools import islice
+from CSV_creator.annotation_to_csv import AnnoToCSV
 
 
 class DBBuilder:
@@ -47,7 +48,9 @@ class DBBuilder:
         task_id = self.task_mngr.define_task(proj_id, "Building project DB")
         # Send task-id to user
         self.send_data(task_id)
-        # First, retrieve the list of files in this project (excluding hidden files)
+        # Then, retrieve the list of files in this project (excluding hidden files)
+        # Only GFF3 files have the anno_mapping and feat_hierarchie field
+        # For all other files, the return value for this field is None
         self.task_mngr.set_task_status(proj_id, task_id, "Collecting files")
         file_list = list(self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
                               "WHERE ID(proj)={proj_id} AND file.hidden = 'False' "
@@ -83,7 +86,11 @@ class DBBuilder:
             if sorted([file_combination[0][1], file_combination[1][1]]) == ["gff3","nt"]:
                 del file_dict[(file[2], file[3])]
                 continue
-        print(file_dict)
+        # Initialize the annotation to csv format parser
+        anno_to_csv_parser = AnnoToCSV(proj_id)
+        for species in file_dict:
+            anno_to_csv_parser.create_csv("_".join([species[0],species[1]]),file_dict[species][0], file_dict[species][1],
+                                          file_dict[species][2],file_dict[species][3])
 
     # For one GFF3 file (or all GFF3 files) in a project, set the annotation mapper and the feature hierarchy
     # Function initializes an instance of the GFF3-parser to check the validity of the annotation mapper string

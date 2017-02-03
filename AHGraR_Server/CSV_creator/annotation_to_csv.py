@@ -14,7 +14,7 @@ from Parser.CSV_parser import CSVParser
 import os
 
 
-class GeneToCSV:
+class AnnoToCSV:
     def __init__(self, proj_id):
         self.file_path =  os.path.join("Projects", proj_id, "Files")
         self.CSV_path = os.path.join("Projects", proj_id, "CSV")
@@ -22,7 +22,7 @@ class GeneToCSV:
         self.protein_node_id = 0
 
 
-    def create_csv(self, species_name, annofile_name, annofile_type):
+    def create_csv(self, species_name, annofile_name, annofile_type, anno_mapping, feat_hierarchy):
         # Define and create output files
         # For each species, a set of three CSV files is created.
         gene_node_output = open(os.path.join(self.CSV_path, species_name+"_gene_node.csv"),"w")
@@ -32,8 +32,30 @@ class GeneToCSV:
         # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name,
         #                           chromosome, strand_orientation, coding_frame),...]
         # Decicion which parser to use depends on annotation file type: GFF3 or CSV
-        if annofile_type = "gff3":
-            anno_parser = GFF3Parser.
+        if annofile_type == "gff3":
+            # Parse a GFF3 file
+            anno_parser = GFF3Parser(os.path.join(self.file_path, annofile_name),
+                                     self.gene_node_id, self.protein_node_id)
+            # Set the annotation mapping string
+            anno_parser.set_annotation_mapper(anno_mapping)
+            # Set the feature hierarchy
+            anno_parser.set_feature_hierarchy(feat_hierarchy)
+        elif annofile_type == "csv":
+            # Parse a CSV file
+            anno_parser = CSVParser(os.path.join(self.file_path, annofile_name),
+                                    self.gene_node_id, self.protein_node_id)
+        # Parse the file
+        anno_parser.parse_gff3_file()
+        # Retrieve gene annotation as list
+        gene_list = anno_parser.get_gene_list()
+        # Retrieve protein annotation as dict
+        protein_list = anno_parser.get_protein_dict()
+        # Set gene_node_id and protein_node_id to id last assigned while parsing
+        self.gene_node_id = anno_parser.get_gene_node_id()
+        self.protein_node_id = anno_parser.get_protein_node_id()
+        print(self.gene_node_id)
+        print(self.protein_node_id)
+        return
         gene_list = []
         for anno_file_path in self.anno_file_path_list:
             gene_list.extend(anno_parser.parse_annotation(self.anno_file_type, anno_file_path))
