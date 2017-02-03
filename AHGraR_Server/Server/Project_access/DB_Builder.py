@@ -106,7 +106,7 @@ class DBBuilder:
                 "MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
                 "MATCH (fileMngr)-[:file]->(file:File) WHERE file.filename IN {file_list} "
                 "AND file.filetype = 'gff3' AND file.hidden = 'False' RETURN file.filename",
-                {"proj_id": proj_id, "file_list": file_names})
+                {"proj_id": int(proj_id), "file_list": file_names})
         # Add relative path to file_list
         file_list = [os.path.join("Projects", str(proj_id), "Files", item[0]) for item in file_list]
         # First, test whether the annotation_mapping and the feature_hierarchy fulfill or formal requirements
@@ -128,7 +128,8 @@ class DBBuilder:
                     "MATCH (fileMngr)-[:file]->(file:File) WHERE file.filename IN {file_list} "
                     "AND file.filetype = 'gff3' AND file.hidden = 'False' "
                     "SET file.anno_mapping = {anno_map} SET file.feat_hierarchie = {feat_hier} ",
-                    {"proj_id": proj_id, "file_list": str([os.path.basename(path) for path in file_list]), "anno_map": annotation_mapping, "feat_hier": feature_hierarchy})
+                    {"proj_id": int(proj_id), "file_list": [os.path.basename(path) for path in file_list],
+                     "anno_map": annotation_mapping, "feat_hier": feature_hierarchy})
         self.task_mngr.set_task_status(proj_id, task_id, "Added annotation to main-db")
         # Test the parsing of each GFF3 file
         # Make a copy of all gff3-files, copying only the first 100 lines
