@@ -17,6 +17,7 @@ access project "project_id"
          sleep                          PAFILE_SLEE_ProjectID
     build
         set GFF3 annoMap hier filename  PABULD_GFF3_ProjectID_annotationmapping_featurehierarchy_file1_file2
+        db                              PABULD_DB_ProjectID
     query                               PAQURY_ProjectID_Query
     job list                            PATASK_STAT_ProjectID_TaskID1_TaskID2
         status                          PATASK_STAT_ProjectID_TaskID

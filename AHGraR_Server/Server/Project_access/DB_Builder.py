@@ -25,8 +25,44 @@ class DBBuilder:
             # Call format: ProjectID, annotation_mapping, feature_hierarchy, file_names
             self.set_gff3_parser(user_request[1],user_request[2], user_request[3], user_request[4:]
                 if len(user_request) > 4 else [])
+        # Build the neo4j-based project database from the previously added files
+        if user_request[0] == "DB" and len(user_request) == 2 and user_request[1].isdigit():
+            self.build_db(user_request[1])
         else:
             self.send_data("-3")
+
+    # Build a neo4j graph database of the genes and proteins in the project data files
+    # Two types of input for each species are possible:
+    # (1.) Protein-fasta plus Gene annotation in GFF3 or CVS format
+    # (2.) Nucleotide-fasta plus Gene annotation in GFF3 format
+    # For (2.) a Protein-fasta is generated from the nucleotide sequence and then GFF3 gene annotation
+    # Afterwards, the approach is the same as for (1.)
+    # The build_db functions consists of multiple parts
+    # After finishing each part, the task status is updated.
+    # If one part fails, an error message is stored in the task result output.
+    # (1.) Check for valid file combinations/input
+    # (2.)
+    def build_db(self, proj_id):
+        # First, define a new task for the db build and return task-id to user
+        task_id = self.task_mngr.define_task(proj_id, "Building project DB")
+        # Send task-id to user
+        self.send_data(task_id)
+        # First, retrieve the list of files in this project (excluding hidden files)
+        self.task_mngr.set_task_status(proj_id, task_id, "Collecting files")
+        file_list = list(self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
+                              "WHERE ID(proj)={proj_id} AND file.hidden = 'False' "
+                              "RETURN file.filename, file.filetype, file.species, file.variant ORDER BY file.filename",
+                          {"proj_id":int(proj_id)}))
+        # Convert file_list into a dictionary:
+        file_dict = {}
+        # Keys are (Species, Variant) and entries are a list of files
+        for file in file_list:
+            file_dict[(file[2],file[3])] = []
+        for file in file_list:
+            file_dict[(file[2],file[3])].append((file[0],file[1]))
+        print(file_dict)
+
+
 
     # For one GFF3 file (or all GFF3 files) in a project, set the annotation mapper and the feature hierarchy
     # Function initializes an instance of the GFF3-parser to check the validity of the annotation mapper string

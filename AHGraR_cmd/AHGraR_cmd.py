@@ -228,13 +228,24 @@ def file_management(connection, accessed_project, user_input):
         task_id = receive_data(connection)
         add_jobid(task_id, accessed_project, "Importing files from " + user_input[1])
 
+
 def build_management(connection, accessed_project, user_input):
     if user_input[0] == "set" and user_input[1] == "GFF3" and len(user_input) >=4:
         # Convert any "_" in annotation mapping, feature hierarchy or file names to "\t"
         user_input = [command.replace("_","\t") for command in user_input]
         send_data(connection, "PABULD_GFF3_" + str(accessed_project) + "_" + "_".join(user_input[2:]))
         task_id = receive_data(connection)
-        print(task_id)
+        add_jobid(task_id, accessed_project, "Testing GFF3 parsing")
+    if user_input[0] == "db" and len(user_input)==1:
+        # Build project-db. No further input parameters are required as
+        # files, parser etc. have to be configured before calling "build db"
+        # Appropriate error messages will be returned if project was not
+        # configured for db-building
+        send_data(connection, "PABULD_DB_" + str(accessed_project))
+        task_id = receive_data(connection)
+        add_jobid(task_id, accessed_project, "Building project DB")
+
+
 
 if __name__ == '__main__':
     print("Welcome to AHGraR")
