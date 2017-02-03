@@ -9,7 +9,8 @@
 # Species_variant_gene_node.csv
 # Species_variant_gene_5nb.csv
 # Species_variant_gene_3nb.csv
-import Par
+from Parser.GFF3_parser_gffutils import GFF3Parser
+from Parser.CSV_parser import CSVParser
 import os
 
 
@@ -32,7 +33,7 @@ class GeneToCSV:
         #                           chromosome, strand_orientation, coding_frame),...]
         # Decide which parser to use, depending an annotation file type: GFF3 or CSV
         if annofile_type = "gff3":
-            anno_parser =
+            anno_parser = GFF3Parser.
         gene_list = []
         for anno_file_path in self.anno_file_path_list:
             gene_list.extend(anno_parser.parse_annotation(self.anno_file_type, anno_file_path))

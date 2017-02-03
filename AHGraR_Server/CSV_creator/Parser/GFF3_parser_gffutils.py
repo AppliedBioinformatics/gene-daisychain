@@ -69,7 +69,7 @@ class GFF3Parser:
 
     # Set annotation mapper
     # Input: String, example:
-    # Gene::(Start:4),(Stop:5),(Contig:1),(Gene_name:Name),(Phase:8),(Strand:7);mRNA::(Protein_name:Name),(Protein_desc:Product)
+    # gene::(Start:4),(Stop:5),(Contig:1),(Gene_name:Name),(Phase:8),(Strand:7);CDS::(Protein_name:Name),(Protein_desc:product)
     def set_annotation_mapper(self, anno_map):
         # 0. Ensure that annotation mapping string has the right format
         # Ensure that there are no whitespaces in anno_map
