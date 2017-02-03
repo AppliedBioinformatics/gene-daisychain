@@ -84,19 +84,16 @@ class DBBuilder:
             with open(file + "_head.gff3", "w") as head_gff3_file:
                 for line in head:
                     head_gff3_file.write(line)
-            print(file+ "_head.gff3")
             gff3_parser = Parser.GFF3_parser_gffutils.GFF3Parser(file + "_head.gff3", 0, 0)
             gff3_parser.set_annotation_mapper(annotation_mapping)
             gff3_parser.set_feature_hierarchy(feature_hierarchy)
             gff3_parser.parse_gff3_file()
             try:
                 gene_node = ", ".join(str(item) for item in gff3_parser.get_gene_list()[0])
-                print(gene_node)
             except IndexError:
                 gene_node = "Error"
             try:
                 protein_node = ", ".join(str(item) for item in gff3_parser.get_protein_list()[0])
-                print(protein_node)
             except IndexError:
                 protein_node = "Error"
             results.append("\t".join([os.path.basename(file), gene_node, protein_node]))
