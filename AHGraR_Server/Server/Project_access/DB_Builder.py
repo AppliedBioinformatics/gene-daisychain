@@ -123,7 +123,7 @@ class DBBuilder:
             self.task_mngr.add_task_results(proj_id, task_id, "Correct Annotation: " + str(valid_annotation_mapper)+ " Correct Hierarchy: "+ str(valid_feature_hierarchy))
             return
         # Else add them to the main-db
-        print(file_list)
+        print([os.path.basename(path) for path in file_list])
         self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
                     "MATCH (fileMngr)-[:file]->(file:File) WHERE file.filename IN {file_list} "
                     "AND file.filetype = 'gff3' AND file.hidden = 'False' "
