@@ -68,7 +68,11 @@ class DBBuilder:
         # TODO: Implement this
         # Until then: Just delete these file combinations
         for file in file_list:
-            file_combination = file_dict[(file[2],file[3])]
+            try:
+                file_combination = file_dict[(file[2],file[3])]
+            # Since there are two files per db-entry, a file could belong to an entry that is already deleted
+            except KeyError:
+                continue
             if len(file_combination) != 2:
                 del file_dict[(file[2],file[3])]
                 continue
