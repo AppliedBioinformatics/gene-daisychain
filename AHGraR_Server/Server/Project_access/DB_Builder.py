@@ -87,12 +87,19 @@ class DBBuilder:
                 del file_dict[(file[2], file[3])]
                 continue
         # Initialize the annotation to csv format parser
+        self.task_mngr.set_task_status(proj_id, task_id, "Parsing annotation data")
         anno_to_csv_parser = AnnoToCSV(proj_id)
         for species in file_dict:
-            anno_file = sorted(file_dict[species], key=lambda x: x[1])[0]
-            print(anno_file)
-            anno_to_csv_parser.create_csv("_".join([species[0],species[1]]),anno_file[0], anno_file[1],
-                                          anno_file[2],anno_file[3])
+            try:
+                anno_file = sorted(file_dict[species], key=lambda x: x[1])[0]
+                anno_to_csv_parser.create_csv("_".join([species[0],species[1]]),anno_file[0], anno_file[1],
+                                              anno_file[2],anno_file[3])
+            except (IndexError, KeyError):
+                self.task_mngr.set_task_status(proj_id, task_id, "Failed: Annotation parsing")
+                return
+
+
+
 
     # For one GFF3 file (or all GFF3 files) in a project, set the annotation mapper and the feature hierarchy
     # Function initializes an instance of the GFF3-parser to check the validity of the annotation mapper string
