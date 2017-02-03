@@ -54,61 +54,45 @@ class AnnoToCSV:
         # Set gene_node_id and protein_node_id to id last assigned while parsing
         self.gene_node_id = anno_parser.get_gene_node_id()
         self.protein_node_id = anno_parser.get_protein_node_id()
-
         # Save protein_dict as json-file
         # This will be used at a later stage following the homology clustering of proteins
         # File is stored temporarily in the CSV folder
         with open(os.path.join(self.CSV_path, species_name+"_protein_dict.json"), "w") as json_file:
             json.dump(protein_dict, json_file)
-        return
-        gene_list = []
-        for anno_file_path in self.anno_file_path_list:
-            gene_list.extend(anno_parser.parse_annotation(self.anno_file_type, anno_file_path))
         # Format for Gene node CSV:
-        # geneId:ID(Gene),organism,chromosome,strand,start:INT,end:INT,name
-        gene_node_output.write("geneId:ID(Gene),organism,chromosome,strand,start:INT,end:INT,name\n")
-        # Format for (gene)-[5'-nb]->(gene)
+        # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
+        gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame\n")
+        # Format for (Gene)-[5'-nb]->(Gene)
         # :START_ID(Gene),:END_ID(Gene)
-        gene_rel5nb_output.write(":START_ID(Gene),:END_ID(Gene)\n")
-        # Format for (gene)-[3'-nb]->(gene)
+        gene_rel5nb_output.write(":START_ID(Gene),:STOP_ID(Gene)\n")
+        # Format for (Gene)-[3'-nb]->(Gene)
         # :START_ID(Gene),:END_ID(Gene)
-        gene_rel3nb_output.write(":START_ID(Gene),:END_ID(Gene)\n")
+        gene_rel3nb_output.write(":START_ID(Gene),:STOP_ID(Gene)\n")
         # Gene list has to be sorted at this stage (!!!)
         # Walk through gene list:
-        # Append gene lists from multiple organisms
-        prev_org = ""
-        prev_chrom = ""
-        prev_start = ""
-        prev_id = last_gene_id
+        prev_contig = ""
+        prev_id = 0
+        prev_start = None
         for gene in gene_list:
-            cur_org = gene[0]
-            cur_chrom = gene[1]
-            cur_strand = gene[2]
+            cur_contig = gene[2]
+            cur_id = gene[0]
             cur_start = gene[3]
-            cur_name = gene[5]
-            cur_id = prev_id + 1
-            # Add entry to gene - 2 - ID dict:
-            gene_id_dict[(cur_org, cur_chrom, cur_strand, cur_start, cur_name)] = cur_id
-            # Only connect genes if connect_nb = TRUE
-            # Only connect genes from the same organism and same chromosome
-            # Only connect genes if prev and cur gene have a chromosome index position
-            if (prev_org == cur_org and prev_chrom == cur_chrom and prev_start and cur_start):
-                # print("Connecting"+str((prev_id, cur_id)))
+            # Only connect genes on the same contig
+            # Only connect genes if both have a defined start index
+            if (prev_contig == cur_contig and prev_start and cur_start):
                 gene_rel3nb_output.write(str(prev_id) + "," + str(cur_id) + "\n")
                 gene_rel5nb_output.write(str(cur_id) + "," + str(prev_id) + "\n")
             # In all cases: create an entry in the CSV to create a Gene node
             # Format:
-            # geneId:ID(Gene),organism,chromosome,strand,start:INT,end:INT,name
+            # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
+            # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name, chromosome, strand_orientation, coding_frame),...]
             gene_node_output.write(
-                ",".join([str(cur_id), cur_org, cur_chrom, cur_strand, cur_start, gene[4], cur_name + "\n"]))
-            prev_org = cur_org
-            prev_chrom = cur_chrom
+                ",".join([str(cur_id), gene[1], gene[2], str(gene[3]), str(gene[4]), gene[5], gene[6], gene[7],gene[8] + "\n"]))
             prev_start = cur_start
             prev_id = cur_id
+            prev_contig = cur_contig
         # Close files
         gene_node_output.close()
         gene_rel5nb_output.close()
         gene_rel3nb_output.close()
-        # Store last gene-id and updated gene-id-2-nodes dict in dump
-        self.project_dump_dict["last_gene_id"] = prev_id
-        self.project_dump_dict["gene_id_dict"] = gene_id_dict
+
