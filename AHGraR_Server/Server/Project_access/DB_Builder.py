@@ -128,7 +128,7 @@ class DBBuilder:
                     "AND file.filetype = 'gff3' AND file.hidden = 'False' "
                     "SET file.anno_mapping = {anno_map} SET file.feat_hierarchie = {feat_hier} ",
                     {"proj_id": proj_id, "file_list": file_list, "anno_map": annotation_mapping, "feat_hier": feature_hierarchy})
-        print(result.single())
+        print(result)
         self.task_mngr.set_task_status(proj_id, task_id, "Added annotation to main-db")
         # Test the parsing of each GFF3 file
         # Make a copy of all gff3-files, copying only the first 100 lines
