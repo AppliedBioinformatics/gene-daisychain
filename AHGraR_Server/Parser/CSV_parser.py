@@ -59,6 +59,22 @@ class CSVParser:
     def get_protein_list(self):
         return (self.protein_annotation_list)
 
+    # Retrieve protein nodes as dict
+    # dict[prot_name] = (protein_id, protein_desc, gene_id)
+    def get_protein_dict(self):
+        protein_dict = {}
+        for protein in self.protein_annotation_list:
+            protein_dict[protein[1]]=(protein[0],protein[2],protein[3])
+        return (protein_dict)
+
+    # Retrieve current gene_node id
+    def get_gene_node_id(self):
+        return (self.gene_id)
+
+    # Retrieve current protein_node id
+    def get_protein_node_id(self):
+        return (self.protein_id)
+
 
 
 

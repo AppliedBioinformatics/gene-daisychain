@@ -1,10 +1,12 @@
 # GFF3-parser based on gffutils
-# Input: GFF3 file
+# Input: GFF3 file, initial gene and protein id
 # Output: Two lists
 # 1. List describing gene nodes:
 # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name, chromosome, strand_orientation, coding_frame),...]
 # 2. List describing protein nodes with a reference to coding gene id
 # [(protein_id, protein_name, protein_description, gene_id),...]
+# 3. Dict matching protein names to gene-ID and protein description
+# dict[prot_name]=(protein_id, protein_desc, gene_id)
 # Some annotation is mandatory, i.e. GFF3 file has to contain these fields, others are optional:
 # Mandatory: Gene-name, Protein-name, contig-name, start-index, stop-index
 # Optional: Protein-description, chromosome-name, strand-orientation, coding frame
@@ -229,3 +231,18 @@ class GFF3Parser:
     def get_protein_list(self):
         return (self.protein_list)
 
+    # Retrieve protein nodes as dict
+    # dict[prot_name] = (protein_id, protein_desc, gene_id)
+    def get_protein_dict(self):
+        protein_dict = {}
+        for protein in self.protein_list:
+            protein_dict[protein[1]]=(protein[0],protein[2],protein[3])
+        return (protein_dict)
+
+    # Retrieve current gene_node id
+    def get_gene_node_id(self):
+        return (self.gene_node_id)
+
+    # Retrieve current protein_node id
+    def get_protein_node_id(self):
+        return (self.protein_node_id)

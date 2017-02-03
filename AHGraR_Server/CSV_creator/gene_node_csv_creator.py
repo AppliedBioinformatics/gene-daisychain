@@ -1,46 +1,38 @@
-# Convert gene node information into CSV file format
-# This includes: CSV file describing the gene nodes itself
-# Plus two CSV files describing the 5' and 3' relations
-# CSV files can be loaded fast and easy into Neo4j DB
-# Input: List with paths to gene annotation files, path to output file, project ID,
-#  annotation file format (e.g.NCBI_refseq)
-# Output file names have this format:
-# [Path]_gene_node.csv
-# [Path]_gene_5nb.csv
-# [Path]_gene_3nb.csv
-import Parser.annotation_parser as anno_parser
-import pickle
+# Convert gene annotation information into CSV file format
+# This includes: CSV file describing the gene properties itself
+# plus two CSV files describing the 5' and 3' relations
+# CSV files are used to build a new Neo4j graph DB
+# Init. params: Project-ID
+# The function create_csv is the called with a tuple: (file_name, file_type)
+# with file_type being either GFF3 or CSV
+# Each annotation file thus generates a set of three CSV files:
+# Species_variant_gene_node.csv
+# Species_variant_gene_5nb.csv
+# Species_variant_gene_3nb.csv
+import Par
+import os
 
 
 class GeneToCSV:
-    def __init__(self, anno_file_path_list, output_file_path, project_id, anno_file_type):
-        self.anno_file_path_list = anno_file_path_list
-        self.output_file_path = output_file_path
-        self.anno_parser = anno_parser.AnnotationParser()
-        self.project_id = project_id
-        self.anno_file_type = anno_file_type
-        # Retrieve project dump or create a new dict in
-        # case this a new project id
-        try:
-            self.project_dump_dict= pickle.load(open("project_dump_"+str(self.project_id)+".pkl", "rb"))
-        except FileNotFoundError:
-            self.project_dump_dict = {}
+    def __init__(self, proj_id):
+        self.file_path =  os.path.join("Projects", proj_id, "Files")
+        self.CSV_path = os.path.join("Projects", proj_id, "CSV")
+        self.gene_node_id = 0
+        self.protein_node_id = 0
 
-    def __dump_project_dict(self):
-        pickle.dump(self.project_dump_dict, open("project_dump_"+str(self.project_id)+".pkl","wb"),
-                    pickle.HIGHEST_PROTOCOL)
 
-    def create_csv(self, connect_nb):
-        # Retrieve project-id dependent first gene_id
-        last_gene_id = self.project_dump_dict.get("last_gene_id",0)
-        # Retrieve project-id dependent dict of all previous assigned gene-ids
-        gene_id_dict = self.project_dump_dict.get("gene_id_dict",{})
-        # Create output files
-        gene_node_output = open(self.output_file_path+"_gene_node.csv","w")
-        gene_rel5nb_output = open(self.output_file_path + "_gene_5nb.csv", "w")
-        gene_rel3nb_output = open(self.output_file_path + "_gene_3nb.csv", "w")
-        # Parse anno files into one gene list
-        # Format [(Organism,Chromosome,Strand_orientation,Start_index,End_index, Gene_name),...]
+    def create_csv(self, species_name, annofile_name, annofile_type):
+        # Define and create output files
+        # For each species, a set of three CSV files is created.
+        gene_node_output = open(os.path.join(self.CSV_path, species_name+"_gene_node.csv"),"w")
+        gene_rel5nb_output = open(os.path.join(self.CSV_path, species_name+"_gene_5nb.csv"),"w")
+        gene_rel3nb_output = open(os.path.join(self.CSV_path, species_name+"_gene_3nb.csv"),"w")
+        # Parse gene annotation file into one list:
+        # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name,
+        #                           chromosome, strand_orientation, coding_frame),...]
+        # Decide which parser to use, depending an annotation file type: GFF3 or CSV
+        if annofile_type = "gff3":
+            anno_parser =
         gene_list = []
         for anno_file_path in self.anno_file_path_list:
             gene_list.extend(anno_parser.parse_annotation(self.anno_file_type, anno_file_path))
@@ -72,7 +64,7 @@ class GeneToCSV:
             # Only connect genes if connect_nb = TRUE
             # Only connect genes from the same organism and same chromosome
             # Only connect genes if prev and cur gene have a chromosome index position
-            if (connect_nb and prev_org == cur_org and prev_chrom == cur_chrom and prev_start and cur_start):
+            if (prev_org == cur_org and prev_chrom == cur_chrom and prev_start and cur_start):
                 # print("Connecting"+str((prev_id, cur_id)))
                 gene_rel3nb_output.write(str(prev_id) + "," + str(cur_id) + "\n")
                 gene_rel5nb_output.write(str(cur_id) + "," + str(prev_id) + "\n")

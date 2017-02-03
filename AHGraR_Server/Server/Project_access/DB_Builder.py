@@ -60,7 +60,6 @@ class DBBuilder:
             file_dict[(file[2],file[3])] = []
         for file in file_list:
             file_dict[(file[2],file[3])].append((file[0],file[1]))
-        print(file_dict)
         # Check if each entry in the database consists of exactly two files, one fasta and one annotation file
         # If not, remove that entry from the database
         # Also, search for gff3+nt combinations

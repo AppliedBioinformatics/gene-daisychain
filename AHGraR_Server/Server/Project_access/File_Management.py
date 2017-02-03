@@ -205,9 +205,14 @@ class FileManagement:
             if len(new_file_desc) != 4: continue
             new_file_path = os.path.join("Import", new_file_desc[3])
             # Check if next file has valid file_type
-            if new_file_desc[2] not in ["gff3", "nt", "prot"]:
+            if new_file_desc[2] not in ["gff3", "csv", "nt", "prot"]:
                continue
-            file_ending = ".gff3" if new_file_desc[2] == "gff3" else ".faa"
+            if new_file_desc[2] == "gff3":
+                file_ending = ".gff3"
+            elif new_file_desc[2] == "csv":
+                file_ending = ".csv"
+            else:
+                file_ending = ".faa"
             file_name = "_".join([new_file_desc[0], new_file_desc[1]]) + file_ending
             try:
                 shutil.copy2(new_file_path, os.path.join(project_file_path, file_name))
