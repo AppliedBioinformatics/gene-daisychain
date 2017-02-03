@@ -31,7 +31,7 @@ class GeneToCSV:
         # Parse gene annotation file into one list:
         # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name,
         #                           chromosome, strand_orientation, coding_frame),...]
-        # Decide which parser to use, depending an annotation file type: GFF3 or CSV
+        # Decicion which parser to use depends on annotation file type: GFF3 or CSV
         if annofile_type = "gff3":
             anno_parser = GFF3Parser.
         gene_list = []

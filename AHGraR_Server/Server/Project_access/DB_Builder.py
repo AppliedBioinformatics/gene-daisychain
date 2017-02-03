@@ -51,7 +51,8 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "Collecting files")
         file_list = list(self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
                               "WHERE ID(proj)={proj_id} AND file.hidden = 'False' "
-                              "RETURN file.filename, file.filetype, file.species, file.variant ORDER BY file.filename",
+                              "RETURN file.filename, file.filetype, file.species, file.variant, file.anno_mapping, "
+                                               "file.feat_hierarchie ORDER BY file.filename",
                           {"proj_id":int(proj_id)}))
         # Convert file_list into a dictionary:
         file_dict = {}
@@ -59,7 +60,7 @@ class DBBuilder:
         for file in file_list:
             file_dict[(file[2],file[3])] = []
         for file in file_list:
-            file_dict[(file[2],file[3])].append((file[0],file[1]))
+            file_dict[(file[2],file[3])].append((file[0],file[1],file[4],file[5]))
         # Check if each entry in the database consists of exactly two files, one fasta and one annotation file
         # If not, remove that entry from the database
         # Also, search for gff3+nt combinations
