@@ -12,6 +12,7 @@
 from Parser.GFF3_parser_gffutils import GFF3Parser
 from Parser.CSV_parser import CSVParser
 import os
+import json
 
 
 class AnnoToCSV:
@@ -49,12 +50,16 @@ class AnnoToCSV:
         # Retrieve gene annotation as list
         gene_list = anno_parser.get_gene_list()
         # Retrieve protein annotation as dict
-        protein_list = anno_parser.get_protein_dict()
+        protein_dict = anno_parser.get_protein_dict()
         # Set gene_node_id and protein_node_id to id last assigned while parsing
         self.gene_node_id = anno_parser.get_gene_node_id()
         self.protein_node_id = anno_parser.get_protein_node_id()
-        print(self.gene_node_id)
-        print(self.protein_node_id)
+
+        # Save protein_dict as json-file
+        # This will be used at a later stage following the homology clustering of proteins
+        # File is stored temporarily in the CSV folder
+        with open(os.path.join(self.CSV_path, species_name+"_protein_dict.json"), "w") as json_file:
+            json.dump(protein_dict, json_file)
         return
         gene_list = []
         for anno_file_path in self.anno_file_path_list:
