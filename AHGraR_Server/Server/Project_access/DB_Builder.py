@@ -63,9 +63,9 @@ class DBBuilder:
         print(file_dict)
         # Check if each entry in the database consists of exactly two files, one fasta and one annotation file
         # If not, remove that entry from the database
-        for file_key in file_dict.keys():
-            if len(file_dict[file_key]) != 2:
-                del file_dict[file_key]
+        for file in file_list:
+            if len(file_dict[(file[2],file[3])]) != 2:
+                del file_dict[(file[2],file[3])]
         print(file_dict)
 
 
