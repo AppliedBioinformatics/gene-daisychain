@@ -89,6 +89,7 @@ class DBBuilder:
         # Initialize the annotation to csv format parser
         anno_to_csv_parser = AnnoToCSV(proj_id)
         for species in file_dict:
+            print(file_dict[species])
             anno_to_csv_parser.create_csv("_".join([species[0],species[1]]),file_dict[species][0], file_dict[species][1],
                                           file_dict[species][2],file_dict[species][3])
 
