@@ -37,6 +37,7 @@ class GFF3Parser:
 
     def __init__(self, gff3_file_path, gene_node_id, protein_node_id):
         self.gff3_file_path = gff3_file_path
+        print(self.gff3_file_path)
         # Organism/species name
         self.species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
         # Each protein and gene node gets an unique id
