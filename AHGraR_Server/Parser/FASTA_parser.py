@@ -6,7 +6,6 @@
 # ID must match protein name in csv/gff3 annotation file
 # Additionally, one large FASTA file consisting of all individual FASTA sequences of
 # all species is created. This is used later to build the BLAST database.
-import sys
 import os
 
 
@@ -38,7 +37,6 @@ class FastaParser:
         # Rename modified FASTA file to original file name
         os.rename(os.path.join(self.file_path, file_name+"_header_corrected.faa"),
                   os.path.join(self.file_path, file_name))
-
     def close_combined_fasta(self):
         self.combined_fasta_file.close()
 

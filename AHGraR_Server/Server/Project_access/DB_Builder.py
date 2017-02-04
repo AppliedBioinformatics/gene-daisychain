@@ -3,6 +3,7 @@
 # Functions directly accessible by user query always return a string via socket connection
 import Parser.GFF3_parser_gffutils
 import os
+import subprocess
 from itertools import islice
 from CSV_creator.annotation_to_csv import AnnoToCSV
 from Parser.FASTA_parser import FastaParser
@@ -113,6 +114,11 @@ class DBBuilder:
             print("Parsing: "+prot_fasta_file)
             fasta_parser.parse_fasta(prot_fasta_file)
         fasta_parser.close_combined_fasta()
+        # Build the BLAST database using BLAST+ makeblastdb
+        subprocess.run(
+            ["makeblastdb", "-dbtype", "prot", "-in", os.path.join("Projects", str(proj_id), "Files", "combined_prot_fasta.faa"),
+             "-parse_seqids", "-hash_index", "-out", "BlastPDB"], check=True)
+        print("Finished")
 
 
 
