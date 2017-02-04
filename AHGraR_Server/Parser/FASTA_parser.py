@@ -22,7 +22,7 @@ class FastaParser:
                 for line in input_fasta_file:
                     # If line is not a fasta-header or an already corrected fasta header
                     # write line to new file and to combined file
-                    if not line.startswith(">") or line.startswith(">|lcl|"):
+                    if not line.startswith(">") or line.startswith(">lcl|"):
                         output_fasta_file.write(line)
                         self.combined_fasta_file.write(line)
                         continue
@@ -31,8 +31,8 @@ class FastaParser:
                         # Remove > and newline
                         header = line[1:-1]
                         id = header.split(" ")[0]
-                        output_fasta_file.write(">|lcl|" + id + "\n")
-                        self.combined_fasta_file.write(">|lcl|" + id + "\n")
+                        output_fasta_file.write(">lcl|" + id + "\n")
+                        self.combined_fasta_file.write(">lcl|" + id + "\n")
         # Delete original FASTA file
         os.remove(os.path.join(self.file_path, file_name))
         # Rename modified FASTA file to original file name
