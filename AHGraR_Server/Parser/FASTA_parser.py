@@ -14,11 +14,11 @@ class FastaParser:
     def __init__(self, proj_id):
         self.file_path = os.path.join("Projects", proj_id, "Files")
         self.CSV_path = os.path.join("Projects", proj_id, "CSV")
-        self.combined_fasta_file = open(os.path.join(self.file_path, "combined_prot_fasta.faa"))
+        self.combined_fasta_file = open(os.path.join(self.file_path, "combined_prot_fasta.faa"), "w")
 
     def parse_fasta(self, file_name):
-        with open(os.path.join(self.file_path, file_name)) as input_fasta_file:
-            with open(os.path.join(self.file_path, file_name+"_header_corrected.faa")) as output_fasta_file:
+        with open(os.path.join(self.file_path, file_name),"r") as input_fasta_file:
+            with open(os.path.join(self.file_path, file_name+"_header_corrected.faa"),"r") as output_fasta_file:
                 for line in input_fasta_file:
                     # If line is not a fasta-header or an already corrected fasta header
                     # write line to new file and to combined file
