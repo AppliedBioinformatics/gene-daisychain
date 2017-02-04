@@ -115,9 +115,11 @@ class DBBuilder:
             fasta_parser.parse_fasta(prot_fasta_file)
         fasta_parser.close_combined_fasta()
         # Build the BLAST database using BLAST+ makeblastdb
+        # Define File folder path:
+        file_path = os.path.join("Projects", str(proj_id), "Files")
         subprocess.run(
-            ["makeblastdb", "-dbtype", "prot", "-in", os.path.join("Projects", str(proj_id), "Files", "combined_prot_fasta.faa"),
-             "-parse_seqids", "-hash_index", "-out", "BlastPDB"], check=True)
+            ["makeblastdb", "-dbtype", "prot", "-in", os.path.join(file_path, "combined_prot_fasta.faa"),
+             "-parse_seqids", "-hash_index", "-out", os.path.join(file_path, "BlastPDB")], check=True)
         print("Finished")
 
 
