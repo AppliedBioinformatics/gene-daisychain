@@ -44,6 +44,7 @@ class CreateProject:
             os.makedirs(project_path)
             os.makedirs(os.path.join(project_path, "Files"))
             os.makedirs(os.path.join(project_path, "CSV"))
+            os.makedirs(os.path.join(project_path, "BlastDB"))
             shutil.copytree(self.neo4j_path, os.path.join(project_path, "proj_graph_db"))
             # Edit project neo4j graph database config file
             self.edit_neo4j_config(project_path, project_port_nr)
