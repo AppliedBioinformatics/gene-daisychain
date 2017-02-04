@@ -18,7 +18,7 @@ class FastaParser:
 
     def parse_fasta(self, file_name):
         with open(os.path.join(self.file_path, file_name),"r") as input_fasta_file:
-            with open(os.path.join(self.file_path, file_name+"_header_corrected.faa"),"r") as output_fasta_file:
+            with open(os.path.join(self.file_path, file_name+"_header_corrected.faa"),"w") as output_fasta_file:
                 for line in input_fasta_file:
                     # If line is not a fasta-header or an already corrected fasta header
                     # write line to new file and to combined file
