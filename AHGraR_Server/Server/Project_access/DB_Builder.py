@@ -5,6 +5,7 @@ import Parser.GFF3_parser_gffutils
 import os
 from itertools import islice
 from CSV_creator.annotation_to_csv import AnnoToCSV
+from Parser.FASTA_parser import FastaParser
 
 
 class DBBuilder:
@@ -69,7 +70,7 @@ class DBBuilder:
         # Also, search for gff3+nt combinations
         # The nt-fasta needs to be translated to prot-fasta guided by the GFF3-file
         # TODO: Implement this
-        # Until then: Just delete these file combinations
+        # Until then: Just delete nt/gff3 file combinations
         for file in file_list:
             try:
                 file_combination = file_dict[(file[2],file[3])]
@@ -89,14 +90,27 @@ class DBBuilder:
         # Initialize the annotation to csv format parser
         self.task_mngr.set_task_status(proj_id, task_id, "Parsing annotation data")
         anno_to_csv_parser = AnnoToCSV(proj_id)
+        # Then convert every annotation file into a Neo4j-specific CSV file format
         for species in file_dict:
             try:
+                # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
+                # gff < prot and csv < prot
                 anno_file = sorted(file_dict[species], key=lambda x: x[1])[0]
+                print(anno_file)
                 anno_to_csv_parser.create_csv("_".join([species[0],species[1]]),anno_file[0], anno_file[1],
                                               anno_file[2],anno_file[3])
             except (IndexError, KeyError):
-                self.task_mngr.set_task_status(proj_id, task_id, "Failed: Annotation parsing")
+                self.task_mngr.set_task_status(proj_id, task_id, "Failed")
+                self.task_mngr.add_task_results(proj_id, task_id, "Failed: Annotation parsing")
                 return
+        # Load the FASTA files: Modify header so that protein-ID gets recognized by BLAST+ and
+        # combine all FASTA files into one large file from which the Blast-DB is build
+        fasta_parser = FastaParser(proj_id)
+        for species in file_dict:
+            # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
+            # gff < prot and csv < prot
+            fasta_file = sorted(file_dict[species], key=lambda x: x[1])[0]
+            print(fasta_file)
 
 
 

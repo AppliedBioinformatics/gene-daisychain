@@ -3,12 +3,15 @@
 # plus two CSV files describing the 5' and 3' relations
 # CSV files are used to build a new Neo4j graph DB
 # Init. params: Project-ID
-# The function create_csv is the called with a tuple: (file_name, file_type)
+# The function create_csv is called multiple times, once for each annotation file.
 # with file_type being either GFF3 or CSV
 # Each annotation file thus generates a set of three CSV files:
 # Species_variant_gene_node.csv
 # Species_variant_gene_5nb.csv
 # Species_variant_gene_3nb.csv
+# Plus a dict mapping protein names to [protein_id, protein_description, coding_gene_id]
+# Dict is saved in json format in CSV directory and used at a later stage while parsing the
+# BLAST/MCL clustering results
 from Parser.GFF3_parser_gffutils import GFF3Parser
 from Parser.CSV_parser import CSVParser
 import os
