@@ -106,6 +106,7 @@ class DBBuilder:
                 return
         # Load the FASTA files: Modify header so that protein-ID gets recognized by BLAST+ and
         # combine all FASTA files into one large file from which the Blast-DB is build
+        self.task_mngr.set_task_status(proj_id, task_id, "Parsing protein fasta files")
         fasta_parser = FastaParser(proj_id)
         for species in file_dict:
             # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
@@ -116,12 +117,13 @@ class DBBuilder:
         fasta_parser.close_combined_fasta()
         # Build the BLAST database using BLAST+ makeblastdb
         # Define File folder path:
+        self.task_mngr.set_task_status(proj_id, task_id, "Building Blast+ DB")
         BlastDB_path = os.path.join("Projects", str(proj_id), "BlastDB")
         subprocess.run(
             ["makeblastdb", "-dbtype", "prot", "-in", os.path.join(BlastDB_path, "all_prot_fasta.faa"),
              "-parse_seqids", "-hash_index", "-out", os.path.join(BlastDB_path, "BlastPDB")], check=True)
-        print("Finished")
         # Run each species protein fasta file against the Blast protein database
+        self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastP")
         file_path = os.path.join("Projects", str(proj_id), "Files")
         for species in file_dict:
             # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
@@ -133,7 +135,22 @@ class DBBuilder:
                                          "-out", os.path.join(BlastDB_path,
                                         prot_fasta_file[:prot_fasta_file.rfind(".")]+".blastp"), "-evalue", "0.05",
                             "-num_threads", "8", "-parse_deflines"])
-
+        # Cluster all-vs.-all BlastP results into protein homology groups
+        self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastP results")
+        # 1. Concatenate all BlastP Results into one "ABC" file
+        print("1. Concatenate all BlastP Results into one ABC file")
+        subprocess.run(["cat", os.path.join(BlastDB_path, "*.blastp"), ">", "blastp.abc" ])
+        # 2. Convert ABC file into a network and dictionary file.
+        print("2. Convert ABC file into a network and dictionary file.")
+        subprocess.run(["mcxload", "-abc", "blastp.abc", "--stream-mirror", "--stream-neg-log10", "-stream-tf",
+                        "'ceil(200)'", "-o", "blastp.mci", "-write-tab", "blastp.tab"])
+        # 3.Cluster results
+        print("3.Cluster results")
+        subprocess.run(["mcl", "blastp.mci", "-te", "8", "-I", "1.4", "-use-tab", "blastp.tab"])
+        subprocess.run(["mcl", "blastp.mci", "-te", "8", "-I", "2.0", "-use-tab", "blastp.tab"])
+        subprocess.run(["mcl", "blastp.mci", "-te", "8", "-I", "4.0", "-use-tab", "blastp.tab"])
+        subprocess.run(["mcl", "blastp.mci", "-te", "8", "-I", "6.0", "-use-tab", "blastp.tab"])
+        print("Finished")
 
 
     # For one GFF3 file (or all GFF3 files) in a project, set the annotation mapper and the feature hierarchy
