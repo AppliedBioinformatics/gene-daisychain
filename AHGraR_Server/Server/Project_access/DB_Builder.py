@@ -109,9 +109,10 @@ class DBBuilder:
         for species in file_dict:
             # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
             # gff < prot and csv < prot
-            fasta_file = sorted(file_dict[species], key=lambda x: x[1])[1]
-            print(fasta_file)
-
+            prot_fasta_file = sorted(file_dict[species], key=lambda x: x[1])[1][0]
+            print("Parsing: "+prot_fasta_file)
+            fasta_parser.parse_fasta(prot_fasta_file)
+        fasta_parser.close_combined_fasta()
 
 
 
