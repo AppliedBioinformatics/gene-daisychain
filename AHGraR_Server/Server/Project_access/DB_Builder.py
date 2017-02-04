@@ -116,12 +116,23 @@ class DBBuilder:
         fasta_parser.close_combined_fasta()
         # Build the BLAST database using BLAST+ makeblastdb
         # Define File folder path:
-        file_path = os.path.join("Projects", str(proj_id), "Files")
         BlastDB_path = os.path.join("Projects", str(proj_id), "BlastDB")
         subprocess.run(
-            ["makeblastdb", "-dbtype", "prot", "-in", os.path.join(BlastDB_path, "combined_prot_fasta.faa"),
+            ["makeblastdb", "-dbtype", "prot", "-in", os.path.join(BlastDB_path, "all_prot_fasta.faa"),
              "-parse_seqids", "-hash_index", "-out", os.path.join(BlastDB_path, "BlastPDB")], check=True)
         print("Finished")
+        # Run each species protein fasta file against the Blast protein database
+        file_path = os.path.join("Projects", str(proj_id), "Files")
+        for species in file_dict:
+            # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
+            # gff < prot and csv < prot
+            prot_fasta_file = sorted(file_dict[species], key=lambda x: x[1])[1][0]
+            print("Blasting "+prot_fasta_file)
+            subprocess.run(["blastp", "-query", os.path.join(file_path, prot_fasta_file), "-db",
+                            os.path.join(BlastDB_path, "BlastPDB"), "-outfmt", "6 qseqid sseqid evalue",
+                                         "-out", os.path.join(BlastDB_path,
+                                        prot_fasta_file[:prot_fasta_file.rfind(".")]+".blastp"), "-evalue", "0.05",
+                            "-num_threads", "8", "-parse_deflines"])
 
 
 

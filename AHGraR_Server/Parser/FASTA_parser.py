@@ -14,7 +14,7 @@ class FastaParser:
         self.file_path = os.path.join("Projects", proj_id, "Files")
         self.CSV_path = os.path.join("Projects", proj_id, "CSV")
         self.BlastDB_path = os.path.join("Projects", proj_id, "BlastDB")
-        self.combined_fasta_file = open(os.path.join(self.BlastDB_path, "combined_prot_fasta.faa"), "w")
+        self.combined_fasta_file = open(os.path.join(self.BlastDB_path, "all_prot_fasta.faa"), "w")
 
     def parse_fasta(self, file_name):
         with open(os.path.join(self.file_path, file_name),"r") as input_fasta_file:
