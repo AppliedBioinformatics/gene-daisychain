@@ -182,7 +182,12 @@ class DBBuilder:
         # Create a new Neo4j graph database from node and relationship CSV files
         print("4. Create DB")
         self.task_mngr.set_task_status(proj_id, task_id, "Building database from CSV files")
-        # First, create header for gene nodes, 5' and 3' relationships and homolog relationships
+        # Use nei4j-import to create a database from the CSV files
+        subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-import"),
+                                     "--into", os.path.join("Projects", str(proj_id), "db_folder"), "--id-type",
+                                     "string", "--nodes:Gene gene_nodes.csv",
+                                     "--relationships:5_NB gene_5nb.csv", "--relationships:3_NB gene_3nb.csv",
+                                     "--relationships:HOMOLOG gene_hmlg.csv"], check=True)
 
         print("Finished")
 
