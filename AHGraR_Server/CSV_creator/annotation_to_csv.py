@@ -28,9 +28,9 @@ class AnnoToCSV:
     def create_csv(self, species_name, annofile_name, annofile_type, anno_mapping, feat_hierarchy):
         # Define and create output files
         # For each species, a set of three CSV files is created.
-        gene_node_output = open(os.path.join(self.CSV_path, species_name+"_gene_node.csv"),"w")
-        gene_rel5nb_output = open(os.path.join(self.CSV_path, species_name+"_gene_5nb.csv"),"w")
-        gene_rel3nb_output = open(os.path.join(self.CSV_path, species_name+"_gene_3nb.csv"),"w")
+        gene_node_output = open(os.path.join(self.CSV_path, "gene_nodes.csv"),"a")
+        gene_rel5nb_output = open(os.path.join(self.CSV_path, "gene_5nb.csv"),"a")
+        gene_rel3nb_output = open(os.path.join(self.CSV_path, "gene_3nb.csv"),"a")
         # Parse gene annotation file into one list:
         # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name,
         #                           chromosome, strand_orientation, coding_frame),...]
@@ -63,13 +63,13 @@ class AnnoToCSV:
             json.dump(protein_dict, json_file)
         # Format for Gene node CSV:
         # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
-        gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame\n")
+        #gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame\n")
         # Format for (Gene)-[5'-nb]->(Gene)
         # :START_ID(Gene),:END_ID(Gene)
-        gene_rel5nb_output.write(":START_ID(Gene),:STOP_ID(Gene)\n")
+        #gene_rel5nb_output.write(":START_ID(Gene),:STOP_ID(Gene)\n")
         # Format for (Gene)-[3'-nb]->(Gene)
         # :START_ID(Gene),:END_ID(Gene)
-        gene_rel3nb_output.write(":START_ID(Gene),:STOP_ID(Gene)\n")
+        #gene_rel3nb_output.write(":START_ID(Gene),:STOP_ID(Gene)\n")
         # Gene list has to be sorted at this stage (!!!)
         # Walk through gene list:
         prev_contig = ""

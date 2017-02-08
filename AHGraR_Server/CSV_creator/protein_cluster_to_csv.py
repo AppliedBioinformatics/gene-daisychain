@@ -60,8 +60,8 @@ class ClusterToCSV:
             # This could create multiple copies of the same pairwise relationship between gene nodes
             print(pairwise_homologs_list[:10])
             pairwise_homologs_unique_set = list(set(pairwise_homologs_list))
-            with open(os.path.join(self.CSV_path, "homolog_"+cluster_file_name[1]+".csv"), "w") as csv_file:
-                csv_file.write(":START_ID(Gene),sensitivity:INT,:END_ID(Gene)\n")
+            with open(os.path.join(self.CSV_path, "gene_hmlg.csv"), "a") as csv_file:
+                #csv_file.write(":START_ID(Gene),sensitivity:INT,:END_ID(Gene)\n")
                 # Write each pairwise homolog relationship between two gene node IDS
                 # into the CSV file.
                 # Format: Gene_ID1,inflation_value,Gene_ID2
