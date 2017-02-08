@@ -49,7 +49,7 @@ class ClusterToCSV:
                     # Skip empty lines
                     if not protein_cluster: continue
                     # Map protein name to coding gene id
-                    gene_cluster = [self.protein_to_gene_map[protein_name] for protein_name in protein_cluster]
+                    gene_cluster = [self.protein_to_gene_map[protein_name][2] for protein_name in protein_cluster]
                     #  Make all possible pairwise combinations between gene IDs
                     # i.e. [1,2,3] --> [(1,1),(1,2),(1,3),(2,1),(2,2),(2,3),(3,1),(3,2),(3,3)]
                     gene_cluster_pw_comb = iter.product(gene_cluster, repeat=2)
@@ -58,7 +58,7 @@ class ClusterToCSV:
             # Ensure that the set of pairwise homologs is unique
             # For example, a gene could code for multiple isoforms,
             # This could create multiple copies of the same pairwise relationship between gene nodes
-            print(pairwise_homologs_list)
+            print(pairwise_homologs_list[:10])
             pairwise_homologs_unique_set = list(set(pairwise_homologs_list))
             with open(os.path.join(self.CSV_path, "homolog_"+cluster_file_name[1]+".csv")) as csv_file:
                 csv_file.write(":START_ID(Gene),sensitivity:INT,:END_ID(Gene)\n")
