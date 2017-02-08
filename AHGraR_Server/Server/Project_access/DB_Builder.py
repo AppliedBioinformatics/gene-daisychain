@@ -131,11 +131,11 @@ class DBBuilder:
             # gff < prot and csv < prot
             prot_fasta_file = sorted(file_dict[species], key=lambda x: x[1])[1][0]
             print("Blasting "+prot_fasta_file)
-            subprocess.run(["blastp", "-query", os.path.join(file_path, prot_fasta_file), "-db",
-                            os.path.join(BlastDB_path, "BlastPDB"), "-outfmt", "6 qseqid sseqid evalue",
-                                         "-out", os.path.join(BlastDB_path,
-                                        prot_fasta_file[:prot_fasta_file.rfind(".")]+".blastp"), "-evalue", "0.05",
-                            "-num_threads", "8", "-parse_deflines"])
+            # subprocess.run(["blastp", "-query", os.path.join(file_path, prot_fasta_file), "-db",
+            #                 os.path.join(BlastDB_path, "BlastPDB"), "-outfmt", "6 qseqid sseqid evalue",
+            #                              "-out", os.path.join(BlastDB_path,
+            #                             prot_fasta_file[:prot_fasta_file.rfind(".")]+".blastp"), "-evalue", "0.05",
+            #                 "-num_threads", "8", "-parse_deflines"])
         # Cluster all-vs.-all BlastP results into protein homology groups
         self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastP results")
         # 1. Concatenate all BlastP Results into one "ABC" file

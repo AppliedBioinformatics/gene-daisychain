@@ -66,7 +66,7 @@ class ClusterToCSV:
                 # into the CSV file.
                 # Format: Gene_ID1,inflation_value,Gene_ID2
                 for pairwise_homolog in pairwise_homologs_unique_set:
-                    csv_file.write(",".join(pairwise_homolog[0], cluster_file_name[1], pairwise_homolog[1]))
+                    csv_file.write(",".join([pairwise_homolog[0], cluster_file_name[1], pairwise_homolog[1]]))
 
 
 
