@@ -149,7 +149,7 @@ class DBBuilder:
         # 2. Convert ABC file into a network and dictionary file.
         print("2. Convert ABC file into a network and dictionary file.")
         subprocess.run(["mcxload", "-abc", os.path.join(BlastDB_path, "blastp.abc"), "--stream-mirror", "--stream-neg-log10", "-stream-tf",
-                        "'ceil(200)'", "-o", os.path.join(BlastDB_path, "blastp.mci"), "-write-tab", os.path.join(BlastDB_path, "blastp.tab")], check=True)
+                        "ceil(200)", "-o", os.path.join(BlastDB_path, "blastp.mci"), "-write-tab", os.path.join(BlastDB_path, "blastp.tab")], check=True)
         # 3.Cluster results
         print("3.Cluster results")
         subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "1.4", "-use-tab",
