@@ -23,6 +23,9 @@ class ClusterToCSV:
         # Initialize an empty dict
         # All protein_name to gene_id dicts will be added to this dict subsequently
         self.protein_to_gene_map = {}
+        # Initialize output file
+        with open(os.path.join(self.CSV_path, "gene_hmlg.csv"), "w") as csv_file:
+            csv_file.write(":START_ID(Gene),sensitivity:INT,:END_ID(Gene)\n")
 
     # Add a species-specific protein2gene_id dict to the cumulative dict
     # Function parameter is the species name needed to retrieve the json-stored dict from the project CSV directory
@@ -61,7 +64,6 @@ class ClusterToCSV:
             print(pairwise_homologs_list[:10])
             pairwise_homologs_unique_set = list(set(pairwise_homologs_list))
             with open(os.path.join(self.CSV_path, "gene_hmlg.csv"), "a") as csv_file:
-                #csv_file.write(":START_ID(Gene),sensitivity:INT,:END_ID(Gene)\n")
                 # Write each pairwise homolog relationship between two gene node IDS
                 # into the CSV file.
                 # Format: Gene_ID1,inflation_value,Gene_ID2

@@ -179,6 +179,11 @@ class DBBuilder:
             cluster_to_csv_parser.add_protein_to_gene_map("_".join([species[0],species[1]]))
         # Create CSV file for all MCL-generated clusters
         cluster_to_csv_parser.create_csv()
+        # Create a new Neo4j graph database from node and relationship CSV files
+        print("4. Create DB")
+        self.task_mngr.set_task_status(proj_id, task_id, "Building database from CSV files")
+        # First, create header for gene nodes, 5' and 3' relationships and homolog relationships
+
         print("Finished")
 
 

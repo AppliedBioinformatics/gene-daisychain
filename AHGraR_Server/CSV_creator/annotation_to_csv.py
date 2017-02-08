@@ -24,13 +24,24 @@ class AnnoToCSV:
         self.CSV_path = os.path.join("Projects", proj_id, "CSV")
         self.gene_node_id = 0
         self.protein_node_id = 0
+        # Initialize output files
+        # Data from each parsed species will be appended to the following three files
+        # Write header lines
+        # Format for Gene node CSV:
+        # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
+        with open(os.path.join(self.CSV_path, "gene_nodes.csv"), "w") as gene_node_output:
+            gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame\n")
+        # Format for (Gene)-[5'-nb]->(Gene)
+        # :START_ID(Gene),:END_ID(Gene)
+        with open(os.path.join(self.CSV_path, "gene_5nb.csv"), "w") as gene_rel5nb_output:
+            gene_rel5nb_output.write(":START_ID(Gene),:END_ID(Gene)\n")
+        # Format for (Gene)-[3'-nb]->(Gene)
+        # :START_ID(Gene),:END_ID(Gene)
+        with open(os.path.join(self.CSV_path, "gene_3nb.csv"), "w") as gene_rel3nb_output:
+            gene_rel3nb_output.write(":START_ID(Gene),:END_ID(Gene)\n")
 
     def create_csv(self, species_name, annofile_name, annofile_type, anno_mapping, feat_hierarchy):
-        # Define and create output files
-        # For each species, a set of three CSV files is created.
-        gene_node_output = open(os.path.join(self.CSV_path, "gene_nodes.csv"),"a")
-        gene_rel5nb_output = open(os.path.join(self.CSV_path, "gene_5nb.csv"),"a")
-        gene_rel3nb_output = open(os.path.join(self.CSV_path, "gene_3nb.csv"),"a")
+
         # Parse gene annotation file into one list:
         # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name,
         #                           chromosome, strand_orientation, coding_frame),...]
@@ -61,40 +72,32 @@ class AnnoToCSV:
         # File is stored temporarily in the CSV folder
         with open(os.path.join(self.CSV_path, species_name+"_protein_dict.json"), "w") as json_file:
             json.dump(protein_dict, json_file)
-        # Format for Gene node CSV:
-        # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
-        #gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame\n")
-        # Format for (Gene)-[5'-nb]->(Gene)
-        # :START_ID(Gene),:END_ID(Gene)
-        #gene_rel5nb_output.write(":START_ID(Gene),:STOP_ID(Gene)\n")
-        # Format for (Gene)-[3'-nb]->(Gene)
-        # :START_ID(Gene),:END_ID(Gene)
-        #gene_rel3nb_output.write(":START_ID(Gene),:STOP_ID(Gene)\n")
+
         # Gene list has to be sorted at this stage (!!!)
-        # Walk through gene list:
-        prev_contig = ""
-        prev_id = 0
-        prev_start = None
-        for gene in gene_list:
-            cur_contig = gene[2]
-            cur_id = gene[0]
-            cur_start = gene[3]
-            # Only connect genes on the same contig
-            # Only connect genes if both have a defined start index
-            if (prev_contig == cur_contig and prev_start and cur_start):
-                gene_rel3nb_output.write(str(prev_id) + "," + str(cur_id) + "\n")
-                gene_rel5nb_output.write(str(cur_id) + "," + str(prev_id) + "\n")
-            # In all cases: create an entry in the CSV to create a Gene node
-            # Format:
-            # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
-            # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name, chromosome, strand_orientation, coding_frame),...]
-            gene_node_output.write(
-                ",".join([str(cur_id), gene[1], gene[2], str(gene[3]), str(gene[4]), gene[5], gene[6], gene[7],gene[8] + "\n"]))
-            prev_start = cur_start
-            prev_id = cur_id
-            prev_contig = cur_contig
-        # Close files
-        gene_node_output.close()
-        gene_rel5nb_output.close()
-        gene_rel3nb_output.close()
+        # Walk through gene list and write content to CSV files
+        with open(os.path.join(self.CSV_path, "gene_nodes.csv"), "a") as gene_node_output:
+            with open(os.path.join(self.CSV_path, "gene_5nb.csv"), "a") as gene_rel5nb_output:
+                with open(os.path.join(self.CSV_path, "gene_3nb.csv"), "a") as gene_rel3nb_output:
+                    prev_contig = ""
+                    prev_id = 0
+                    prev_start = None
+                    for gene in gene_list:
+                        cur_contig = gene[2]
+                        cur_id = gene[0]
+                        cur_start = gene[3]
+                        # Only connect genes on the same contig
+                        # Only connect genes if both have a defined start index
+                        if (prev_contig == cur_contig and prev_start and cur_start):
+                            gene_rel3nb_output.write(str(prev_id) + "," + str(cur_id) + "\n")
+                            gene_rel5nb_output.write(str(cur_id) + "," + str(prev_id) + "\n")
+                        # In all cases: create an entry in the CSV to create a Gene node
+                        # Format:
+                        # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
+                        # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name, chromosome, strand_orientation, coding_frame),...]
+                        gene_node_output.write(
+                            ",".join([str(cur_id), gene[1], gene[2], str(gene[3]), str(gene[4]), gene[5], gene[6], gene[7],gene[8] + "\n"]))
+                        prev_start = cur_start
+                        prev_id = cur_id
+                        prev_contig = cur_contig
+
 
