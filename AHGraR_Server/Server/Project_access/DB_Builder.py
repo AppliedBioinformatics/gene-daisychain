@@ -186,8 +186,8 @@ class DBBuilder:
         subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-import"),
                                      "--into", os.path.join("Projects", str(proj_id), "db_folder"), "--id-type",
                                      "string", "--nodes:Gene gene_nodes.csv",
-                                     "--relationships:5_NB gene_5nb.csv", "--relationships:3_NB gene_3nb.csv",
-                                     "--relationships:HOMOLOG gene_hmlg.csv"], check=True)
+                                     "--relationships:5_NB", "gene_5nb.csv", "--relationships:3_NB", "gene_3nb.csv",
+                                     "--relationships:HOMOLOG", "gene_hmlg.csv"], check=True)
 
         print("Finished")
 
