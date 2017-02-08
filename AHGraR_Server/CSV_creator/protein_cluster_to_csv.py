@@ -58,7 +58,8 @@ class ClusterToCSV:
             # Ensure that the set of pairwise homologs is unique
             # For example, a gene could code for multiple isoforms,
             # This could create multiple copies of the same pairwise relationship between gene nodes
-            pairwise_homologs_unique_set = list(set(pairwise_homologs_list))#
+            print(pairwise_homologs_list)
+            pairwise_homologs_unique_set = list(set(pairwise_homologs_list))
             with open(os.path.join(self.CSV_path, "homolog_"+cluster_file_name[1]+".csv")) as csv_file:
                 csv_file.write(":START_ID(Gene),sensitivity:INT,:END_ID(Gene)\n")
                 # Write each pairwise homolog relationship between two gene node IDS
