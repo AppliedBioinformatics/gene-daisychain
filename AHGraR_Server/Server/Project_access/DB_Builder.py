@@ -6,6 +6,7 @@ import os
 import subprocess
 from itertools import islice
 from CSV_creator.annotation_to_csv import AnnoToCSV
+from CSV_creator.protein_cluster_to_csv import ClusterToCSV
 from Parser.FASTA_parser import FastaParser
 
 
@@ -170,6 +171,14 @@ class DBBuilder:
         subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "10.0", "-use-tab",
                         os.path.join(BlastDB_path, "blastp.tab"), "-o",
                         os.path.join(BlastDB_path, "protein_cluster_10.0.clstr")], check=True)
+        # Parse MCL cluster files and create CSV files describing the homology relationships between gene nodes
+        self.task_mngr.set_task_status(proj_id, task_id, "Write CSV files for clusters")
+        cluster_to_csv_parser = ClusterToCSV(proj_id)
+        # Load all species-specific protein to gene dicts into cluster2csv parser
+        for species in file_dict:
+            cluster_to_csv_parser.add_protein_to_gene_map("_".join([species[0],species[1]]))
+        # Create CSV file for all MCL-generated clusters
+        cluster_to_csv_parser.create_csv()
         print("Finished")
 
 

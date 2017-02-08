@@ -25,7 +25,6 @@ class AnnoToCSV:
         self.gene_node_id = 0
         self.protein_node_id = 0
 
-
     def create_csv(self, species_name, annofile_name, annofile_type, anno_mapping, feat_hierarchy):
         # Define and create output files
         # For each species, a set of three CSV files is created.
