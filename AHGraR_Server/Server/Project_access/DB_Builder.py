@@ -139,17 +139,27 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastP results")
         # 1. Concatenate all BlastP Results into one "ABC" file
         print("1. Concatenate all BlastP Results into one ABC file")
-        subprocess.run(["cat", os.path.join(BlastDB_path, "*.blastp"), ">", "blastp.abc" ])
+        with open(os.path.join(BlastDB_path, "blastp.abc"), 'w') as combined_file:
+            for species in file_dict:
+                prot_fasta_file_name = sorted(file_dict[species], key=lambda x: x[1])[1][0]
+                prot_blastp_file_name = prot_fasta_file_name[:prot_fasta_file_name.rfind(".")]+".blastp"
+                with open(os.path.join(BlastDB_path, prot_blastp_file_name),"r") as blastp_file:
+                    for line in blastp_file:
+                        combined_file.write(line)
         # 2. Convert ABC file into a network and dictionary file.
         print("2. Convert ABC file into a network and dictionary file.")
-        subprocess.run(["mcxload", "-abc", "blastp.abc", "--stream-mirror", "--stream-neg-log10", "-stream-tf",
-                        "'ceil(200)'", "-o", "blastp.mci", "-write-tab", "blastp.tab"])
+        subprocess.run(["mcxload", "-abc", os.path.join(BlastDB_path, "blastp.abc"), "--stream-mirror", "--stream-neg-log10", "-stream-tf",
+                        "'ceil(200)'", "-o", os.path.join(BlastDB_path, "blastp.mci"), "-write-tab", os.path.join(BlastDB_path, "blastp.tab")], check=True)
         # 3.Cluster results
         print("3.Cluster results")
-        subprocess.run(["mcl", "blastp.mci", "-te", "8", "-I", "1.4", "-use-tab", "blastp.tab"])
-        subprocess.run(["mcl", "blastp.mci", "-te", "8", "-I", "2.0", "-use-tab", "blastp.tab"])
-        subprocess.run(["mcl", "blastp.mci", "-te", "8", "-I", "4.0", "-use-tab", "blastp.tab"])
-        subprocess.run(["mcl", "blastp.mci", "-te", "8", "-I", "6.0", "-use-tab", "blastp.tab"])
+        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "1.4", "-use-tab",
+                        os.path.join(BlastDB_path, "blastp.tab")], check=True)
+        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "2.0", "-use-tab",
+                        os.path.join(BlastDB_path, "blastp.tab")], check=True)
+        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "4.0", "-use-tab",
+                        os.path.join(BlastDB_path, "blastp.tab")],check=True)
+        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "6.0", "-use-tab",
+                        os.path.join(BlastDB_path, "blastp.tab")],check=True)
         print("Finished")
 
 
