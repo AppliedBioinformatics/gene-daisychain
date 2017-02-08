@@ -25,7 +25,7 @@ class ClusterToCSV:
         self.protein_to_gene_map = {}
         # Initialize output file
         with open(os.path.join(self.CSV_path, "gene_hmlg.csv"), "w") as csv_file:
-            csv_file.write(":START_ID(Gene),sensitivity:INT,:END_ID(Gene)\n")
+            csv_file.write(":START_ID(Gene),sensitivity,:END_ID(Gene)\n")
 
     # Add a species-specific protein2gene_id dict to the cumulative dict
     # Function parameter is the species name needed to retrieve the json-stored dict from the project CSV directory
