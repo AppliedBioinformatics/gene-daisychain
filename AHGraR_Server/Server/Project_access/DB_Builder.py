@@ -153,13 +153,23 @@ class DBBuilder:
         # 3.Cluster results
         print("3.Cluster results")
         subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "1.4", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab")], check=True)
+                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
+                        os.path.join(BlastDB_path, "protein_cluster_1.4.clstr")], check=True)
         subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "2.0", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab")], check=True)
+                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
+                        os.path.join(BlastDB_path, "protein_cluster_2.0.clstr")], check=True)
         subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "4.0", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab")],check=True)
+                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
+                        os.path.join(BlastDB_path, "protein_cluster_4.0.clstr")],check=True)
         subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "6.0", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab")],check=True)
+                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
+                        os.path.join(BlastDB_path, "protein_cluster_6.0.clstr")],check=True)
+        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "8.0", "-use-tab",
+                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
+                        os.path.join(BlastDB_path, "protein_cluster_8.0.clstr")], check=True)
+        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "10.0", "-use-tab",
+                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
+                        os.path.join(BlastDB_path, "protein_cluster_10.0.clstr")], check=True)
         print("Finished")
 
 
