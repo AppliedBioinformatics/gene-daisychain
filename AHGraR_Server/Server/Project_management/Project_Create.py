@@ -34,21 +34,23 @@ class CreateProject:
             # Retrieve a BOLT port to access the project graph db (only accessible from localhost)
             request_bolt_port_nr = self.main_db_conn.run(
                 "MATCH(:Port_Manager)-[:has_port]->(port:Port {status:'inactive'}) RETURN (port.nr) LIMIT(1)")
+            project_bolt_port = request_bolt_port_nr.single()[0]
+            # Mark BOLT port-nr in AHGRaR main DB as active
+            self.main_db_conn.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
+                                  {"props": {"status": "active", "project": proj_id, "nr": project_bolt_port},
+                                   "port_nr": project_bolt_port})
+            # Add project BOLT port nr to project in AHGRaR main DB
+            self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.bolt_port = {port_nr}",
+                                  {"project_id": proj_id, "port_nr": project_bolt_port})
             # Retrieve a HTTP port to access the project graph db (only accessible from localhost)
             request_http_port_nr = self.main_db_conn.run(
                 "MATCH(:Port_Manager)-[:has_port]->(port:Port {status:'inactive'}) RETURN (port.nr) LIMIT(1)")
-            project_bolt_port = request_bolt_port_nr.single()[0]
             project_http_port = request_http_port_nr.single()[0]
-            # Mark port-nrs in AHGRaR main DB as active
-            self.main_db_conn.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
-                        {"props": {"status": "active", "project": proj_id, "nr":project_bolt_port},
-                         "port_nr": project_bolt_port})
+            # Mark HTTP port-nr in AHGRaR main DB as active
             self.main_db_conn.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
                                   {"props": {"status": "active", "project": proj_id, "nr": project_http_port},
                                    "port_nr": project_http_port})
-            # Add project port nr to project in AHGRaR main DB
-            self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.bolt_port = {port_nr}",
-                        {"project_id":proj_id, "port_nr": project_bolt_port})
+            # Add project HTTP port nr to project in AHGRaR main DB
             self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.http_port = {port_nr}",
                                   {"project_id": proj_id, "port_nr": project_http_port})
             project_path = os.path.join("Projects", str(proj_id))
