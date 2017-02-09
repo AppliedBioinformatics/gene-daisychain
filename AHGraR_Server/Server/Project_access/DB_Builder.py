@@ -8,6 +8,7 @@ from itertools import islice
 from CSV_creator.annotation_to_csv import AnnoToCSV
 from CSV_creator.protein_cluster_to_csv import ClusterToCSV
 from Parser.FASTA_parser import FastaParser
+from random import choice
 
 
 class DBBuilder:
@@ -182,7 +183,8 @@ class DBBuilder:
         # Create a new Neo4j graph database from node and relationship CSV files
         print("4. Create DB")
         self.task_mngr.set_task_status(proj_id, task_id, "Building database from CSV files")
-        # Use nei4j-import to create a database from the CSV files
+        # Use neo4j-admin to create a database from the CSV files
+        # The database is created within the projects neo4j folder
         try:
             subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin"), "import",
                                          "--id-type",
@@ -196,7 +198,18 @@ class DBBuilder:
         except subprocess.CalledProcessError as err:
             print(err.stdout)
             print(err.stderr)
-
+        # Set the Neo4j admin password for the project database
+        chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+        neo4j_pw = ''.join(choice(chars) for _ in range(50))
+        # Write password to project folder
+        with open(os.path.join("Projects", str(proj_id), "access"), "w") as file:
+            file.write(neo4j_pw)
+        try:
+            subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin",
+                    "set-initial-password", neo4j_pw)], check=True, stdout=subprocess.PIPE, stderr =subprocess.PIPE)
+        except subprocess.CalledProcessError as err:
+            print(err.stdout)
+            print(err.stderr)
         print("Finished")
 
 
