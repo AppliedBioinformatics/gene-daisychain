@@ -205,8 +205,8 @@ class DBBuilder:
         with open(os.path.join("Projects", str(proj_id), "access"), "w") as file:
             file.write(neo4j_pw)
         try:
-            subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin",
-                    "set-initial-password", neo4j_pw)], check=True, stdout=subprocess.PIPE, stderr =subprocess.PIPE)
+            subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin"),
+                    "set-initial-password", neo4j_pw], check=True, stdout=subprocess.PIPE, stderr =subprocess.PIPE)
         except subprocess.CalledProcessError as err:
             print(err.stdout)
             print(err.stderr)
