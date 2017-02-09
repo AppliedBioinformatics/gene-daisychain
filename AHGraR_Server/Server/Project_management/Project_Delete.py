@@ -19,9 +19,12 @@ class DeleteProject:
     def run(self):
         # First, check if project-ID is valid by retrieving the projects graph-db port
         try:
-            proj_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
-                                           "RETURN del_proj.port",
+            proj_bolt_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
+                                           "RETURN del_proj.bolt_port",
                                            {"proj_id": int(self.proj_id)}).single()[0])
+            proj_http_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
+                                                          "RETURN del_proj.http_port",
+                                                          {"proj_id": int(self.proj_id)}).single()[0])
         except:
             # If project or project port cannot be found, signal failure by sending -1 back to user
             self.send_data("-1")
@@ -62,10 +65,14 @@ class DeleteProject:
                 "DETACH DELETE (edit) "
                 "DETACH DELETE (editMngr)", {"proj_id": self.proj_id})
 
-            # Set port used for project graph db as inactive
+            # Set ports used for project graph db as inactive
             self.main_db_conn.run("MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
                         "REMOVE projPort.project "
-                        "SET projPort.status='inactive'", {"proj_port": proj_port_nr})
+                        "SET projPort.status='inactive'", {"proj_port": proj_bolt_port_nr})
+
+            self.main_db_conn.run("MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
+                                  "REMOVE projPort.project "
+                                  "SET projPort.status='inactive'", {"proj_port": proj_http_port_nr})
 
             # Delete project graph db port entry and set project status to deleted
             self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "

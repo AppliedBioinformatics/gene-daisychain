@@ -25,21 +25,32 @@ class CreateProject:
                                  {"name": self.proj_name, "status": "INIT"}).single()[0]
         # Return project ID to gateway -> user-app
         self.send_data(proj_id)
-        # Assign a port to project graph db (only accessible from localhost)
-        request_port_nr = self.main_db_conn.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {status:'inactive'}) RETURN (port.nr) LIMIT(1)")
         # Extract project port nr. from server reply
         # Reply either contains a port nr. or, if there is no free port left,
         # extracting the port nr. will fail
         # In the latter case the project will not be assigned a port nr.
         # and initialization of the project fails
         try:
-            project_port_nr = request_port_nr.single()[0]
-            # Mark port-nr in AHGRaR main DB as active
+            # Retrieve a BOLT port to access the project graph db (only accessible from localhost)
+            request_bolt_port_nr = self.main_db_conn.run(
+                "MATCH(:Port_Manager)-[:has_port]->(port:Port {status:'inactive'}) RETURN (port.nr) LIMIT(1)")
+            # Retrieve a HTTP port to access the project graph db (only accessible from localhost)
+            request_http_port_nr = self.main_db_conn.run(
+                "MATCH(:Port_Manager)-[:has_port]->(port:Port {status:'inactive'}) RETURN (port.nr) LIMIT(1)")
+            project_bolt_port = request_bolt_port_nr.single()[0]
+            project_http_port = request_http_port_nr.single()[0]
+            # Mark port-nrs in AHGRaR main DB as active
             self.main_db_conn.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
-                        {"props": {"status": "active", "project": proj_id, "nr":project_port_nr}, "port_nr": project_port_nr})
+                        {"props": {"status": "active", "project": proj_id, "nr":project_bolt_port},
+                         "port_nr": project_bolt_port})
+            self.main_db_conn.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
+                                  {"props": {"status": "active", "project": proj_id, "nr": project_http_port},
+                                   "port_nr": project_http_port})
             # Add project port nr to project in AHGRaR main DB
-            self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.port = {port_nr}",
-                        {"project_id":proj_id, "port_nr": project_port_nr})
+            self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.bolt_port = {port_nr}",
+                        {"project_id":proj_id, "port_nr": project_bolt_port})
+            self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.http_port = {port_nr}",
+                                  {"project_id": proj_id, "port_nr": project_http_port})
             project_path = os.path.join("Projects", str(proj_id))
             os.makedirs(project_path)
             os.makedirs(os.path.join(project_path, "Files"))
@@ -47,7 +58,7 @@ class CreateProject:
             os.makedirs(os.path.join(project_path, "BlastDB"))
             shutil.copytree(self.neo4j_path, os.path.join(project_path, "proj_graph_db"))
             # Edit project neo4j graph database config file
-            self.edit_neo4j_config(project_path, project_port_nr)
+            self.edit_neo4j_config(project_path, project_bolt_port, project_http_port)
             # Mark project in DB as successfully initialized INIT_SUCCESS
             self.main_db_conn.run(
                 "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
@@ -63,13 +74,15 @@ class CreateProject:
             self.main_db_conn.close()
 
     # Edit project neo4j graph database
-    # Set BOLT port to port assigned by main-db
-    def edit_neo4j_config(self, project_path, project_port):
+    # Set BOLT port and HTTP port to ports assigned by main-db
+    def edit_neo4j_config(self, project_path, project_bolt_port, project_http_port):
         neo4j_conf_content = []
         with open(os.path.join(project_path, "proj_graph_db", "conf", "neo4j.conf"), "r") as conf_file:
             for line in conf_file:
                 if line == "#dbms.connector.bolt.listen_address=:7687\n":
-                    neo4j_conf_content.append("dbms.connector.bolt.listen_address=:" + str(project_port) + "\n")
+                    neo4j_conf_content.append("dbms.connector.bolt.listen_address=:" + str(project_bolt_port) + "\n")
+                if line == "#dbms.connector.http.listen_address=:7474\n":
+                    neo4j_conf_content.append("dbms.connector.http.listen_address=:" + str(project_http_port) + "\n")
                 if line == "dbms.connector.https.enabled=true\n":
                     neo4j_conf_content.append("dbms.connector.https.enabled=false\n")
                 else:
