@@ -184,9 +184,10 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "Building database from CSV files")
         # Use nei4j-import to create a database from the CSV files
         try:
-            subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-import"),
-                                         "--into", os.path.join("Projects", str(proj_id), "db_folder"), "--id-type",
-                                         "string", "--nodes:Gene", os.path.join("Projects", str(proj_id),
+            subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin"), "import",
+                                         "--database", os.path.join("Projects", str(proj_id), "proj_graph_db","data",
+                                                                    "databases"), "--id-type",
+                                         "STRING", "--nodes:Gene", os.path.join("Projects", str(proj_id),
                                          "CSV", "gene_nodes.csv"),"--relationships:5_NB", os.path.join("Projects",
                                          str(proj_id), "CSV", "gene_5nb.csv"), "--relationships:3_NB",
                                          os.path.join("Projects", str(proj_id), "CSV", "gene_3nb.csv"),
