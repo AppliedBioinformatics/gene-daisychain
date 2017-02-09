@@ -183,11 +183,15 @@ class DBBuilder:
         print("4. Create DB")
         self.task_mngr.set_task_status(proj_id, task_id, "Building database from CSV files")
         # Use nei4j-import to create a database from the CSV files
-        subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-import"),
-                                     "--into", os.path.join("Projects", str(proj_id), "db_folder"), "--id-type",
-                                     "string", "--nodes:Gene gene_nodes.csv",
-                                     "--relationships:5_NB", "gene_5nb.csv", "--relationships:3_NB", "gene_3nb.csv",
-                                     "--relationships:HOMOLOG", "gene_hmlg.csv"], check=True)
+        try:
+            subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-import"),
+                                         "--into", os.path.join("Projects", str(proj_id), "db_folder"), "--id-type",
+                                         "string", "--nodes:Gene gene_nodes.csv",
+                                         "--relationships:5_NB", "gene_5nb.csv", "--relationships:3_NB", "gene_3nb.csv",
+                                         "--relationships:HOMOLOG", "gene_hmlg.csv"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError as err:
+            print(err.stdout)
+            print(err.stderr)
 
         print("Finished")
 
