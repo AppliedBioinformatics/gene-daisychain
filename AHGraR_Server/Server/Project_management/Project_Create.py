@@ -83,9 +83,9 @@ class CreateProject:
             for line in conf_file:
                 if line == "#dbms.connector.bolt.listen_address=:7687\n":
                     neo4j_conf_content.append("dbms.connector.bolt.listen_address=:" + str(project_bolt_port) + "\n")
-                if line == "#dbms.connector.http.listen_address=:7474\n":
+                elif line == "#dbms.connector.http.listen_address=:7474\n":
                     neo4j_conf_content.append("dbms.connector.http.listen_address=:" + str(project_http_port) + "\n")
-                if line == "dbms.connector.https.enabled=true\n":
+                elif line == "dbms.connector.https.enabled=true\n":
                     neo4j_conf_content.append("dbms.connector.https.enabled=false\n")
                 else:
                     neo4j_conf_content.append(line)
