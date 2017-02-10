@@ -52,7 +52,7 @@ class ClusterToCSV:
                     # Skip empty lines
                     if not protein_cluster: continue
                     # Map protein name to protein node id
-                    protein_id_cluster = [self.protein_map[protein_name][0] for protein_name in protein_cluster]
+                    protein_id_cluster = [self.protein_dict[protein_name][0] for protein_name in protein_cluster]
                     #  Make all possible pairwise combinations between gene IDs
                     # i.e. [1,2,3] --> [(1,1),(1,2),(1,3),(2,1),(2,2),(2,3),(3,1),(3,2),(3,3)]
                     protein_id_cluster_pw_comb = iter.product(protein_id_cluster, repeat=2)
