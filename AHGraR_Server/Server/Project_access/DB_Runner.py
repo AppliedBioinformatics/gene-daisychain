@@ -1,4 +1,4 @@
-# This class provides functionality to start, stop or restart a project-specific neo4j graph database instance
+# This class provides functionality to start, stop, status a project-specific neo4j graph database instance
 import os
 import subprocess
 
@@ -23,8 +23,6 @@ class DBRunner:
             self.start(neo4j_binary)
         elif user_request[1] == "STOP":
             self.stop(neo4j_binary)
-        elif user_request[1] == "RESTART":
-            self.restart(neo4j_binary)
         elif user_request[1] == "STATUS":
             self.get_status(neo4j_binary)
         else:
@@ -32,23 +30,31 @@ class DBRunner:
 
     def get_status(self,neo4j_binary):
         # Retrieve status (running/not running) from neo4j instance
-        status = subprocess.run([neo4j_binary, "status"], stdout=subprocess.PIPE)
-        self.send_data(status)
+        try:
+            status = subprocess.run([neo4j_binary, "status"], stdout=subprocess.PIPE)
+        except subprocess.CalledProcessError as err:
+            self.send_data("Unknown")
+            return
+        if status.returncode == 0:
+            self.send_data("Running")
+        elif status.returncode == 3:
+            self.send_data("Not running")
+        else:
+            self.send_data("Unknown")
 
     def start(self,neo4j_binary):
         # Start up the project neo4j database
         self.send_data("Starting Project DB")
-        subprocess.run([neo4j_binary, "start"])
+        stdout = subprocess.run([neo4j_binary, "start"], stdout=subprocess.PIPE)
+        print(stdout)
+
 
     def stop(self,neo4j_binary):
         # Start up the project neo4j database
         self.send_data("Stopping Project DB")
-        subprocess.run([neo4j_binary, "stop"])
+        stdout = subprocess.run([neo4j_binary, "stop"])
+        print(stdout)
 
-    def restart(self,neo4j_binary):
-        self.send_data("Restarting Project DB")
-        subprocess.run([neo4j_binary, "stop"])
-        subprocess.run([neo4j_binary, "start"])
 
     # Change project status
     def set_project_status(self, proj_id, new_status):

@@ -254,8 +254,6 @@ def db_runner(connection, accessed_project, user_input):
             send_data(connection, "PADABA_" + str(accessed_project)+"_START")
         elif user_input[0] == "stop":
             send_data(connection, "PADABA_" + str(accessed_project)+"_STOP")
-        elif user_input[0] == "restart":
-            send_data(connection, "PADABA_" + str(accessed_project)+"_RESTART")
         elif user_input[0] == "status":
             send_data(connection, "PADABA_" + str(accessed_project)+"_STATUS")
         else:

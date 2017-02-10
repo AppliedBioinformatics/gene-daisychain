@@ -21,7 +21,6 @@ access project "project_id"
     database
         start                           PADABA_ProjectID_START
         stop                            PADABA_ProjectID_STOP
-        restart                         PADABA_ProjectID_RESTART
         status                          PADABA_ProjectID_STATUS
     query                               PAQURY_ProjectID_Query
     job list                            PATASK_STAT_ProjectID_TaskID1_TaskID2
