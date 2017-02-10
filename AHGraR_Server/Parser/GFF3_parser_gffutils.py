@@ -197,7 +197,7 @@ class GFF3Parser:
                 gene_node.append(gene_annotation_dict.get("Strand", "?")[0])
                 gene_node.append(gene_annotation_dict.get("Phase", "?")[0])
                 # Add this gene node annotation to overall list of gene nodes
-                self.gene_list.append(tuple(gene_node))
+                self.gene_list.append(gene_node)
                 # Create protein node annotation
                 # Each gene node can be associated with multiple proteins
                 protein_names = gene_annotation_dict["Protein_name"]
