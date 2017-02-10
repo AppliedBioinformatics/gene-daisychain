@@ -68,6 +68,8 @@ class GFF3Parser:
 
 
     # Set annotation mapper
+    # Mandatory fields: Start,Stop,Contig,Gene_name,Protein_name
+    # Optional fields: Chromosome,Strand,Phase,Protein_desc
     # Input: String, example:
     # gene::(Start:4),(Stop:5),(Contig:1),(Gene_name:Name),(Phase:8),(Strand:7);CDS::(Protein_name:Name),(Protein_desc:product)
     def set_annotation_mapper(self, anno_map):
@@ -180,6 +182,7 @@ class GFF3Parser:
         # [(Protein_name, Protein_desc, Gene_id),...]
         #  Most features should/are supposed to have only one value,
         # e.g. a gene has only one start index, one chromosome etc. A gene can however code for multiple proteins (e.g. isoforms).
+        print(gene_annotation_dict[:5])
         for gene_annotation_dict in gene_annotation_list:
             try:
                 self.gene_node_id +=1
