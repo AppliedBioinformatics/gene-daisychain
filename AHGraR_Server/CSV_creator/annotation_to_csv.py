@@ -30,7 +30,7 @@ class AnnoToCSV:
         # Format for Gene node CSV:
         # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
         with open(os.path.join(self.CSV_path, "gene_nodes.csv"), "w") as gene_node_output:
-            gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame\n")
+            gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame,protein_name:string_array,protein_desc:string_array\n")
         # Format for (Gene)-[5'-nb]->(Gene)
         # :START_ID(Gene),:END_ID(Gene)
         with open(os.path.join(self.CSV_path, "gene_5nb.csv"), "w") as gene_rel5nb_output:
@@ -96,7 +96,7 @@ class AnnoToCSV:
                         # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
                         # [(gene_id, species_name, contig_name, start_index, stop_index, gene_name, chromosome, strand_orientation, coding_frame),...]
                         gene_node_output.write(
-                            ",".join([str(cur_id), gene[1], gene[2], str(gene[3]), str(gene[4]), gene[5], gene[6], gene[7],gene[8] + "\n"]))
+                            ",".join([str(cur_id), gene[1], gene[2], str(gene[3]), str(gene[4]), gene[5], gene[6], gene[7],gene[8], ",".join(gene[9]), ",".join(gene[10]) + "\n"]))
                         prev_start = cur_start
                         prev_id = cur_id
                         prev_contig = cur_contig

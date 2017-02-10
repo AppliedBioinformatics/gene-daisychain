@@ -196,6 +196,9 @@ class GFF3Parser:
                 gene_node.append(gene_annotation_dict.get("Chromosome", "?")[0])
                 gene_node.append(gene_annotation_dict.get("Strand", "?")[0])
                 gene_node.append(gene_annotation_dict.get("Phase", "?")[0])
+                # Add a (right now empty) list for protein names (index 9) and protein descriptions (index 10)
+                gene_node.append([])
+                gene_node.append([])
                 # Add this gene node annotation to overall list of gene nodes
                 self.gene_list.append(tuple(gene_node))
                 # Create protein node annotation
@@ -212,6 +215,9 @@ class GFF3Parser:
                     self.protein_node_id+=1
                     protein_node = (self.protein_node_id, protein_node[0],protein_node[1], self.gene_node_id)
                     self.protein_list.append(protein_node)
+                    # Add protein name and protein descr to gene node
+                    gene_node[9].append(protein_node[0])
+                    gene_node[10].append(protein_node[1])
             # In case annotation data for one gene node could not be retrieved, continue with the next annotation data set
             except (KeyError, IndexError):
                 continue
