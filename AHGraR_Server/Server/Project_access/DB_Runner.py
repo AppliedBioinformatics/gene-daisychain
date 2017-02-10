@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-class DBRUnner:
+class DBRunner:
 
     def __init__(self, send_data):
         # Define path to neo4j binary
