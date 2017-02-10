@@ -182,7 +182,6 @@ class GFF3Parser:
         # [(Protein_name, Protein_desc, Gene_id),...]
         #  Most features should/are supposed to have only one value,
         # e.g. a gene has only one start index, one chromosome etc. A gene can however code for multiple proteins (e.g. isoforms).
-        print(gene_annotation_dict)
         for gene_annotation_dict in gene_annotation_list:
             try:
                 self.gene_node_id +=1
