@@ -33,7 +33,7 @@ class DBRunner:
     def get_status(self,neo4j_binary):
         # Retrieve status (running/not running) from neo4j instance
         status = subprocess.run([neo4j_binary, "status"], stdout=subprocess.PIPE)
-        self.send_data(status.stdout)
+        self.send_data(str(status.stdout))
 
     def start(self,neo4j_binary):
         # Start up the project neo4j database
