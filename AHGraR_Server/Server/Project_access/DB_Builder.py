@@ -1,13 +1,13 @@
 # Provides project build functions to AHGraR-Server
 # All functions return either a String or Null
 # Functions directly accessible by user query always return a string via socket connection
-import Parser.GFF3_parser_gffutils
 import os
 import subprocess
 from itertools import islice
 from CSV_creator.annotation_to_csv import AnnoToCSV
 from CSV_creator.protein_cluster_to_csv import ClusterToCSV
 from Parser.FASTA_parser import FastaParser
+import Parser.GFF3_parser_gffutils
 from random import choice
 
 

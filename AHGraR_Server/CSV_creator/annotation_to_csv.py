@@ -58,6 +58,7 @@ class AnnoToCSV:
             # Parse a CSV file
             anno_parser = CSVParser(os.path.join(self.file_path, annofile_name),
                                     self.gene_node_id, self.protein_node_id)
+        else: return
         # Parse the file
         anno_parser.parse_gff3_file()
         # Retrieve gene annotation as list
