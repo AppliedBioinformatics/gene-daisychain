@@ -234,10 +234,16 @@ class GFF3Parser:
         self.gene_list = [list(item) for item in self.gene_list]
         # Add the lists of protein names and protein desc to gene_list
         for gene_node in self.gene_list:
-            # Add list with protein names
-            gene_node.append(geneid_to_protienid_dict[gene_node[0]][0])
-            # Add list with protein descr
-            gene_node.append(geneid_to_protienid_dict[gene_node[0]][1])
+            try:
+                # Add list with protein names
+                gene_node.append(geneid_to_protienid_dict[gene_node[0]][0])
+                # Add list with protein descr
+                gene_node.append(geneid_to_protienid_dict[gene_node[0]][1])
+            except KeyError:
+                # Not each gene may be coding for a protein
+                # In this cases, the gene_id is not found in the geneid_to_protienid_dict
+                # Just skip this entry
+                continue
         # Sort the gene_list by contig, start and stop. Only one species per file, so no need to sort by species
         self.gene_list = sorted(self.gene_list, key=lambda x: (x[2], x[3], x[4]))
         # Sort the protein_list by protein_id
