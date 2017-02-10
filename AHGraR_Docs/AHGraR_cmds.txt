@@ -18,6 +18,11 @@ access project "project_id"
     build
         set GFF3 annoMap hier filename  PABULD_GFF3_ProjectID_annotationmapping_featurehierarchy_file1_file2
         db                              PABULD_DB_ProjectID
+    database
+        start                           PADABA_ProjectID_START
+        stop                            PADABA_ProjectID_STOP
+        restart                         PADABA_ProjectID_RESTART
+        status                          PADABA_ProjectID_STATUS
     query                               PAQURY_ProjectID_Query
     job list                            PATASK_STAT_ProjectID_TaskID1_TaskID2
         status                          PATASK_STAT_ProjectID_TaskID

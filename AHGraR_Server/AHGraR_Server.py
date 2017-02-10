@@ -13,6 +13,7 @@ from Server.Project_management.Project_Info import ProjectInfo
 from Server.Project_access.Task_Management import TaskManagement
 from Server.Project_access.File_Management import FileManagement
 from Server.Project_access.DB_Builder import DBBuilder
+from Server.Project_access.DB_Runner import DBRunner
 
 # Define server functionality
 class AHGraRServer(socketserver.BaseRequestHandler):
@@ -90,6 +91,11 @@ class AHGraRServer(socketserver.BaseRequestHandler):
             build_manager.evaluate_user_request(user_request[1:])
             # Close file manager connection to main-db
             build_manager.close_connection()
+        if user_request[0] == "DABA":
+            # Initialize Database runner, providing start/stop/restart/status functionality
+            db_runner = DBRunner(self.send_data)
+            # Evaluate user request
+            db_runner.evaluate_user_request(user_request[1:])
         else:
             self.send_data("-2")
         # Close task manager connection to main-db

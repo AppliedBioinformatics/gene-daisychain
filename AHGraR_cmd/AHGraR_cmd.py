@@ -173,6 +173,8 @@ def project_access(connection, user_input):
                 file_management(connection, accessed_project, user_input[1:])
             if user_input[0] == "build":
                 build_management(connection, accessed_project, user_input[1:])
+            if user_input[0] == "database":
+                db_runner(connection, accessed_project, user_input[1:])
             connection.close()
             # Connection is closed after evey send/received interval
             # Open a new connection to continue project access
@@ -244,6 +246,21 @@ def build_management(connection, accessed_project, user_input):
         send_data(connection, "PABULD_DB_" + str(accessed_project))
         task_id = receive_data(connection)
         add_jobid(task_id, accessed_project, "Building project DB")
+
+def db_runner(connection, accessed_project, user_input):
+    # Check user command for correct syntax
+    if len(user_input) == 1:
+        if user_input[0] == "start":
+            send_data(connection, "PADABA_" + str(accessed_project)+"_START")
+        elif user_input[0] == "stop":
+            send_data(connection, "PADABA_" + str(accessed_project)+"_STOP")
+        elif user_input[0] == "restart":
+            send_data(connection, "PADABA_" + str(accessed_project)+"_RESTART")
+        elif user_input[0] == "status":
+            send_data(connection, "PADABA_" + str(accessed_project)+"_STATUS")
+        else:
+            return
+        print(receive_data(connection))
 
 
 
