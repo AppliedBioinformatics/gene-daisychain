@@ -5,8 +5,8 @@ import subprocess
 
 class DBRunner:
 
-    def __init__(self, send_data):
-        # Define path to neo4j binary
+    def __init__(self, main_db_connection, send_data):
+        self.main_db_conn = main_db_connection
         self.send_data = send_data
 
     # Reply to request send from a user app
@@ -33,7 +33,7 @@ class DBRunner:
     def get_status(self,neo4j_binary):
         # Retrieve status (running/not running) from neo4j instance
         status = subprocess.run([neo4j_binary, "status"], stdout=subprocess.PIPE)
-        self.send_data(str(status.stdout))
+        self.send_data(status.stdout)
 
     def start(self,neo4j_binary):
         # Start up the project neo4j database
@@ -49,3 +49,9 @@ class DBRunner:
         self.send_data("Restarting Project DB")
         subprocess.run([neo4j_binary, "stop"])
         subprocess.run([neo4j_binary, "start"])
+
+    # Change project status
+    def set_project_status(self, proj_id, new_status):
+        self.main_db_conn.run(
+            "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
+            , {"proj_id": int(proj_id), "new_status": str(new_status)})

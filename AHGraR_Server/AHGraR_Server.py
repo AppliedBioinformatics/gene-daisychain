@@ -93,7 +93,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
             build_manager.close_connection()
         if user_request[0] == "DABA":
             # Initialize Database runner, providing start/stop/restart/status functionality
-            db_runner = DBRunner(self.send_data)
+            db_runner = DBRunner(self.get_db_conn(), self.send_data)
             # Evaluate user request
             db_runner.evaluate_user_request(user_request[1:])
         else:

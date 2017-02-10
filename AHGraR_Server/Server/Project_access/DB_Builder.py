@@ -195,7 +195,15 @@ class DBBuilder:
                                          "--relationships:HOMOLOG", os.path.join("Projects", str(proj_id),
                                          "CSV", "gene_hmlg.csv")], check=True, stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE)
+            # Change project status to DB_BUILD
+            self.main_db_conn.run(
+                "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
+                , {"proj_id": int(proj_id), "new_status": "DB_BUILD"})
         except subprocess.CalledProcessError as err:
+            # Change project status to DB_BUILD_FAILED in case build failed
+            self.main_db_conn.run(
+                "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
+                , {"proj_id": int(proj_id), "new_status": "DB_BUILD_FAILED"})
             print(err.stdout)
             print(err.stderr)
         # Set the Neo4j admin password for the project database
@@ -204,10 +212,19 @@ class DBBuilder:
         # Write password to project folder
         with open(os.path.join("Projects", str(proj_id), "access"), "w") as file:
             file.write(neo4j_pw)
+        # Start up the database
         try:
             subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin"),
                     "set-initial-password", neo4j_pw], check=True, stdout=subprocess.PIPE, stderr =subprocess.PIPE)
+            # Change project status to DB_RUNNING
+            self.main_db_conn.run(
+                "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
+                , {"proj_id": int(proj_id), "new_status": "DB_RUNNING"})
         except subprocess.CalledProcessError as err:
+            # Change project status to DB_START FAILED in case the build database could not be started up
+            self.main_db_conn.run(
+                "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
+                , {"proj_id": int(proj_id), "new_status": "DB_START_FAILED"})
             print(err.stdout)
             print(err.stderr)
         print("Finished")
