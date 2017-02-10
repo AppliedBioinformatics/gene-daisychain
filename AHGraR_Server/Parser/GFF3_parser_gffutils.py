@@ -178,7 +178,7 @@ class GFF3Parser:
 
         # 6.Convert annotation_dicts into lists.
         #  Final format:
-        # [(Gene_id, Species,Contig,Start_index,End_index, Strand_orientation, Chromosome, Gene_name),...]
+        # [[Gene_id, Species,Contig,Start_index,End_index, Strand_orientation, Chromosome, Gene_name],...]
         # [(Protein_name, Protein_desc, Gene_id),...]
         #  Most features should/are supposed to have only one value,
         # e.g. a gene has only one start index, one chromosome etc. A gene can however code for multiple proteins (e.g. isoforms).
@@ -196,9 +196,6 @@ class GFF3Parser:
                 gene_node.append(gene_annotation_dict.get("Chromosome", "?")[0])
                 gene_node.append(gene_annotation_dict.get("Strand", "?")[0])
                 gene_node.append(gene_annotation_dict.get("Phase", "?")[0])
-                # Add a (right now empty) list for protein names (index 9) and protein descriptions (index 10)
-                gene_node.append([])
-                gene_node.append([])
                 # Add this gene node annotation to overall list of gene nodes
                 self.gene_list.append(tuple(gene_node))
                 # Create protein node annotation
@@ -215,15 +212,30 @@ class GFF3Parser:
                     self.protein_node_id+=1
                     protein_node = (self.protein_node_id, protein_node[0],protein_node[1], self.gene_node_id)
                     self.protein_list.append(protein_node)
-                    # Add protein name and protein descr to gene node
-                    gene_node[9].append(protein_node[0])
-                    gene_node[10].append(protein_node[1])
             # In case annotation data for one gene node could not be retrieved, continue with the next annotation data set
             except (KeyError, IndexError):
                 continue
         # Ensure that gene and protein list contain only unique entries
         self.gene_list = list(set(self.gene_list))
         self.protein_list = list(set(self.protein_list))
+        # Add protein names and descriptions to gene list
+        # We an only do this after making the list unique
+        # First, protein names and descriptions are sorted by their gene-id
+        # In case a gene codes for multiple proteins, they will all point to the same gene-id
+        geneid_to_protienid_dict = {}
+        for protein in self.protein_list:
+            if protein[3] not in geneid_to_protienid_dict.keys():
+                geneid_to_protienid_dict[protein[3]] = ([],[])
+            # Add protein name to gene_id
+            geneid_to_protienid_dict[protein[3]][0].append(protein[1])
+            # Add protein descr to gene_id
+            geneid_to_protienid_dict[protein[3]][1].append(protein[2])
+        # Add the lists of protein names and protein desc to gene_list
+        for gene_node in self.gene_list:
+            # Add list with protein names
+            gene_node.append(geneid_to_protienid_dict[gene_node[0]][0])
+            # Add list with protein descr
+            gene_node.append(geneid_to_protienid_dict[gene_node[0]][1])
         # Sort the gene_list by contig, start and stop. Only one species per file, so no need to sort by species
         self.gene_list = sorted(self.gene_list, key=lambda x: (x[2], x[3], x[4]))
         # Sort the protein_list by protein_id
