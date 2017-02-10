@@ -218,34 +218,6 @@ class GFF3Parser:
         # Ensure that gene and protein list contain only unique entries
         self.gene_list = list(set(self.gene_list))
         self.protein_list = list(set(self.protein_list))
-        # Add protein names and descriptions to gene list
-        # We an only do this after making the list unique
-        # First, protein names and descriptions are sorted by their gene-id
-        # In case a gene codes for multiple proteins, they will all point to the same gene-id
-        geneid_to_protienid_dict = {}
-        for protein in self.protein_list:
-            if protein[3] not in geneid_to_protienid_dict.keys():
-                geneid_to_protienid_dict[protein[3]] = ([],[])
-            # Add protein name to gene_id
-            geneid_to_protienid_dict[protein[3]][0].append(protein[1])
-            # Add protein descr to gene_id
-            geneid_to_protienid_dict[protein[3]][1].append(protein[2])
-        # Convert list of tuples to list of list
-        self.gene_list = [list(item) for item in self.gene_list]
-        # Add the lists of protein names and protein desc to gene_list
-        for gene_node in self.gene_list:
-            try:
-                # Add list with protein names
-                gene_node.append(geneid_to_protienid_dict[gene_node[0]][0])
-                # Add list with protein descr
-                gene_node.append(geneid_to_protienid_dict[gene_node[0]][1])
-            except KeyError:
-                # Not each gene may be coding for a protein
-                # In this cases, the gene_id is not found in the geneid_to_protienid_dict
-                # We need to add something to the gene node to allow proper parsing into CSV format later
-                gene_node.append(["None"])
-                gene_node.append(["None"])
-                continue
         # Sort the gene_list by contig, start and stop. Only one species per file, so no need to sort by species
         self.gene_list = sorted(self.gene_list, key=lambda x: (x[2], x[3], x[4]))
         # Sort the protein_list by protein_id
