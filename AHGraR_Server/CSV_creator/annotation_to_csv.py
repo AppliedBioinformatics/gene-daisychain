@@ -84,8 +84,8 @@ class AnnoToCSV:
                     protein_id = protein_node_attr[0]
                     protein_descr = protein_node_attr[1]
                     gene_id = protein_node_attr[2]
-                    protein_node_output.write(",".join[str(protein_id),protein_name,protein_descr+"\n"])
-                    gene_protein_coding_output.write(",".join[str(gene_id),str(protein_id)+"\n"])
+                    protein_node_output.write(",".join([str(protein_id),protein_name,protein_descr+"\n"]))
+                    gene_protein_coding_output.write(",".join([str(gene_id),str(protein_id)+"\n"]))
 
         # Save protein_dict as json-file
         # This will be used at a later stage following the homology clustering of proteins
