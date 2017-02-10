@@ -186,15 +186,16 @@ class DBBuilder:
         # Use neo4j-admin to create a database from the CSV files
         # The database is created within the projects neo4j folder
         try:
-            subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin"), "import",
-                                         "--id-type",
-                                         "STRING", "--nodes:Gene", os.path.join("Projects", str(proj_id),
-                                         "CSV", "gene_nodes.csv"),"--relationships:5_NB", os.path.join("Projects",
-                                         str(proj_id), "CSV", "gene_5nb.csv"), "--relationships:3_NB",
-                                         os.path.join("Projects", str(proj_id), "CSV", "gene_3nb.csv"),
-                                         "--relationships:HOMOLOG", os.path.join("Projects", str(proj_id),
-                                         "CSV", "gene_hmlg.csv")], check=True, stdout=subprocess.PIPE,
-                                         stderr=subprocess.PIPE)
+            subprocess.run([
+                os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin"),
+                "import","--id-type","STRING",
+                "--nodes:Gene", os.path.join("Projects", str(proj_id),"CSV", "gene_nodes.csv"),
+                "--relationships:5_NB", os.path.join("Projects",str(proj_id), "CSV", "gene_5nb.csv"),
+                "--relationships:3_NB", os.path.join("Projects", str(proj_id), "CSV", "gene_3nb.csv"),
+                "--nodes:Protein", os.path.join("Projects", str(proj_id), "CSV", "protein_nodes.csv"),
+                "--relationships:CODING", os.path.join("Projects", str(proj_id), "CSV", "gene_protein_coding.csv"),
+                "--relationships:HOMOLOG", os.path.join("Projects", str(proj_id),"CSV", "protein_hmlg.csv")],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # Change project status to DB_BUILD
             self.main_db_conn.run(
                 "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"

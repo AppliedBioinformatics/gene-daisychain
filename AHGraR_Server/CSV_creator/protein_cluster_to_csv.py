@@ -21,19 +21,19 @@ class ClusterToCSV:
         self.CSV_path = os.path.join("Projects", proj_id, "CSV")
         self.blast_path = os.path.join("Projects", proj_id, "BlastDB")
         # Initialize an empty dict
-        # All protein_name to gene_id dicts will be added to this dict subsequently
-        self.protein_to_gene_map = {}
+        # All project-specific protein dicts will be added to a cumulative dict:
+        self.protein_dict = {}
         # Initialize output file
-        with open(os.path.join(self.CSV_path, "gene_hmlg.csv"), "w") as csv_file:
-            csv_file.write(":START_ID(Gene),sensitivity,:END_ID(Gene)\n")
+        with open(os.path.join(self.CSV_path, "protein_hmlg.csv"), "w") as csv_file:
+            csv_file.write(":START_ID(Protein),sensitivity,:END_ID(Protein)\n")
 
-    # Add a species-specific protein2gene_id dict to the cumulative dict
+    # Add a species-specific protein dict to the cumulative dict
     # Function parameter is the species name needed to retrieve the json-stored dict from the project CSV directory
-    def add_protein_to_gene_map(self, species_name):
+    def add_protein_dict(self, species_name):
         with open(os.path.join(self.CSV_path, species_name+"_protein_dict.json"), "r") as json_file:
-            species_protein_to_gene_map = json.load(json_file)
-        self.protein_to_gene_map.update(species_protein_to_gene_map)
-        print("New protein2gene_map length: "+str(len(self.protein_to_gene_map)))
+            species_protein_dict = json.load(json_file)
+        self.protein_dict.update(species_protein_dict)
+        print("New cumulative protein dict length: "+str(len(self.protein_dict)))
 
 
     # Convert a MCL cluster file into Neo4j relations coded in CSV format
@@ -51,22 +51,20 @@ class ClusterToCSV:
                     protein_cluster = line.strip().split("\t")
                     # Skip empty lines
                     if not protein_cluster: continue
-                    # Map protein name to coding gene id
-                    gene_cluster = [self.protein_to_gene_map[protein_name][2] for protein_name in protein_cluster]
+                    # Map protein name to protein node id
+                    protein_id_cluster = [self.protein_map[protein_name][0] for protein_name in protein_cluster]
                     #  Make all possible pairwise combinations between gene IDs
                     # i.e. [1,2,3] --> [(1,1),(1,2),(1,3),(2,1),(2,2),(2,3),(3,1),(3,2),(3,3)]
-                    gene_cluster_pw_comb = iter.product(gene_cluster, repeat=2)
+                    protein_id_cluster_pw_comb = iter.product(protein_id_cluster, repeat=2)
                     # Collect all pairwise homolog relations in pairwise_homologs_list
-                    pairwise_homologs_list.extend(gene_cluster_pw_comb)
+                    pairwise_homologs_list.extend(protein_id_cluster_pw_comb)
             # Ensure that the set of pairwise homologs is unique
-            # For example, a gene could code for multiple isoforms,
-            # This could create multiple copies of the same pairwise relationship between gene nodes
             print(pairwise_homologs_list[:10])
             pairwise_homologs_unique_set = list(set(pairwise_homologs_list))
-            with open(os.path.join(self.CSV_path, "gene_hmlg.csv"), "a") as csv_file:
-                # Write each pairwise homolog relationship between two gene node IDS
+            with open(os.path.join(self.CSV_path, "protein_hmlg.csv"), "a") as csv_file:
+                # Write each pairwise homolog relationship between two protein node IDS
                 # into the CSV file.
-                # Format: Gene_ID1,inflation_value,Gene_ID2
+                # Format: Protein_ID1,inflation_value,Protein_ID2
                 for pairwise_homolog in pairwise_homologs_unique_set:
                     csv_file.write(",".join([str(pairwise_homolog[0]), cluster_file_name[1], str(pairwise_homolog[1])+"\n"]))
 

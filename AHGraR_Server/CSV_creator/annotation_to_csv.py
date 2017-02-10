@@ -30,7 +30,7 @@ class AnnoToCSV:
         # Format for Gene node CSV:
         # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
         with open(os.path.join(self.CSV_path, "gene_nodes.csv"), "w") as gene_node_output:
-            gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame,protein_name:string_array,protein_desc:string_array\n")
+            gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame\n")
         # Format for (Gene)-[5'-nb]->(Gene)
         # :START_ID(Gene),:END_ID(Gene)
         with open(os.path.join(self.CSV_path, "gene_5nb.csv"), "w") as gene_rel5nb_output:
@@ -39,6 +39,13 @@ class AnnoToCSV:
         # :START_ID(Gene),:END_ID(Gene)
         with open(os.path.join(self.CSV_path, "gene_3nb.csv"), "w") as gene_rel3nb_output:
             gene_rel3nb_output.write(":START_ID(Gene),:END_ID(Gene)\n")
+        # Format for Protein node CSV:
+        # proteinId:ID(Protein),protein_name,protein_descr
+        with open(os.path.join(self.CSV_path, "protein_nodes.csv"), "w") as protein_node_output:
+            protein_node_output.write("proteinId:ID(Protein),protein_name,protein_descr\n")
+        # Format for (Gene)-[:CODING]->(Protein)
+        with open(os.path.join(self.CSV_path, "gene_protein_coding.csv"), "w") as gene_protein_coding_output:
+            gene_protein_coding_output.write(":START_ID(Gene),:END_ID(Protein)\n")
 
     def create_csv(self, species_name, annofile_name, annofile_type, anno_mapping, feat_hierarchy):
 
@@ -68,6 +75,18 @@ class AnnoToCSV:
         # Set gene_node_id and protein_node_id to id last assigned while parsing
         self.gene_node_id = anno_parser.get_gene_node_id()
         self.protein_node_id = anno_parser.get_protein_node_id()
+        # Write protein nodes and (Gene)-[:CODING]->(Protein) to CSV file
+        # Iterate through protein dict, the key is the protein name
+        with open(os.path.join(self.CSV_path, "protein_nodes.csv"), "a") as protein_node_output:
+            with open(os.path.join(self.CSV_path, "gene_protein_coding.csv"), "a") as gene_protein_coding_output:
+                for protein_name in protein_dict.keys():
+                    protein_node_attr = protein_dict[protein_name]
+                    protein_id = protein_node_attr[0]
+                    protein_descr = protein_node_attr[1]
+                    gene_id = protein_node_attr[2]
+                    protein_node_output.write(",".join[str(protein_id),protein_name,protein_descr+"\n"])
+                    gene_protein_coding_output.write(",".join[str(gene_id),str(protein_id)+"\n"])
+
         # Save protein_dict as json-file
         # This will be used at a later stage following the homology clustering of proteins
         # File is stored temporarily in the CSV folder
