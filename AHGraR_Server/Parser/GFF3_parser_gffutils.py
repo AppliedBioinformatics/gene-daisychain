@@ -242,7 +242,9 @@ class GFF3Parser:
             except KeyError:
                 # Not each gene may be coding for a protein
                 # In this cases, the gene_id is not found in the geneid_to_protienid_dict
-                # Just skip this entry
+                # We need to add something to the gene node to allow proper parsing into CSV format later
+                gene_node.append(["None"])
+                gene_node.append(["None"])
                 continue
         # Sort the gene_list by contig, start and stop. Only one species per file, so no need to sort by species
         self.gene_list = sorted(self.gene_list, key=lambda x: (x[2], x[3], x[4]))
