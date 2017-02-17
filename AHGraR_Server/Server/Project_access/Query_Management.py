@@ -80,10 +80,11 @@ class QueryManagement:
             hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                                        "AND LOWER(gene.gene_name) CONTAINS {query_name} RETURN(gene)",
                                        {"query_species":query_species, "query_name": query_name})
+            hit_elements = []
             for record in hits:
-                print([record["gene"][item] for item in ["species", " chromosome", "contig_name", "start",
-                                                         "stop", "gene_name"]])
-        self.send_data("Working on it")
+                hit_elements += [record["gene"][item] for item in ["geneId","species", " chromosome", "contig_name", "start",
+                                                         "stop", "gene_name"]] + ["\n"]
+        self.send_data("\t".join(hit_elements))
 
 
 
