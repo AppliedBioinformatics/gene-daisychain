@@ -84,8 +84,8 @@ class QueryManagement:
                                        {"query_species":query_species, "query_name": query_name})
             hit_elements = []
             for record in hits:
-                hit_elements += [str(record["gene"][item]) for item in ["geneId","species", " chromosome", "contig_name", "start",
-                                                         "stop", "gene_name"]]
+                hit_elements += ([str(record["gene"][item]) for item in ["geneId","species", " chromosome", "contig_name", "start",
+                                                         "stop", "gene_name"]] )
             print(hit_elements)
         self.send_data("Coming soon")
 
