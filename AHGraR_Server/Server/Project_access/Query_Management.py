@@ -75,14 +75,13 @@ class QueryManagement:
                 return
         except IndexError:
             query_type = None
-        print(query_type)
         # Search for gene node(s)
         if query_type == "gene":
-            hits = list(project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
+            hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                                        "AND LOWER(gene.gene_name) CONTAINS {query_name} RETURN(gene)",
-                                       {"query_species":query_species, "query_name": query_name}))
-            print(hits)
-        print(query_term)
+                                       {"query_species":query_species, "query_name": query_name})
+            for record in hits:
+                print(record)
         self.send_data("Working on it")
 
 
