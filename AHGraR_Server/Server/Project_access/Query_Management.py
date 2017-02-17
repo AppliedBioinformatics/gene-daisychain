@@ -65,7 +65,9 @@ class QueryManagement:
         if not return_format in ["CMD", "WEB"]:
             self.send_data("-9")
             return
-        query_term = [item.strip() for item in user_request[2].split(":")]
+        # "_" underscores were replaced by "\t" before being send to the server
+        # Undo this here
+        query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
         query_species = str(query_term[0]).lower()
         query_name = str(query_term[1]).lower()
         try:
