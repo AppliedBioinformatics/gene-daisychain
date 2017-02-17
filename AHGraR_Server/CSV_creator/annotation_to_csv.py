@@ -30,7 +30,7 @@ class AnnoToCSV:
         # Format for Gene node CSV:
         # geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand_orientation, coding_frame
         with open(os.path.join(self.CSV_path, "gene_nodes.csv"), "w") as gene_node_output:
-            gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name, chromosome, strand, frame\n")
+            gene_node_output.write("geneId:ID(Gene),species,contig_name,start:INT,stop:INT,gene_name,chromosome,strand,frame\n")
         # Format for (Gene)-[5'-nb]->(Gene)
         # :START_ID(Gene),:END_ID(Gene)
         with open(os.path.join(self.CSV_path, "gene_5nb.csv"), "w") as gene_rel5nb_output:
