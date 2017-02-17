@@ -269,7 +269,7 @@ def query_management(connection, accessed_project, user_input):
     if 2 <= len(user_input) <=3:
         if user_input[0] == "search" and len(user_input) == 2:
             # Convert user-input into search term:
-            # Input: e.g. Org,Name,Protein
+            # Input: e.g. Org,Name,Protein/Gene
             # convert to: org:name:prot
             # Search is case-insensitive, last term defines if searching for only gene or protein,
             # if empty: search for both
