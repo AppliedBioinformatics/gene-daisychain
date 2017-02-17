@@ -65,7 +65,7 @@ class QueryManagement:
         if not return_format in ["CMD", "WEB"]:
             self.send_data("-9")
             return
-        query_term = [item.split() for item in user_request[2].split(":")]
+        query_term = [item.strip() for item in user_request[2].split(":")]
         print(query_term)
         self.send_data("Working on it")
 
