@@ -14,6 +14,7 @@ from Server.Project_access.Task_Management import TaskManagement
 from Server.Project_access.File_Management import FileManagement
 from Server.Project_access.DB_Builder import DBBuilder
 from Server.Project_access.DB_Runner import DBRunner
+from Server.Project_access.Query_Management import QueryManagement
 
 # Define server functionality
 class AHGraRServer(socketserver.BaseRequestHandler):
@@ -96,6 +97,11 @@ class AHGraRServer(socketserver.BaseRequestHandler):
             db_runner = DBRunner(self.get_db_conn(), self.send_data)
             # Evaluate user request
             db_runner.evaluate_user_request(user_request[1:])
+        if user_request[0] == "QURY":
+            # Initialize query manager
+            query_manager = QueryManagement(self.get_db_conn(), self.send_data)
+            # Evaluate user request
+            query_manager.evaluate_user_request(user_request[1:])
         else:
             self.send_data("-2")
         # Close task manager connection to main-db

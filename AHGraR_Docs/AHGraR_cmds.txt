@@ -23,6 +23,8 @@ access project "project_id"
         stop                            PADABA_ProjectID_STOP
         status                          PADABA_ProjectID_STATUS
     query                               PAQURY_ProjectID_Query
+        search                          PAQURY_SEAR_ProjectID_Organism:Prot/Gene:Name
+        related                         PAQURY_RELA_ProjectID_NodeID_Relationship1:Relationship2
     job list                            PATASK_STAT_ProjectID_TaskID1_TaskID2
         status                          PATASK_STAT_ProjectID_TaskID
         result                          PATASK_RESU_ProjectID_TaskID
