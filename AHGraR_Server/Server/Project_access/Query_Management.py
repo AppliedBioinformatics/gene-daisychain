@@ -43,9 +43,9 @@ class QueryManagement:
     # User_request is a list of the "_" split command
     # e.g. [SEAR, ProjectID, Organism:Prot/Gene:Name]
     def evaluate_user_request(self, user_request):
-        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 3:
+        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 4:
             self.find_node(user_request[1:])
-        if user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 4:
+        if user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 5:
             self.find_node_relations(user_request[1:])
         else:
             self.send_data("-6")
