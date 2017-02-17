@@ -283,7 +283,8 @@ def query_management(connection, accessed_project, user_input):
             # Replace underscores in query terms with "\t"
             send_data(connection, "PAQURY_SEAR_" + str(accessed_project) + "_CMD_" +
                       ":".join([item.strip().replace("_","\t") for item in user_input[1].split(",")]))
-            print(receive_data(connection))
+            recv = receive_data(connection)
+            print("done")
 
 
 
