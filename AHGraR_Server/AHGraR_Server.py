@@ -4,7 +4,6 @@
 # Can handle multiple requests in parallel (not sequential)
 import configparser
 import socketserver
-import subprocess
 import threading
 from neo4j.v1 import GraphDatabase, basic_auth
 from Server.Project_management.Project_Delete import DeleteProject
