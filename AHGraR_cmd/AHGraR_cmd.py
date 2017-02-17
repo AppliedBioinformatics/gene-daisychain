@@ -274,7 +274,7 @@ def query_management(connection, accessed_project, user_input):
             # Search is case-insensitive, last term defines if searching for only gene or protein,
             # if empty: search for both
             send_data(connection, "PAQURY_SEAR_" + str(accessed_project) + "_CMD_" +
-                      ":".join([item.strip for item in user_input[1].split(",")]))
+                      ":".join([item.strip() for item in user_input[1].split(",")]))
             print(receive_data(connection))
 
 
