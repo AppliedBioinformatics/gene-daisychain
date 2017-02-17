@@ -23,6 +23,7 @@ def send_data(connection, reply):
     # reply = reply.replace("|"," ")
     # reply = reply.replace("_", " ")
     # Add length of message to header
+    print(reply)
     message = str(len(reply)) + "|" + reply
     connection.sendall(message.encode())
 
