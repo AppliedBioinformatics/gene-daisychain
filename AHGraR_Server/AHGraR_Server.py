@@ -109,7 +109,8 @@ class AHGraRServer(socketserver.BaseRequestHandler):
 
     def get_db_conn(self):
         driver = GraphDatabase.driver("bolt://localhost:"+self.ahgrar_config["AHGraR_Server"]["proj_db_port"],
-                                      auth=basic_auth(self.ahgrar_config["AHGraR_Server"]["proj_db_login"], self.ahgrar_config["AHGraR_Server"]["proj_db_pw"]))
+                                      auth=basic_auth(self.ahgrar_config["AHGraR_Server"]["proj_db_login"],
+                                                      self.ahgrar_config["AHGraR_Server"]["proj_db_pw"]),encrypted=False)
         return(driver.session())
 
     # Send data to gateway

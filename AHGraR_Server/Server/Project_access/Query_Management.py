@@ -29,7 +29,7 @@ class QueryManagement:
             with open(os.path.join("Projects", str(proj_id), "access"), "r") as pw_file:
                 bolt_pw = pw_file.read()
             project_db_driver = GraphDatabase.driver("bolt://localhost:" + str(bolt_port),
-                                          auth=basic_auth("neo4j", bolt_pw))
+                                          auth=basic_auth("neo4j", bolt_pw), encrypted=False)
             return (project_db_driver.session())
         # Except errors while establishing a connection to project db and return error code
         except IndexError:
