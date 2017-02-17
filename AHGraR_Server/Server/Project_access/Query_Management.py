@@ -53,6 +53,6 @@ class QueryManagement:
     def find_node(self, user_request):
         # Connect to the project-db
         project_db_conn = self.get_project_db_connection(user_request[0])
-        print("Find a node :-)")
+        self.send_data("Find a node :-)")
         # Close connection to the project-db
         project_db_conn.close()

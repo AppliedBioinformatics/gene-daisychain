@@ -175,6 +175,8 @@ def project_access(connection, user_input):
                 build_management(connection, accessed_project, user_input[1:])
             if user_input[0] == "database":
                 db_runner(connection, accessed_project, user_input[1:])
+            if user_input[0] == "query":
+                query_management(connection, accessed_project, user_input[1:])
             connection.close()
             # Connection is closed after evey send/received interval
             # Open a new connection to continue project access
@@ -247,6 +249,7 @@ def build_management(connection, accessed_project, user_input):
         task_id = receive_data(connection)
         add_jobid(task_id, accessed_project, "Building project DB")
 
+
 def db_runner(connection, accessed_project, user_input):
     # Check user command for correct syntax
     if len(user_input) == 1:
@@ -259,6 +262,21 @@ def db_runner(connection, accessed_project, user_input):
         else:
             return
         print(receive_data(connection))
+
+
+def query_management(connection, accessed_project, user_input):
+    # Check user command for correct syntax
+    if 2 <= len(user_input) <=3:
+        if user_input[0] == "search" and len(user_input) == 2:
+            # Convert user-input into search term:
+            # Input: e.g. Org,Name,Protein
+            # convert to: org:name:prot
+            # Search is case-insensitive, last term defines if searching for only gene or protein,
+            # if empty: search for both
+            send_data(connection, "PAQURY_SEAR_" + str(accessed_project) + "_CMD_" +
+                      ":".join([item.strip for item in user_input[1].split(",")]))
+            print(receive_data(connection))
+
 
 
 
