@@ -88,8 +88,7 @@ class QueryManagement:
                                                          "stop", "gene_name"]] )
             hit_elements.sort(key= lambda x: (x[1], x[3], x[4]))
             hit_elements = ["\t".join(item) for item in hit_elements]
-            print(hit_elements)
-        self.send_data("Coming soon")
+        self.send_data("\n".join(hit_elements))
 
 
 
