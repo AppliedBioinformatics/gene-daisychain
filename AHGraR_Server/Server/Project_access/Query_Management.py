@@ -85,7 +85,8 @@ class QueryManagement:
             hit_elements = []
             for record in hits:
                 hit_elements += [str(record["gene"][item]) for item in ["geneId","species", " chromosome", "contig_name", "start",
-                                                         "stop", "gene_name"]] + ["\n"]
+                                                         "stop", "gene_name"]]
+                hit_elements[-1] += "\n"
         self.send_data("\t".join(hit_elements))
 
 
