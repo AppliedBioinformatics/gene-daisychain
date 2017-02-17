@@ -81,7 +81,7 @@ class QueryManagement:
                                        "AND LOWER(gene.gene_name) CONTAINS {query_name} RETURN(gene)",
                                        {"query_species":query_species, "query_name": query_name})
             for record in hits:
-                print(record["properties"])
+                print(dir(record))
         self.send_data("Working on it")
 
 
