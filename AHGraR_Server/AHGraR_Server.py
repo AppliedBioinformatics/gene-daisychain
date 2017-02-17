@@ -116,6 +116,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
     def send_data(self, reply):
         # Ensure reply is in string format
         reply = str(reply)
+        print(len(reply))
         # Add length of message to header
         message = str(len(reply)) + "|" + reply
         self.request.sendall(message.encode())

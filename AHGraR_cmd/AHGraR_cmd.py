@@ -14,6 +14,7 @@ def receive_data(connection):
         else:
             msg_length += incoming_data
     msg_length = int(msg_length)
+    print(msg_length)
     msg = connection.recv(msg_length).decode()
     return(msg)
 
