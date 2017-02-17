@@ -122,8 +122,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         self.request.sendall(message.encode())
 
     # Receive data from gateway
-    def receive_data(self, connection):
-        # First decode the length of the message
+    def receive_data(connection):
         msg_length = ""
         while True:
             incoming_data = connection.recv(1).decode()
@@ -132,8 +131,12 @@ class AHGraRServer(socketserver.BaseRequestHandler):
             else:
                 msg_length += incoming_data
         msg_length = int(msg_length)
-        # Then receive the actual message
-        msg = connection.recv(msg_length).decode()
+        msg = ""
+        while msg_length > 0:
+            rcv_length = 1024 if msg_length >= 1024 else msg_length
+            msg_length -= rcv_length
+            msg += connection.recv(rcv_length).decode()
+            print(msg_length)
         return (msg)
 
 

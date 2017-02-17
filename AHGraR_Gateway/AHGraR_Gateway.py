@@ -43,7 +43,6 @@ class GatewayServer(socketserver.BaseRequestHandler):
 
     # Receive data from user client
     def receive_data_user(self, connection):
-        # First decode the length of the message
         msg_length = ""
         while True:
             incoming_data = connection.recv(1).decode()
@@ -52,8 +51,12 @@ class GatewayServer(socketserver.BaseRequestHandler):
             else:
                 msg_length += incoming_data
         msg_length = int(msg_length)
-        # Then receive the actual message
-        msg = connection.recv(msg_length).decode()
+        msg = ""
+        while msg_length > 0:
+            rcv_length = 1024 if msg_length >= 1024 else msg_length
+            msg_length -= rcv_length
+            msg += connection.recv(rcv_length).decode()
+            print(msg_length)
         return (msg)
 
     def receive_data_server(self, connection):
@@ -65,7 +68,12 @@ class GatewayServer(socketserver.BaseRequestHandler):
             else:
                 msg_length += incoming_data
         msg_length = int(msg_length)
-        msg = connection.recv(msg_length).decode()
+        msg = ""
+        while msg_length > 0:
+            rcv_length = 1024 if msg_length >= 1024 else msg_length
+            msg_length -= rcv_length
+            msg += connection.recv(rcv_length).decode()
+            print(msg_length)
         return (msg)
 
     def send_data_server(self, connection, reply):
