@@ -66,6 +66,22 @@ class QueryManagement:
             self.send_data("-9")
             return
         query_term = [item.strip() for item in user_request[2].split(":")]
+        query_species = str(query_term[0]).lower()
+        query_name = str(query_term[1]).lower()
+        try:
+            query_type = query_term[2].lower()
+            if query_type not in ["gene", "protein"]:
+                self.send_data("-10")
+                return
+        except IndexError:
+            query_type = None
+        print(query_type)
+        # Search for gene node(s)
+        if query_type == "gene":
+            hits = list(project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
+                                       "AND LOWER(gene.gene_name) CONTAINS {query_name} RETURN(gene)",
+                                       {"query_species":query_species, "query_name": query_name}))
+            print(hits)
         print(query_term)
         self.send_data("Working on it")
 
