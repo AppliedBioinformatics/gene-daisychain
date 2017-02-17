@@ -82,7 +82,10 @@ class QueryManagement:
                                        {"query_species":query_species, "query_name": query_name})
             for record in hits:
                 print(dir(record))
-                print(record.items())
+                print(record.index())
+                print(list(record.items()))
+                print(record.keys())
+                print(record.values())
         self.send_data("Working on it")
 
 
