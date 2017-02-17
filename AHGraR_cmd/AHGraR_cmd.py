@@ -18,7 +18,8 @@ def receive_data(connection):
     while msg_length > 0:
         rcv_length = 1024 if msg_length >= 1024 else msg_length
         msg_length -= rcv_length
-        msg += connection.recv(rcv_length).decode()
+        new_msg = connection.recv(rcv_length).decode()
+        msg += new_msg
         print(msg_length)
     return(msg)
 
