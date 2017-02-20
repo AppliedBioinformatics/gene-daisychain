@@ -118,8 +118,10 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         reply = str(reply)
         print(len(reply))
         # Add length of message to header
-        message = str(len(reply)) + "|" + reply
-        self.request.sendall(message.encode())
+        #message = str(len(reply)) + "|" + reply
+        self.request.sendall((str(len(reply)) + "|").encode())
+        self.request.sendall(reply.encode())
+
 
     # Receive data from gateway
     def receive_data(self, connection):
