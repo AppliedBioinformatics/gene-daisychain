@@ -106,7 +106,7 @@ class QueryManagement:
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
                                              "CONTAINS {query_species} AND LOWER(prot.protein_name) CONTAINS "
                                              "{query_name} AND LOWER(prot.protein_descr) CONTAINS {query_anno} WITH "
-                                             "COLLECT(prot) AS prots UNWIND prots as p1 UNWIND ports as p2 "
+                                             "COLLECT(prot) AS prots UNWIND prots as p1 UNWIND prots as p2 "
                                              "OPTIONAL MATCH (p1)-[rel]->(p2) RETURN p1,rel,p2",
                                              {"query_species":query_species, "query_name":query_name,
                                               "query_anno":query_anno})
