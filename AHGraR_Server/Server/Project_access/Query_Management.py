@@ -68,6 +68,7 @@ class QueryManagement:
         # "_" underscores were replaced by "\t" before being send to the server
         # Undo this here
         query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
+        print(query_term)
         # Species name or gene/protein name to query for can be empty
         query_species = str(query_term[0]).lower()
         query_chromosome = str(query_term[1]).lower()
