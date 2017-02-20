@@ -91,7 +91,7 @@ class QueryManagement:
                                              {"query_species":query_species, "query_name": query_name,
                                               "query_chromosome":query_chromosome, "query_anno":query_anno})
             for record in query_hits:
-                print(record["g1"])
+                print(record["g1"]["geneId"], record["rel"], record["g2"])
             # for record in query_hits:
             #     gene_node_hits.append([str(record["gene"][item]) for item in ["geneId","species", " chromosome", "contig_name", "start",
             #                                              "stop", "gene_name"]] )
