@@ -283,7 +283,7 @@ def query_management(connection, accessed_project, user_input):
             send_data(connection, "PAQURY_SEAR_" + str(accessed_project) + "_CMD_" +
                       ":".join([item.strip().replace("_","\t") for item in user_input[1].split(",")]))
             recv = receive_data(connection)
-            print("done")
+            print(recv)
 
 
 
