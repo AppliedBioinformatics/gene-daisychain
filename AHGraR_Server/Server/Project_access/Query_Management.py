@@ -111,10 +111,12 @@ class QueryManagement:
                                              {"query_species":query_species, "query_name":query_name,
                                               "query_anno":query_anno})
             for record in query_hits:
-                print([record["p1"][prop] for prop in ["protein_name", "proteinId", "protein_descr"]])
+                protein_node_hits.append([record["p1"][prop] for prop in ["protein_name", "proteinId", "protein_descr"]])
                 if record["rel"] != None:
                     print(record["p1"]["proteinId"], record["rel"], record["p2"]["proteinId"])
-
+            print(len(protein_node_hits))
+            protein_node_hits = list(set(protein_node_hits))
+            print(len(protein_node_hits))
         # Search for protein node(s)
        # if query_type in ["protein", "both"]:
        #     query_hits = project_db_conn.run("MATCH(gene:Gene)", {})
