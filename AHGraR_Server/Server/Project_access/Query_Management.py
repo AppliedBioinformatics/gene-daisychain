@@ -47,7 +47,7 @@ class QueryManagement:
 
     # React to request send from a user app
     # User_request is a list of the "_" split command
-    # e.g. [SEAR, ProjectID, Organism:Prot/Gene:Name]
+    # e.g. [SEAR, ProjectID, Organism:Chromosome:Name:Annotation:Gene/Protein(Both]
     def evaluate_user_request(self, user_request):
         if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 4:
             self.find_node(user_request[1:])
@@ -70,28 +70,38 @@ class QueryManagement:
         query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
         # Species name or gene/protein name to query for can be empty
         query_species = str(query_term[0]).lower()
-        query_name = str(query_term[1]).lower()
-        try:
-            query_type = query_term[2].lower()
-            if query_type not in ["gene", "protein"]:
-                self.send_data("-10")
-                return
-        except IndexError:
-            query_type = None
+        query_chromosome = str(query_term[1]).lower()
+        query_name = str(query_term[2]).lower()
+        query_anno = str(query_term[3]).lower()
+        query_type = str(query_term[4].lower())
+        if query_type not in ["gene", "protein", "both"]:
+            self.send_data("-10")
+            return
+        # Collect gene node hits and protein node hits
+        gene_node_hits = []
+        protein_node_hits = []
         # Search for gene node(s)
-        if query_type == "gene":
-            hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
-                                       "AND LOWER(gene.gene_name) CONTAINS {query_name} RETURN(gene)",
-                                       {"query_species":query_species, "query_name": query_name})
-            hit_elements = []
-            for record in hits:
-                hit_elements.append([str(record["gene"][item]) for item in ["geneId","species", " chromosome", "contig_name", "start",
-                                                         "stop", "gene_name"]] )
-            hit_elements.sort(key= lambda x: (x[1], x[3], x[4]))
-            hit_elements = ["\t".join(item) for item in hit_elements]
-        print(len(hit_elements))
-        self.send_data("\n".join(hit_elements))
-
+        if query_type in ["gene", "both"]:
+            query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
+                                             "CONTAINS {query_species} AND LOWER(gene.chromosome) CONTAINS "
+                                             "{query_chromosome} AND LOWER(prot.protein_descr) CONTAINS {query_anno} "
+                                             "AND LOWER(gene.gene_name) CONTAINS {query_name} WITH COLLECT(gene) AS "
+                                             "genes UNWIND genes AS g1 UNWIND genes AS g2 "
+                                             "OPTIONAL MATCH (g1)-[rel]-(g2) RETURN g1,rel,g2",
+                                             {"query_species":query_species, "query_name": query_name,
+                                              "query_chromosome":query_chromosome, "query_anno":query_anno})
+            for record in query_hits:
+                print(record["g1"])
+            # for record in query_hits:
+            #     gene_node_hits.append([str(record["gene"][item]) for item in ["geneId","species", " chromosome", "contig_name", "start",
+            #                                              "stop", "gene_name"]] )
+            # gene_node_hits.sort(key= lambda x: (x[1], x[2], x[3], x[4]))
+            # gene_node_hits = ["\t".join(item) for item in gene_node_hits]
+        # Search for protein node(s)
+       # if query_type in ["protein", "both"]:
+       #     query_hits = project_db_conn.run("MATCH(gene:Gene)", {})
+       # self.send_data("\n".join(gene_node_hits))
+        self.send_data("Working on it")
 
 
         # Close connection to the project-db
