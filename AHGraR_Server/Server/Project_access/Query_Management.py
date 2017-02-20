@@ -83,7 +83,7 @@ class QueryManagement:
         # and gene/protein nodes
         gene_node_hits = []
         gene_node_rel = []
-        protein_node_hits = []
+        protein_node_hits = {}
         protein_node_rel = []
         # Search for gene node(s)
         if query_type in ["gene", "both"]:
@@ -111,9 +111,9 @@ class QueryManagement:
                                              {"query_species":query_species, "query_name":query_name,
                                               "query_anno":query_anno})
             for record in query_hits:
-                protein_node_hits.append([record["p1"][prop] for prop in ["protein_name", "proteinId", "protein_descr"]])
+                protein_node_hits[record["p1"]["proteinId"]] = (record["p1"]["protein_name"], record["p1"]["protein_descr"])
                 if record["rel"] != None:
-                    print(record["p1"]["proteinId"], record["rel"], record["p2"]["proteinId"])
+                    print(record["p1"]["proteinId"], record["rel"]["type"], record["p2"]["proteinId"])
             print(len(protein_node_hits))
             protein_node_hits = list(set(protein_node_hits))
             print(len(protein_node_hits))
