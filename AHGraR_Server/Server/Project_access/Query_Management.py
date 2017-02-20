@@ -83,15 +83,14 @@ class QueryManagement:
         protein_node_hits = []
         # Search for gene node(s)
         if query_type in ["gene", "both"]:
-            query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
+            query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) "
                                              "CONTAINS {query_species} AND LOWER(gene.chromosome) CONTAINS "
-                                             "{query_chromosome} AND LOWER(prot.protein_descr) CONTAINS {query_anno} "
+                                             "{query_chromosome} "
                                              "AND LOWER(gene.gene_name) CONTAINS {query_name} WITH COLLECT(gene) AS "
                                              "genes UNWIND genes AS g1 UNWIND genes AS g2 "
                                              "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
                                              {"query_species":query_species, "query_name": query_name,
                                               "query_chromosome":query_chromosome, "query_anno":query_anno})
-            print(query_hits.single())
             for record in query_hits:
                 print(record["g1"])
             # for record in query_hits:
