@@ -88,9 +88,10 @@ class QueryManagement:
                                              "{query_chromosome} AND LOWER(prot.protein_descr) CONTAINS {query_anno} "
                                              "AND LOWER(gene.gene_name) CONTAINS {query_name} WITH COLLECT(gene) AS "
                                              "genes UNWIND genes AS g1 UNWIND genes AS g2 "
-                                             "OPTIONAL MATCH (g1)-[rel]-(g2) RETURN g1,rel,g2",
+                                             "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
                                              {"query_species":query_species, "query_name": query_name,
                                               "query_chromosome":query_chromosome, "query_anno":query_anno})
+            print(query_hits)
             for record in query_hits:
                 print(record["g1"])
             # for record in query_hits:
