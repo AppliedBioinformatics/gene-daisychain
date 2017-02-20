@@ -20,8 +20,6 @@ def receive_data(connection):
         msg_length -= rcv_length
         new_msg = connection.recv(rcv_length).decode()
         msg += new_msg
-        print(msg_length)
-        print(new_msg)
     return(msg)
 
 
