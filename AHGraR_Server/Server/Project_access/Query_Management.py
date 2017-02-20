@@ -84,7 +84,7 @@ class QueryManagement:
         gene_node_hits = []
         gene_node_rel = []
         protein_node_hits = {}
-        protein_node_rel = {}
+        protein_node_rel = []
         # Search for gene node(s)
         if query_type in ["gene", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) "
@@ -112,10 +112,10 @@ class QueryManagement:
                                               "query_anno":query_anno})
             for record in query_hits:
                 protein_node_hits[record["p1"]["proteinId"]] = (record["p1"]["protein_name"], record["p1"]["protein_descr"])
-                if record["rel"] != None:
-                    if not record["p1"]["proteinId"] in protein_node_rel.keys():
-                        protein_node_rel[record["p1"]["proteinId"]] = []
-                    protein_node_rel[record["p1"]["proteinId"]].append((record["rel"]["sensitivity"], record["p2"]["proteinId"]))
+                if record["rel"]:
+                    protein_node_rel.append((record["p1"]["proteinId"], "HOMOLOG_"+record["rel"]["sensitivity"], record["p2"]["proteinId"]))
+            print("Protein nodes: "+str(len(protein_node_hits)))
+            print("Protein rel: "+str(len(protein_node_rel)))
 
         # Search for protein node(s)
        # if query_type in ["protein", "both"]:
