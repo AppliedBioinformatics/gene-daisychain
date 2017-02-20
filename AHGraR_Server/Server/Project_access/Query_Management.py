@@ -111,7 +111,7 @@ class QueryManagement:
                                              {"query_species":query_species, "query_name":query_name,
                                               "query_anno":query_anno})
             for record in query_hits:
-                print(record["p1"])
+                print([record["p1"][prop] for prop in ["protein_name", "proteinId", "protein_descr"]])
                 if record["rel"] != None:
                     print(record["p1"]["proteinId"], record["rel"], record["p2"]["proteinId"])
 
