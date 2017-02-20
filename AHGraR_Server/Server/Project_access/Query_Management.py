@@ -91,7 +91,7 @@ class QueryManagement:
                                              "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
                                              {"query_species":query_species, "query_name": query_name,
                                               "query_chromosome":query_chromosome, "query_anno":query_anno})
-            print(query_hits)
+            print(query_hits.single())
             for record in query_hits:
                 print(record["g1"])
             # for record in query_hits:
