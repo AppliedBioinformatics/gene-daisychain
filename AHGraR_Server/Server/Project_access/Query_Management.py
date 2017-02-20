@@ -113,7 +113,7 @@ class QueryManagement:
             for record in query_hits:
                 protein_node_hits[record["p1"]["proteinId"]] = (record["p1"]["protein_name"], record["p1"]["protein_descr"])
                 if record["rel"] != None:
-                    print(record["p1"]["proteinId"], record["rel"].type, record["p2"]["proteinId"])
+                    print(record["p1"]["proteinId"], record["rel"].type, record["rel"]["sensitivity"], record["p2"]["proteinId"])
             print(len(protein_node_hits))
             protein_node_hits = list(set(protein_node_hits))
             print(len(protein_node_hits))
