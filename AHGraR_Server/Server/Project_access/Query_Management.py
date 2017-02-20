@@ -79,8 +79,12 @@ class QueryManagement:
             self.send_data("-10")
             return
         # Collect gene node hits and protein node hits
+        # Also collect relations between gene nodes, protein nodes
+        # and gene/protein nodes
         gene_node_hits = []
+        gene_node_rel = []
         protein_node_hits = []
+        protein_node_rel = []
         # Search for gene node(s)
         if query_type in ["gene", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) "
@@ -90,6 +94,7 @@ class QueryManagement:
                                              "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
                                              {"query_species":query_species, "query_name": query_name,
                                               "query_chromosome":query_chromosome, "query_anno":query_anno})
+            # Collect all gene nodes for a
             for record in query_hits:
                 print(record["g1"]["geneId"], record["rel"], record["g2"])
             # for record in query_hits:
@@ -97,6 +102,17 @@ class QueryManagement:
             #                                              "stop", "gene_name"]] )
             # gene_node_hits.sort(key= lambda x: (x[1], x[2], x[3], x[4]))
             # gene_node_hits = ["\t".join(item) for item in gene_node_hits]
+        if query_type in ["protein", "both"]:
+            query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
+                                             "CONTAINS {query_species} AND LOWER(prot.protein_name) CONTAINS "
+                                             "{query_name} AND LOWER(prot.protein_descr) CONTAINS {query_anno} WITH "
+                                             "COLLECT(prot) AS prots UNWIND prots as p1 UNWIND ports as p2 "
+                                             "OPTIONAL MATCH (p1)-[rel]->(p2) RETURN p1,rel,p2",
+                                             {"query_species":query_species, "query_name":query_name,
+                                              "query_anno":query_anno})
+            for record in query_hits:
+                print(record["p1"]["proteinId"], record["rel"], record["p2"]["proteinId"])
+
         # Search for protein node(s)
        # if query_type in ["protein", "both"]:
        #     query_hits = project_db_conn.run("MATCH(gene:Gene)", {})
