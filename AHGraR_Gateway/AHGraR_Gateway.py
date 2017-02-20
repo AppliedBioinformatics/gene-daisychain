@@ -38,8 +38,13 @@ class GatewayServer(socketserver.BaseRequestHandler):
     # Send data to user client
     def send_data_user(self, reply):
         # Add length of message to header
-        message = str(len(reply))+"|"+reply
-        self.request.sendall(message.encode())
+        #message = str(len(reply))+"|"+reply
+        #self.request.sendall(message.encode())
+        self.request.sendall((str(len(reply)) + "|").encode())
+        # Split reply into chunks of length 512
+        reply_chunks = [reply[i:i + 512] for i in range(0, len(reply), 512)]
+        for reply_chunk in reply_chunks:
+            self.request.sendall(reply_chunk.encode())
 
     # Receive data from user client
     def receive_data_user(self, connection):
