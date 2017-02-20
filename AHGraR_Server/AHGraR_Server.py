@@ -124,7 +124,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         reply_chunks = [reply[i:i+512] for i in range(0, len(reply), 512)]
         for reply_chunk in reply_chunks:
             self.request.sendall(reply_chunk.encode())
-            print("Length of data: "+ len(reply_chunk))
+            print("Length of data: "+ str(len(reply_chunk)))
 
 
     # Receive data from gateway
