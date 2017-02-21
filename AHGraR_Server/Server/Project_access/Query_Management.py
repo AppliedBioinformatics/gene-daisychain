@@ -156,9 +156,11 @@ class QueryManagement:
         print("Nr. of gene-prot rel: " + str(len(protein_gene_node_rel)))
         # Transfer gene node and protein node dicts into list structures
         # Sort gene node list by species,chromosome, contig, start
-        #
         gene_node_hits = [[item[0]]+item[1] for item in gene_node_hits.items()]
+        gene_node_hits.sort(key=lambda x: (x[1],x[2],x[3],x[5]))
+        protein_node_hits = [[item[0]]+item[1] for item in protein_node_hits.items()]
         print(gene_node_hits[:10])
+        print(protein_node_hits[:10])
         self.send_data("Working on it")
 
 
