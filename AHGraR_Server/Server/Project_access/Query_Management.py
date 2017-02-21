@@ -96,6 +96,7 @@ class QueryManagement:
         gene_node_rel = []
         protein_node_hits = {}
         protein_node_rel = []
+        protein_gene_node_rel = []
         # Search for gene node(s) and gene-gene relationships
         if query_type in ["gene", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
@@ -135,10 +136,7 @@ class QueryManagement:
                 if record["rel"]:
                     protein_node_rel.append((record["p1"]["proteinId"], record["rel"].type,
                                              record["rel"]["sensitivity"], record["p2"]["proteinId"]))
-        print("Nr. of gene nodes: "+str(len(list(gene_node_hits.keys()))))
-        print("Nr. of gene-gene rel: " + str(len(gene_node_rel)))
-        print("Nr. of protein nodes: " + str(len(list(protein_node_hits.keys()))))
-        print("Nr. of prot-prot rel: " + str(len(protein_node_rel)))
+
 
         # Search for gene-protein relationships (only if looking for both protein and gene nodes)
         # i.e. relations between both gene and protein nodes found above (which can only be CODING relations)
@@ -150,7 +148,14 @@ class QueryManagement:
                                              "RETURN gene.geneId, prot.proteinId",
                                              {"query_species": query_species, "query_keyword": query_keyword})
             for record in query_hits:
-                print(record["gene.geneId"], "CODING", record["prot.proteinId"])
+                protein_gene_node_rel.append((record["gene.geneId"], "CODING", record["prot.proteinId"]))
+        print("Nr. of gene nodes: "+str(len(list(gene_node_hits.keys()))))
+        print("Nr. of gene-gene rel: " + str(len(gene_node_rel)))
+        print("Nr. of protein nodes: " + str(len(list(protein_node_hits.keys()))))
+        print("Nr. of prot-prot rel: " + str(len(protein_node_rel)))
+        print("Nr. of gene-prot rel: " + str(len(protein_node_rel)))
+
+
         self.send_data("Working on it")
 
 
