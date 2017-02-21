@@ -182,23 +182,23 @@ class QueryManagement:
             return
 
         # Otherwise, return format is WEB. Reformat data into json format:
-        gene_node_json = ["{'data': {'id':'g"+gene_node[0]+"', 'type':'Gene', 'species':'"+gene_node[1]+
-                          "', 'chromosome':'"+gene_node[2]+"', 'contig':'"+gene_node[3]+"', 'strand':'"+gene_node[4]+
-                          "', 'start':"+str(gene_node[5])+", 'stop':"+str(gene_node[6])+", 'name':'"+gene_node[7]+"'}}"
+        gene_node_json = ['{"data": {"id":"g'+gene_node[0]+'", "type":"Gene", "species":"'+gene_node[1]+
+                          '", "chromosome":"'+gene_node[2]+'", "contig":"'+gene_node[3]+'", "strand":"'+gene_node[4]+
+                          '", "start":'+str(gene_node[5])+', "stop":'+str(gene_node[6])+', "name":"'+gene_node[7]+'"}}'
                           for gene_node in gene_node_hits]
-        protein_node_json = ["{'data': {'id':'p"+protein_node[0]+"', 'type':'Protein', 'name':'"+protein_node[1]+
-                             "', 'description':'"+protein_node[2]+"'}}" for protein_node in protein_node_hits]
-        nodes_json = "'nodes': ["+", ".join(gene_node_json)+", "+", ".join(protein_node_json)+"]"
+        protein_node_json = ['{"data": {"id":"p'+protein_node[0]+'", "type":"Protein", "name":"'+protein_node[1]+
+                             '", "description":"'+protein_node[2]+'"}}' for protein_node in protein_node_hits]
+        nodes_json = '"nodes": ['+', '.join(gene_node_json)+', '+', '.join(protein_node_json)+']'
         print(nodes_json)
-        gene_gene_rel_json = ["{'data': {'source':'g"+gene_gene_rel[0]+"', 'type':'"+gene_gene_rel[1]+
-                              "', 'target':'g"+gene_gene_rel[2]+"'}}" for gene_gene_rel in gene_node_rel]
-        protein_protein_rel_json = ["{'data': {'source':'p"+prot_prot_rel[0]+"', 'type':'"+prot_prot_rel[1]+
-                                    "', 'sensitivity':'"+prot_prot_rel[2]+"', 'target':'p"+prot_prot_rel[3]+"'}}"
+        gene_gene_rel_json = ['{"data": {"source":"g'+gene_gene_rel[0]+'", "type":"'+gene_gene_rel[1]+
+                              '", "target":"g'+gene_gene_rel[2]+'"}}' for gene_gene_rel in gene_node_rel]
+        protein_protein_rel_json = ['{"data": {"source":"p'+prot_prot_rel[0]+'", "type":"'+prot_prot_rel[1]+
+                                    '", "sensitivity":"'+prot_prot_rel[2]+'", "target":"p'+prot_prot_rel[3]+'"}}'
                                     for prot_prot_rel in protein_node_rel]
-        gene_protein_rel_json = ["{'data': {'source':'g"+prot_gene_rel[0]+"', 'type':'CODING', 'target':'"+
-                                 prot_gene_rel[2]+"'}}" for prot_gene_rel in protein_gene_node_rel]
-        edges_json = "'edges': ["+", ".join(gene_gene_rel_json)+", "+", ".join(protein_protein_rel_json)+", "+\
-                     ", ".join(gene_protein_rel_json)+"]"
+        gene_protein_rel_json = ['{"data": {"source":"g'+prot_gene_rel[0]+'", "type":"CODING", "target":"'+
+                                 prot_gene_rel[2]+'"}}' for prot_gene_rel in protein_gene_node_rel]
+        edges_json = '"edges": ['+', '.join(gene_gene_rel_json)+', '+', '.join(protein_protein_rel_json)+', '+\
+                     ', '.join(gene_protein_rel_json)+']'
         print(edges_json)
         self.send_data("almost done")
         # Match geneIDs and proteinIds to their position in the node lists
