@@ -161,6 +161,19 @@ class QueryManagement:
         protein_node_hits = [[item[0]]+item[1] for item in protein_node_hits.items()]
         print(gene_node_hits[:10])
         print(protein_node_hits[:10])
+        # Match geneIDs and proteinIds to their position in the node lists
+        gene_id_index = {}
+        gene_counter = 0
+        for gene_node in gene_node_hits:
+            gene_id_index[gene_node[0]]=gene_counter
+            gene_counter+=1
+        protein_id_index = {}
+        protein_counter = 0
+        for protein_node in protein_node_hits:
+            protein_id_index[protein_node[0]] = protein_counter
+            protein_counter += 1
+        print(gene_id_index)
+        print(protein_id_index)
         self.send_data("Working on it")
 
 
