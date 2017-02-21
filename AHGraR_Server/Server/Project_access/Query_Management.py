@@ -162,7 +162,6 @@ class QueryManagement:
         print(gene_node_hits[:10])
         print(protein_node_hits[:10])
         # If return format is CMD, return protein and gene lists and relations
-        return_format = "WEB"
         if return_format == "CMD":
             # Build return string
             reply = "Gene node(s):\n"
