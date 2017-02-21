@@ -129,13 +129,13 @@ class QueryManagement:
                                              {"query_species":query_species, "query_keyword":query_keyword})
             for record in query_hits:
                 protein_node_hits[record["p1"]["proteinId"]] = \
-                    (record["p1"]["protein_name"], record["p1"]["protein_descr"])
+                    [record["p1"]["protein_name"], record["p1"]["protein_descr"]]
                 # Check if protein p1 has a relationship to protein p2
                 # Possible types of relationship: HOMOLOG or SYNTENY,
                 # both with the additional attribute "sensitivity" (of clustering)
                 if record["rel"]:
-                    protein_node_rel.append([record["p1"]["proteinId"], record["rel"].type,
-                                             record["rel"]["sensitivity"], record["p2"]["proteinId"]])
+                    protein_node_rel.append((record["p1"]["proteinId"], record["rel"].type,
+                                             record["rel"]["sensitivity"], record["p2"]["proteinId"]))
 
 
         # Search for gene-protein relationships (only if looking for both protein and gene nodes)
