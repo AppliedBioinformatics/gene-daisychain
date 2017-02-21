@@ -51,7 +51,7 @@ class QueryManagement:
     def evaluate_user_request(self, user_request):
         if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 4:
             self.find_node(user_request[1:])
-        if user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 5:
+        elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 5:
             self.find_node_relations(user_request[1:])
         else:
             self.send_data("-8")
@@ -182,15 +182,15 @@ class QueryManagement:
             return
 
         # Otherwise, return format is WEB. Reformat data into json format:
-        gene_node_json = ["{'data': {'id':'"+gene_node[0]+"', 'type':'Gene', 'species':'"+gene_node[1]+
+        gene_node_json = ["{'data': {'id':'g"+gene_node[0]+"', 'type':'Gene', 'species':'"+gene_node[1]+
                           "', 'chromosome':'"+gene_node[2]+"', 'contig':'"+gene_node[3]+"', 'strand':'"+gene_node[4]+
                           "', 'start':"+str(gene_node[5])+", 'stop':"+str(gene_node[6])+", 'name':'"+gene_node[7]+"'"
                           for gene_node in gene_node_hits]
-        protein_node_json = ["{'data': {'id':'"+protein_node[0]+"', 'type':'Protein', 'name':'"+protein_node[1]+
+        protein_node_json = ["{'data': {'id':'p"+protein_node[0]+"', 'type':'Protein', 'name':'"+protein_node[1]+
                              "', 'description':'"+protein_node[2]+"'" for protein_node in protein_node_hits]
         print(gene_node_json)
         print(protein_node_json)
-
+        self.send_data("almost done")
         # Match geneIDs and proteinIds to their position in the node lists
         # gene_id_index = {}
         # gene_counter = 0
