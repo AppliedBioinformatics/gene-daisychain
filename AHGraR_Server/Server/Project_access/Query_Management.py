@@ -68,17 +68,17 @@ class QueryManagement:
         # "_" underscores were replaced by "\t" before being send to the server
         # Undo this here
         query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
-        # Check if query term has expected length: ["Organism", "Chromosome", "Name", "Annotation", "Protein/Gene/Both]
+        # Check if query term has expected length: ["Organism", "Chromosome", "Keyword", "Protein/Gene/Both]
         # Fields can be left empty, i.e. being ""
-        if len(query_term) != 5:
+        # Keyword looks in both gene/protein name and gene/protein annotation
+        if len(query_term) != 4:
             self.send_data("-10")
             return
         # Species name or gene/protein name to query for can be empty
         query_species = str(query_term[0]).lower()
         query_chromosome = str(query_term[1]).lower()
-        query_name = str(query_term[2]).lower()
-        query_anno = str(query_term[3]).lower()
-        query_type = str(query_term[4].lower())
+        query_keyword = str(query_term[2]).lower()
+        query_type = str(query_term[3].lower())
         if query_type not in ["gene", "protein", "both"]:
             self.send_data("-11")
             return
@@ -98,13 +98,12 @@ class QueryManagement:
         protein_node_rel = []
         # Search for gene node(s) and gene-gene relationships
         if query_type in ["gene", "both"]:
-            query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) "
-                                             "CONTAINS {query_species} "
-                                             "AND LOWER(gene.gene_name) CONTAINS {query_name} WITH COLLECT(gene) AS "
+            query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
+                                             "AND LOWER(gene.gene_name) CONTAINS {query_keyword} WITH COLLECT(gene) AS "
                                              "genes UNWIND genes AS g1 UNWIND genes AS g2 "
                                              "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
-                                             {"query_species": query_species, "query_name": query_name,
-                                              "query_chromosome": query_chromosome, "query_anno": query_anno})
+                                             {"query_species": query_species, "query_keyword": query_keyword,
+                                              "query_chromosome": query_chromosome, "query_anno": query_keyword})
             # The record format is a n x m matrix of all possible relations between gene nodes
             # First column is gene node 1, third is gene node 2 and the middle column is the relationship between
             # g1 and g2. This relationship can be None, i.e. there is no relationship.
@@ -117,14 +116,16 @@ class QueryManagement:
                 if record["rel"]:
                     gene_node_rel.append((record["g1"]["geneId"], record["rel"].type, record["g2"]["geneId"]))
         # Search for protein nodes and protein-protein relationships
+        # Proteins are always coded for by genes. The keyword query is therefore matched against the gene name, the
+        # protein name and the protein description.
         if query_type in ["protein", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
-                                             "CONTAINS {query_species} AND LOWER(prot.protein_name) CONTAINS "
-                                             "{query_name} AND LOWER(prot.protein_descr) CONTAINS {query_anno} WITH "
+                                             "CONTAINS {query_species} AND (LOWER(prot.protein_name) CONTAINS "
+                                             "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword} "
+                                             "OR LOWER(gene.gene_name) CONTAINS {query_keyword}) WITH "
                                              "COLLECT(prot) AS prots UNWIND prots as p1 UNWIND prots as p2 "
                                              "OPTIONAL MATCH (p1)-[rel]->(p2) RETURN p1,rel,p2",
-                                             {"query_species":query_species, "query_name":query_name,
-                                              "query_anno":query_anno})
+                                             {"query_species":query_species, "query_keyword":query_keyword})
             for record in query_hits:
                 protein_node_hits[record["p1"]["proteinId"]] = \
                     (record["p1"]["protein_name"], record["p1"]["protein_descr"])
@@ -139,10 +140,14 @@ class QueryManagement:
         print("Nr. of protein nodes: " + str(len(list(protein_node_hits.keys()))))
         print("Nr. of prot-prot rel: " + str(len(protein_node_rel)))
 
-        # Search for protein node(s)
-       # if query_type in ["protein", "both"]:
-       #     query_hits = project_db_conn.run("MATCH(gene:Gene)", {})
-       # self.send_data("\n".join(gene_node_hits))
+       # # Search for gene-protein relationships (only if looking for both protein and gene nodes)
+       #  if query_type == "both":
+       #      query_hits = project_db_conn.run("MATCH coding_path = (gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
+       #                                       "CONTAINS {query_species} AND (LOWER(prot.protein_name) CONTAINS "
+       #                                       "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword} OR "
+       #                                       "LOWER(gene.gene_name) CONTAINS {query_keyword}) "
+       #                                       "RETURN coding_path",
+       #                                       {"query_species": query_species, "query_keyword": query_keyword})
         self.send_data("Working on it")
 
 
