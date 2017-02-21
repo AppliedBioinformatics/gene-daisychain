@@ -153,7 +153,7 @@ class QueryManagement:
         print("Nr. of gene-gene rel: " + str(len(gene_node_rel)))
         print("Nr. of protein nodes: " + str(len(list(protein_node_hits.keys()))))
         print("Nr. of prot-prot rel: " + str(len(protein_node_rel)))
-        print("Nr. of gene-prot rel: " + str(len(protein_node_rel)))
+        print("Nr. of gene-prot rel: " + str(len(protein_gene_node_rel)))
 
 
         self.send_data("Working on it")
