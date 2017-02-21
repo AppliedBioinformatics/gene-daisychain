@@ -120,7 +120,7 @@ class QueryManagement:
                 protein_node_hits[record["p1"]["proteinId"]] = (record["p1"]["protein_name"], record["p1"]["protein_descr"])
                 if record["rel"]:
                     protein_node_rel.append((record["p1"]["proteinId"], "HOMOLOG_"+record["rel"]["sensitivity"], record["p2"]["proteinId"]))
-            print(protein_node_hits[key] for key in protein_node_hits.keys()[:10])
+            print(protein_node_hits)
             print(protein_node_rel[:10])
 
         # Search for protein node(s)
