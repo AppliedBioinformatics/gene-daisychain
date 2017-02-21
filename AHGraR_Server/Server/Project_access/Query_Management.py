@@ -81,6 +81,12 @@ class QueryManagement:
         # Collect gene node hits and protein node hits
         # Also collect relations between gene nodes, protein nodes
         # and gene/protein nodes
+        # Nodes are first collected in dicts to ensure uniqueness
+        # Format: dict["ProteinID"]= ("Protein_name", "Protein_descr")
+        # These are later turned into a list format:
+        # ("Protein", "ProteinID", "Protein_name", "Protein_descr")
+        # Relationships between nodes are stored in list format:
+        # ("ProteinID", "relation", "ProteinID")
         gene_node_hits = []
         gene_node_rel = []
         protein_node_hits = {}
@@ -114,8 +120,8 @@ class QueryManagement:
                 protein_node_hits[record["p1"]["proteinId"]] = (record["p1"]["protein_name"], record["p1"]["protein_descr"])
                 if record["rel"]:
                     protein_node_rel.append((record["p1"]["proteinId"], "HOMOLOG_"+record["rel"]["sensitivity"], record["p2"]["proteinId"]))
-            print(protein_node_hits)
-            print(protein_node_rel)
+            print(protein_node_hits[:10])
+            print(protein_node_rel[:10])
 
         # Search for protein node(s)
        # if query_type in ["protein", "both"]:
