@@ -140,14 +140,17 @@ class QueryManagement:
         print("Nr. of protein nodes: " + str(len(list(protein_node_hits.keys()))))
         print("Nr. of prot-prot rel: " + str(len(protein_node_rel)))
 
-       # # Search for gene-protein relationships (only if looking for both protein and gene nodes)
-       #  if query_type == "both":
-       #      query_hits = project_db_conn.run("MATCH coding_path = (gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
-       #                                       "CONTAINS {query_species} AND (LOWER(prot.protein_name) CONTAINS "
-       #                                       "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword} OR "
-       #                                       "LOWER(gene.gene_name) CONTAINS {query_keyword}) "
-       #                                       "RETURN coding_path",
-       #                                       {"query_species": query_species, "query_keyword": query_keyword})
+        # Search for gene-protein relationships (only if looking for both protein and gene nodes)
+        # i.e. relations between both gene and protein nodes found above (which can only be CODING relations)
+        # Since both genes and proteins need to be found, it is sufficient that the species term and the gene_name
+        # term are found (the search for protein nodes also checks the gene_name of the coding gene)
+        if query_type == "both":
+            query_hits = project_db_conn.run("MATCH coding_path = (gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
+                                             "CONTAINS {query_species} AND LOWER(gene.gene_name) CONTAINS {query_keyword} "
+                                             "RETURN coding_path",
+                                             {"query_species": query_species, "query_keyword": query_keyword})
+            for record in query_hits:
+                print(record)
         self.send_data("Working on it")
 
 
