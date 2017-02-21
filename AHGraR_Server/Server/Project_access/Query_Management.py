@@ -134,8 +134,8 @@ class QueryManagement:
                 # Possible types of relationship: HOMOLOG or SYNTENY,
                 # both with the additional attribute "sensitivity" (of clustering)
                 if record["rel"]:
-                    protein_node_rel.append((record["p1"]["proteinId"], record["rel"].type,
-                                             record["rel"]["sensitivity"], record["p2"]["proteinId"]))
+                    protein_node_rel.append([record["p1"]["proteinId"], record["rel"].type,
+                                             record["rel"]["sensitivity"], record["p2"]["proteinId"]])
 
 
         # Search for gene-protein relationships (only if looking for both protein and gene nodes)
