@@ -147,7 +147,7 @@ class QueryManagement:
         if query_type == "both":
             query_hits = project_db_conn.run("MATCH coding_path = (gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
                                              "CONTAINS {query_species} AND LOWER(gene.gene_name) CONTAINS {query_keyword} "
-                                             "RETURN gene, prot",
+                                             "RETURN gene.geneId, prot.proteinId",
                                              {"query_species": query_species, "query_keyword": query_keyword})
             for record in query_hits:
                 print(record)
