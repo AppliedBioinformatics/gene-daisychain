@@ -162,6 +162,7 @@ class QueryManagement:
         print(gene_node_hits[:10])
         print(protein_node_hits[:10])
         # If return format is CMD, return protein and gene lists and relations
+        return_format = "WEB"
         if return_format == "CMD":
             # Build return string
             reply = "Gene node(s):\n"
@@ -169,7 +170,7 @@ class QueryManagement:
                 reply += "\t".join(str(x) for x in gene_node)+"\n"
             reply += "Protein node(s):\n"
             for protein_node in protein_node_hits:
-                reply += "\t".join(str(x) for x in gene_node) + "\n"
+                reply += "\t".join(str(x) for x in protein_node) + "\n"
             reply += "Relations:\n"
             for gene_gene_rel in gene_node_rel:
                 reply += "\t".join(str(x) for x in gene_gene_rel) + "\n"
@@ -180,21 +181,30 @@ class QueryManagement:
             self.send_data(reply)
             return
 
+        # Otherwise, return format is WEB. Reformat data into json format:
+        gene_node_json = ["{'data': {'id':'"+gene_node[0]+"', 'type':'Gene', 'species':'"+gene_node[1]+
+                          "', 'chromosome':'"+gene_node[2]+"', 'contig':'"+gene_node[3]+"', 'strand':'"+gene_node[4]+
+                          "', 'start':'"+gene_node[5]+"', 'stop':'"+gene_node[6]+"', 'name':'"+gene_node[7]+"'"
+                          for gene_node in gene_node_hits]
+        protein_node_json = ["{'data': {'id':'"+protein_node[0]+"', 'type':'Protein', 'name':'"+protein_node[1]+
+                             "', 'description':'"+protein_node[2]+"'" for protein_node in protein_node_hits]
+        print(gene_node_json)
+        print(protein_node_json)
 
         # Match geneIDs and proteinIds to their position in the node lists
-        gene_id_index = {}
-        gene_counter = 0
-        for gene_node in gene_node_hits:
-            gene_id_index[gene_node[0]]=gene_counter
-            gene_counter+=1
-        protein_id_index = {}
-        protein_counter = 0
-        for protein_node in protein_node_hits:
-            protein_id_index[protein_node[0]] = protein_counter
-            protein_counter += 1
-        print(gene_id_index)
-        print(protein_id_index)
-        self.send_data("Working on it")
+        # gene_id_index = {}
+        # gene_counter = 0
+        # for gene_node in gene_node_hits:
+        #     gene_id_index[gene_node[0]]=gene_counter
+        #     gene_counter+=1
+        # protein_id_index = {}
+        # protein_counter = 0
+        # for protein_node in protein_node_hits:
+        #     protein_id_index[protein_node[0]] = protein_counter
+        #     protein_counter += 1
+        # print(gene_id_index)
+        # print(protein_id_index)
+        # self.send_data("Working on it")
 
 
         # Close connection to the project-db
