@@ -150,7 +150,7 @@ class QueryManagement:
                                              "RETURN gene.geneId, prot.proteinId",
                                              {"query_species": query_species, "query_keyword": query_keyword})
             for record in query_hits:
-                print(record)
+                print(record["gene.geneId"])
         self.send_data("Working on it")
 
 
