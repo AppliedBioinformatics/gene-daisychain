@@ -157,7 +157,7 @@ class QueryManagement:
         # Transfer gene node and protein node dicts into list structures
         # Sort gene node list by species,chromosome, contig, start
         #
-        gene_node_hits = [item for item in gene_node_hits.items()]
+        gene_node_hits = [item[0]+item[1] for item in gene_node_hits.items()]
         print(gene_node_hits[:10])
         self.send_data("Working on it")
 
