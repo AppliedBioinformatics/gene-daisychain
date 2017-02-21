@@ -187,8 +187,8 @@ class QueryManagement:
                           for gene_node in gene_node_hits]
         protein_node_json = ["{'data': {'id':'p"+protein_node[0]+"', 'type':'Protein', 'name':'"+protein_node[1]+
                              "', 'description':'"+protein_node[2]+"'" for protein_node in protein_node_hits]
-        print(gene_node_json)
-        print(protein_node_json)
+        nodes_json = "'nodes': ["+", ".join(gene_node_json)+", "+", ".join(protein_node_json)+"]"
+        print(nodes_json)
         self.send_data("almost done")
         # Match geneIDs and proteinIds to their position in the node lists
         # gene_id_index = {}
