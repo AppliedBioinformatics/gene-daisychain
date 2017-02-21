@@ -189,7 +189,6 @@ class QueryManagement:
         protein_node_json = ['{"data": {"id":"p'+protein_node[0]+'", "type":"Protein", "name":"'+protein_node[1]+
                              '", "description":"'+protein_node[2]+'"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": ['+', '.join(gene_node_json+protein_node_json)+']'
-        print(nodes_json)
         gene_gene_rel_json = ['{"data": {"source":"g'+gene_gene_rel[0]+'", "type":"'+gene_gene_rel[1]+
                               '", "target":"g'+gene_gene_rel[2]+'"}}' for gene_gene_rel in gene_node_rel]
         protein_protein_rel_json = ['{"data": {"source":"p'+prot_prot_rel[0]+'", "type":"'+prot_prot_rel[1]+
@@ -198,8 +197,7 @@ class QueryManagement:
         gene_protein_rel_json = ['{"data": {"source":"g'+prot_gene_rel[0]+'", "type":"CODING", "target":"'+
                                  prot_gene_rel[2]+'"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": ['+', '.join(gene_gene_rel_json+protein_protein_rel_json+gene_protein_rel_json)+']'
-        print(edges_json)
-        self.send_data("almost done")
+        self.send_data('{'+nodes_json+','+edges_json+'}')
         # Match geneIDs and proteinIds to their position in the node lists
         # gene_id_index = {}
         # gene_counter = 0
