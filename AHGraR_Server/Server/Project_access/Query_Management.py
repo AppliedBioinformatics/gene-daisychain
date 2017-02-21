@@ -161,6 +161,26 @@ class QueryManagement:
         protein_node_hits = [[item[0]]+item[1] for item in protein_node_hits.items()]
         print(gene_node_hits[:10])
         print(protein_node_hits[:10])
+        # If return format is CMD, return protein and gene lists and relations
+        if return_format == "CMD":
+            # Build return string
+            reply = "Gene node(s):\n"
+            for gene_node in gene_node_hits:
+                reply += "\t".join(str(x) for x in gene_node)+"\n"
+            reply += "Protein node(s):\n"
+            for protein_node in protein_node_hits:
+                reply += "\t".join(str(x) for x in gene_node) + "\n"
+            reply += "Relations:\n"
+            for gene_gene_rel in gene_node_rel:
+                reply += "\t".join(str(x) for x in gene_gene_rel) + "\n"
+            for prot_prot_rel in protein_node_rel:
+                reply += "\t".join(str(x) for x in prot_prot_rel) + "\n"
+            for gene_prot_rel in protein_gene_node_rel:
+                reply += "\t".join(str(x) for x in gene_prot_rel) + "\n"
+            self.send_data(reply)
+            return
+
+
         # Match geneIDs and proteinIds to their position in the node lists
         gene_id_index = {}
         gene_counter = 0
