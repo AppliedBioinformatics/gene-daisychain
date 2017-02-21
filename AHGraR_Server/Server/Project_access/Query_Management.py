@@ -184,7 +184,7 @@ class QueryManagement:
         # Otherwise, return format is WEB. Reformat data into json format:
         gene_node_json = ["{'data': {'id':'"+gene_node[0]+"', 'type':'Gene', 'species':'"+gene_node[1]+
                           "', 'chromosome':'"+gene_node[2]+"', 'contig':'"+gene_node[3]+"', 'strand':'"+gene_node[4]+
-                          "', 'start':'"+gene_node[5]+"', 'stop':'"+gene_node[6]+"', 'name':'"+gene_node[7]+"'"
+                          "', 'start':"+str(gene_node[5])+", 'stop':"+str(gene_node[6])+", 'name':'"+gene_node[7]+"'"
                           for gene_node in gene_node_hits]
         protein_node_json = ["{'data': {'id':'"+protein_node[0]+"', 'type':'Protein', 'name':'"+protein_node[1]+
                              "', 'description':'"+protein_node[2]+"'" for protein_node in protein_node_hits]
