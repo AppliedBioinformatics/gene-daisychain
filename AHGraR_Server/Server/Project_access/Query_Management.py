@@ -68,7 +68,11 @@ class QueryManagement:
         # "_" underscores were replaced by "\t" before being send to the server
         # Undo this here
         query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
-        print(query_term)
+        # Check if query term has expected length: ["Organism", "Chromosome", "Name", "Annotation", "Protein/Gene/Both]
+        # Fields can be left empty, i.e. being ""
+        if len(query_term) != 5:
+            self.send_data("-10")
+            return
         # Species name or gene/protein name to query for can be empty
         query_species = str(query_term[0]).lower()
         query_chromosome = str(query_term[1]).lower()
@@ -76,38 +80,43 @@ class QueryManagement:
         query_anno = str(query_term[3]).lower()
         query_type = str(query_term[4].lower())
         if query_type not in ["gene", "protein", "both"]:
-            self.send_data("-10")
+            self.send_data("-11")
             return
         # Collect gene node hits and protein node hits
         # Also collect relations between gene nodes, protein nodes
         # and gene/protein nodes
         # Nodes are first collected in dicts to ensure uniqueness
         # Format: dict["ProteinID"]= ("Protein_name", "Protein_descr")
+        # or dict["GeneID"]=("Organism", "chromosome", "contig_name", "strand", "start", "stop", "gene_name")
         # These are later turned into a list format:
         # ("Protein", "ProteinID", "Protein_name", "Protein_descr")
         # Relationships between nodes are stored in list format:
         # ("ProteinID", "relation", "ProteinID")
-        gene_node_hits = []
+        gene_node_hits = {}
         gene_node_rel = []
         protein_node_hits = {}
         protein_node_rel = []
-        # Search for gene node(s)
+        # Search for gene node(s) and gene-gene relationships
         if query_type in ["gene", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) "
                                              "CONTAINS {query_species} "
                                              "AND LOWER(gene.gene_name) CONTAINS {query_name} WITH COLLECT(gene) AS "
                                              "genes UNWIND genes AS g1 UNWIND genes AS g2 "
                                              "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
-                                             {"query_species":query_species, "query_name": query_name,
-                                              "query_chromosome":query_chromosome, "query_anno":query_anno})
-            # Collect all gene nodes for a
+                                             {"query_species": query_species, "query_name": query_name,
+                                              "query_chromosome": query_chromosome, "query_anno": query_anno})
+            # The record format is a n x m matrix of all possible relations between gene nodes
+            # First column is gene node 1, third is gene node 2 and the middle column is the relationship between
+            # g1 and g2. This relationship can be None, i.e. there is no relationship.
+            # The overall set of matching gene nodes is extracted from column 1 and stored in a dict to enforce
+            # uniqueness.
             for record in query_hits:
-                print(record["g1"]["geneId"], record["rel"], record["g2"])
-            # for record in query_hits:
-            #     gene_node_hits.append([str(record["gene"][item]) for item in ["geneId","species", " chromosome", "contig_name", "start",
-            #                                              "stop", "gene_name"]] )
-            # gene_node_hits.sort(key= lambda x: (x[1], x[2], x[3], x[4]))
-            # gene_node_hits = ["\t".join(item) for item in gene_node_hits]
+                gene_node_hits[record["g1"]["geneId"]] = \
+                    [record["g1"][item] for item in ["species", " chromosome", "contig_name", " strand",
+                                                     "start", "stop", "gene_name"]]
+                if record["rel"]:
+                    gene_node_rel.append((record["g1"]["geneId"], record["rel"].type, record["g2"]["geneId"]))
+        # Search for protein nodes and protein-protein relationships
         if query_type in ["protein", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
                                              "CONTAINS {query_species} AND LOWER(prot.protein_name) CONTAINS "
@@ -117,11 +126,18 @@ class QueryManagement:
                                              {"query_species":query_species, "query_name":query_name,
                                               "query_anno":query_anno})
             for record in query_hits:
-                protein_node_hits[record["p1"]["proteinId"]] = (record["p1"]["protein_name"], record["p1"]["protein_descr"])
+                protein_node_hits[record["p1"]["proteinId"]] = \
+                    (record["p1"]["protein_name"], record["p1"]["protein_descr"])
+                # Check if protein p1 has a relationship to protein p2
+                # Possible types of relationship: HOMOLOG or SYNTENY,
+                # both with the additional attribute "sensitivity" (of clustering)
                 if record["rel"]:
-                    protein_node_rel.append((record["p1"]["proteinId"], "HOMOLOG_"+record["rel"]["sensitivity"], record["p2"]["proteinId"]))
-            print(protein_node_hits)
-            print(protein_node_rel[:10])
+                    protein_node_rel.append((record["p1"]["proteinId"], record["rel"].type,
+                                             record["rel"]["sensitivity"], record["p2"]["proteinId"]))
+        print("Nr. of gene nodes: "+str(len(list(gene_node_hits.keys()))))
+        print("Nr. of gene-gene rel: " + str(len(gene_node_rel)))
+        print("Nr. of protein nodes: " + str(len(list(protein_node_hits.keys()))))
+        print("Nr. of prot-prot rel: " + str(len(protein_node_rel)))
 
         # Search for protein node(s)
        # if query_type in ["protein", "both"]:
