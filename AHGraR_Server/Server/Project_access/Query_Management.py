@@ -250,7 +250,7 @@ class QueryManagement:
             # The overall set of matching gene nodes is extracted from column 1 and stored in a dict to enforce
             # uniqueness.
             for record in query_hits:
-                print(record)
+                print(record["rel"]==True)
                 gene_node_hits[record["g1"]["geneId"]] = \
                     [record["g1"][item] for item in ["species", " chromosome", "contig_name", " strand",
                                                      "start", "stop", "gene_name"]]
