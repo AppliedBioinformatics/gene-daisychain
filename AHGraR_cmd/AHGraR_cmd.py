@@ -35,9 +35,6 @@ def receive_data(connection):
 
 
 def send_data(connection, reply):
-    # # First replace special characters | and _ with empty space
-    # reply = reply.replace("|"," ")
-    # reply = reply.replace("_", " ")
     # Add length of message to header
     message = str(len(reply)) + "|" + reply
     connection.sendall(message.encode())
