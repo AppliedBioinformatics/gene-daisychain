@@ -2,7 +2,7 @@ import asyncio
 import websockets
 
 async def hello():
-    async with websockets.connect('ws://localhost:6000') as websocket:
+    async with websockets.connect('ws://localhost:7000') as websocket:
         cmd = input("Command?")
         await websocket.send(cmd)
         reply = await websocket.recv()

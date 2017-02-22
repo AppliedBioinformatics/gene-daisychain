@@ -58,7 +58,7 @@ except OSError:
     exit(3)
 # Connect to gateway, running on the same server (i.e. localhost)
 gateway_port = int(ahgrar_config['AHGraR_Server']['port'])
-start_server = websockets.serve(handle, 'localhost', 6000)
+start_server = websockets.serve(handle, 'localhost', 7000)
 class_var = "ABC"
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
