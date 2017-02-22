@@ -282,7 +282,7 @@ def db_runner(connection, accessed_project, user_input):
 
 def query_management(connection, accessed_project, user_input):
     # Check user command for correct syntax
-    if 3 <= len(user_input) <=5:
+    if 4 <= len(user_input) <=5:
         if user_input[0] == "search" and len(user_input) == 5:
             # Convert user-input into search term:
             # Input: e.g. E.coli, "Plasmid A1", Keyword, Gene/Protein/Both
@@ -292,12 +292,10 @@ def query_management(connection, accessed_project, user_input):
             # Replace underscores in query terms with "\t"
             user_input = [item.strip().replace("_","\t") for item in user_input[1:]]
             send_data(connection, "_".join(["PAQURY", "SEAR", str(accessed_project), "CMD"]+user_input))
-            #send_data(connection, "PAQURY_SEAR_" + str(accessed_project) + "_CMD_" +
-             #         ":".join([item.strip().replace("_","\t") for item in user_input[1].split(",")]))
             recv = receive_data(connection)
             print(recv)
-        if user_input[0] == "related" and len(user_input) == 3:
-            send_data(connection, "PAQURY_RELA_"+ str(accessed_project)+"_CMD_"+str(user_input[1])+"_"+str(user_input[2]))
+        if user_input[0] == "related" and len(user_input) == 6:
+            send_data(connection, "PAQURY_RELA_"+ str(accessed_project)+"_CMD_"+"_".join(user_input[1:]))
             recv = receive_data(connection)
             print(recv)
 

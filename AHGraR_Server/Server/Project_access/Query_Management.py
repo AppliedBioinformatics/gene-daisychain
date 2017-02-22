@@ -51,7 +51,7 @@ class QueryManagement:
     def evaluate_user_request(self, user_request):
         if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7:
             self.find_node(user_request[1:])
-        elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 5:
+        elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 6:
             self.find_node_relations(user_request[1:])
         else:
             self.send_data("-8")
@@ -69,14 +69,12 @@ class QueryManagement:
             self.send_data("-9")
             return
         # Determine node type and ID, first letter of ID determines whether node is a gene or protein
-        node_id = user_request[2]
-        if node_id[0] not in ["g", "p"]:
-            self.send_data("-11.5")
+        node_type = user_request[2]
+        if not node_type in ["Gene", "Protein"]:
+            self.send_data("-10")
             return
-        node_type = "Gene" if node_id[0]=="g" else "Protein"
-        # Remove type letter from node-id
-        node_id = node_id[1:]
-        relationship_type = user_request[3]
+        node_id = user_request[3]
+        relationship_type = user_request[4]
         if not relationship_type in ["5_NB", "3_NB", "CODING", "HOMOLOG", "SYNTENY"]:
             self.send_data("-12")
             return
