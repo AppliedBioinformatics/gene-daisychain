@@ -8,7 +8,7 @@ async def handle(websocket, path):
     # Receive request from web application
     web_request = await websocket.recv()
     # Forward request to AHGraR gateway
-    connection = socket.create_connection(('localhost', gateway_port))
+    connection = socket.create_connection(('146.118.99.190', gateway_port))
     send_data(connection, web_request)
     gateway_reply = receive_data(connection)
     websocket.send(gateway_reply)
