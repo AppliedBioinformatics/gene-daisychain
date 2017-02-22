@@ -285,13 +285,15 @@ def query_management(connection, accessed_project, user_input):
     if 3 <= len(user_input) <=5:
         if user_input[0] == "search" and len(user_input) == 5:
             # Convert user-input into search term:
-            # Input: e.g. E.coli, Plasmid A1,
-            # convert to: org:name:prot
+            # Input: e.g. E.coli, "Plasmid A1", Keyword, Gene/Protein/Both
+            # PAQURY_SEAR_123_CMD_E.coli_Plasmid A1_Keyword_Both
             # Search is case-insensitive, last term defines if searching for only gene or protein,
             # if empty: search for both
             # Replace underscores in query terms with "\t"
-            send_data(connection, "PAQURY_SEAR_" + str(accessed_project) + "_CMD_" +
-                      ":".join([item.strip().replace("_","\t") for item in user_input[1].split(",")]))
+            user_input = [item.strip().replace("_","\t") for item in user_input[1:]]
+            send_data(connection, "_".join(["PAQURY", "SEAR", str(accessed_project), "CMD"]+user_input))
+            #send_data(connection, "PAQURY_SEAR_" + str(accessed_project) + "_CMD_" +
+             #         ":".join([item.strip().replace("_","\t") for item in user_input[1].split(",")]))
             recv = receive_data(connection)
             print(recv)
         if user_input[0] == "related" and len(user_input) == 3:

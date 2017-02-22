@@ -49,7 +49,7 @@ class QueryManagement:
     # User_request is a list of the "_" split command
     # e.g. [SEAR, ProjectID, Organism:Chromosome:Name:Annotation:Gene/Protein(Both]
     def evaluate_user_request(self, user_request):
-        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 4:
+        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7:
             self.find_node(user_request[1:])
         elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 5:
             self.find_node_relations(user_request[1:])
@@ -98,7 +98,8 @@ class QueryManagement:
             return
         # "_" underscores were replaced by "\t" before being send to the server
         # Undo this here
-        query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
+        query_term = [item.strip().replace("\t", "_") for item in user_request[2:]]
+        #query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
         # Check if query term has expected length: ["Organism", "Chromosome", "Keyword", "Protein/Gene/Both]
         # Fields can be left empty, i.e. being ""
         # Keyword looks in both gene/protein name and gene/protein annotation
