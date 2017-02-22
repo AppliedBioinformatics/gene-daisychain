@@ -294,7 +294,7 @@ def query_management(connection, accessed_project, user_input):
             send_data(connection, "_".join(["PAQURY", "SEAR", str(accessed_project), "CMD"]+user_input))
             recv = receive_data(connection)
             print(recv)
-        if user_input[0] == "related" and len(user_input) == 6:
+        if user_input[0] == "related" and len(user_input) == 5:
             send_data(connection, "PAQURY_RELA_"+ str(accessed_project)+"_CMD_"+"_".join(user_input[1:]))
             recv = receive_data(connection)
             print(recv)
