@@ -254,6 +254,7 @@ class QueryManagement:
                     [record["g1"][item] for item in ["species", " chromosome", "contig_name", " strand",
                                                      "start", "stop", "gene_name"]]
                 if record["rel"]:
+                    print("rel")
                     gene_node_rel.append((record["g1"]["geneId"], record["rel"].type, record["g2"]["geneId"]))
         # Search for protein nodes and protein-protein relationships
         # Proteins are always coded for by genes. The keyword query is therefore matched against the gene name, the
