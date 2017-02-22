@@ -14,6 +14,7 @@ async def handle(websocket, path):
         exit(3)
     connection = socket.create_connection(
         (ahgrar_config['AHGraR_Gateway']['ip'], ahgrar_config['AHGraR_Gateway']['port']))
+    connection.sendall("Hey")
     connection.close()
     greeting = "Hello {}!".format(web_request)
     await websocket.send(greeting)
