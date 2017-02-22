@@ -91,9 +91,9 @@ class QueryManagement:
         protein_gene_node_rel = []
         # Search for a "5_NB" pr "3_NB" relationship between gene node and gene node
         if relationship_type in ["5_NB", "3_NB"]and node_type == "Gene":
-            query_hits = project_db_conn.run("MATCH(gene:Gene)-[rel:{rel_type}]->(targetGene:Gene) "
+            query_hits = project_db_conn.run("MATCH(gene:Gene)-[rel:"+relationship_type+"]->(targetGene:Gene) "
                                              "WHERE gene.geneId = {geneId} RETURN gene, rel, targetGene",
-                                             {"geneId": node_id, "rel_type": relationship_type} )
+                                             {"geneId": node_id} )
             for record in query_hits:
                 gene_node_hits[record["targetGene"]["geneId"]] = \
                     [record["targetGene"][item] for item in ["species", " chromosome", "contig_name", " strand",
@@ -120,9 +120,9 @@ class QueryManagement:
                 protein_gene_node_rel.append((record["targetGene.geneId"], "CODING", record["prot.proteinId"]))
         # Search for a "HOMOLOG" or "SYNTENY" relationship between a protein node and other protein nodes
         if relationship_type in ["HOMOLOG", "SYNTENY"] and node_type == "Protein":
-            query_hits = project_db_conn.run("MATCH(prot:Protein)-[rel:{rel_type}]->(targetProt:Protein) "
+            query_hits = project_db_conn.run("MATCH(prot:Protein)-[rel:"+relationship_type+"]->(targetProt:Protein) "
                                              "WHERE prot.proteinId = {protId} RETURN prot, rel, targetProt",
-                                             {"protId": node_id, "rel_type":relationship_type})
+                                             {"protId": node_id})
             for record in query_hits:
                 protein_node_hits[record["targetProt"]["proteinId"]] = \
                     [record["targetProt"]["protein_name"], record["targetProt"]["protein_descr"]]
