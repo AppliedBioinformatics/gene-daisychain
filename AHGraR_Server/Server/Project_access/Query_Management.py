@@ -75,6 +75,11 @@ class QueryManagement:
             return
         node_id = user_request[3]
         relationship_type = user_request[4]
+        # Modify 5NB and 3NB to 5_NB and 3_NB
+        if relationship_type == "5NB":
+            relationship_type = "5_NB"
+        if relationship_type == "3NB":
+            relationship_type = "3_NB"
         if not relationship_type in ["5_NB", "3_NB", "CODING", "HOMOLOG", "SYNTENY"]:
             self.send_data("-12")
             return
