@@ -2,6 +2,7 @@
 import socket,os
 import sqlite3
 import configparser
+import shlex
 
 
 # Receive data coming in from gateway
@@ -281,10 +282,10 @@ def db_runner(connection, accessed_project, user_input):
 
 def query_management(connection, accessed_project, user_input):
     # Check user command for correct syntax
-    if 2 <= len(user_input) <=3:
-        if user_input[0] == "search" and len(user_input) == 2:
+    if 3 <= len(user_input) <=5:
+        if user_input[0] == "search" and len(user_input) == 5:
             # Convert user-input into search term:
-            # Input: e.g. Org,Name,Protein/Gene
+            # Input: e.g. E.coli, Plasmid A1,
             # convert to: org:name:prot
             # Search is case-insensitive, last term defines if searching for only gene or protein,
             # if empty: search for both
@@ -293,7 +294,10 @@ def query_management(connection, accessed_project, user_input):
                       ":".join([item.strip().replace("_","\t") for item in user_input[1].split(",")]))
             recv = receive_data(connection)
             print(recv)
-
+        if user_input[0] == "related" and len(user_input) == 3:
+            send_data(connection, "PAQURY_RELA_"+ str(accessed_project)+"_CMD_"+str(user_input[1])+"_"+str(user_input[2]))
+            recv = receive_data(connection)
+            print(recv)
 
 
 
@@ -322,7 +326,7 @@ if __name__ == '__main__':
         if user_input == "exit": break
         connection = socket.create_connection(
             (ahgrar_config['AHGraR_Gateway']['ip'], ahgrar_config['AHGraR_Gateway']['port']))
-        user_input = user_input.split(" ")
+        user_input = shlex.split(user_input)
         if user_input[0] == "project": project_management(connection, user_input)
         elif user_input[0] == "access": project_access(connection, user_input)
         connection.close()

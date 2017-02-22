@@ -55,7 +55,38 @@ class QueryManagement:
             self.find_node_relations(user_request[1:])
         else:
             self.send_data("-8")
+    # Find a nodes relation(s)
+    # Input: Node-ID plus type of relation
+    # i,e. 5NB,3NB,CODING,HOMOLOG,SYNTENY
+    def find_node_relations(self, user_request):
+        # Connect to the project-db
+        project_db_conn = self.get_project_db_connection(user_request[0])
+        # Determine requested return format
+        # Format is either optimized for AHGraR-cmd or AHGraR-web
+        return_format = user_request[1]
+        if not return_format in ["CMD", "WEB"]:
+            self.send_data("-9")
+            return
+        # Determine node type and ID, first letter of ID determines whether node is a gene or protein
+        node_id = user_request[2]
+        node_type = "Gene" if node_id[0]=="g" else "Protein"
+        # Remove type letter from node-id
+        node_id = node_id[1:]
+        relationship_type = user_request[3]
+        if not relationship_type in ["5NB", "3NB", "CODING", "HOMOLOG", "SYNTENY"]:
+            self.send_data("-12")
+            return
+        # Search for a "5NB" relationship between gene node and gene node
+        if relationship_type == "5NB" and node_type == "Gene":
+            query_hits = project_db_conn.run("MATCH(gene:Gene)-[:5_NB]->(targetGene:Gene) "
+                                             "WHERE gene.geneId = {geneId} RETURN(targetGene)",
+                                             {"geneId": node_id})
 
+        # Close connection to the project-db
+        project_db_conn.close()
+
+
+    #Find node(s) based on search terms
     def find_node(self, user_request):
         # Connect to the project-db
         project_db_conn = self.get_project_db_connection(user_request[0])
@@ -149,11 +180,6 @@ class QueryManagement:
                                              {"query_species": query_species, "query_keyword": query_keyword})
             for record in query_hits:
                 protein_gene_node_rel.append((record["gene.geneId"], "CODING", record["prot.proteinId"]))
-        print("Nr. of gene nodes: "+str(len(list(gene_node_hits.keys()))))
-        print("Nr. of gene-gene rel: " + str(len(gene_node_rel)))
-        print("Nr. of protein nodes: " + str(len(list(protein_node_hits.keys()))))
-        print("Nr. of prot-prot rel: " + str(len(protein_node_rel)))
-        print("Nr. of gene-prot rel: " + str(len(protein_gene_node_rel)))
         # Transfer gene node and protein node dicts into list structures
         # Sort gene node list by species,chromosome, contig, start
         gene_node_hits = [[item[0]]+item[1] for item in gene_node_hits.items()]
@@ -162,7 +188,6 @@ class QueryManagement:
         print(gene_node_hits[:10])
         print(protein_node_hits[:10])
         # If return format is CMD, return protein and gene lists and relations
-        return_format = "WEB"
         if return_format == "CMD":
             # Build return string
             reply = "Gene node(s):\n"
@@ -198,21 +223,5 @@ class QueryManagement:
                                  prot_gene_rel[2]+'"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": ['+', '.join(gene_gene_rel_json+protein_protein_rel_json+gene_protein_rel_json)+']'
         self.send_data('{'+nodes_json+','+edges_json+'}')
-        # Match geneIDs and proteinIds to their position in the node lists
-        # gene_id_index = {}
-        # gene_counter = 0
-        # for gene_node in gene_node_hits:
-        #     gene_id_index[gene_node[0]]=gene_counter
-        #     gene_counter+=1
-        # protein_id_index = {}
-        # protein_counter = 0
-        # for protein_node in protein_node_hits:
-        #     protein_id_index[protein_node[0]] = protein_counter
-        #     protein_counter += 1
-        # print(gene_id_index)
-        # print(protein_id_index)
-        # self.send_data("Working on it")
-
-
         # Close connection to the project-db
         project_db_conn.close()

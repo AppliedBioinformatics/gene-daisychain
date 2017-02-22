@@ -23,9 +23,9 @@ access project "project_id"
         stop                            PADABA_ProjectID_STOP
         status                          PADABA_ProjectID_STATUS
     query                               PAQURY_ProjectID_Query
-        search  Org,Chromosome,Keyword,Protein/Gene/Both   PAQURY_SEAR_ProjectID/ProjectName_CMD/WEB_Organism:Name:Prot/Gene
+        search  Org Chromosome Keyword Protein/Gene/Both   PAQURY_SEAR_ProjectID/ProjectName_CMD/WEB_Organism:Name:Prot/Gene
         blast   Org,Name,Protein,Seq
-        related  ID  TERM               PAQURY_RELA_ProjectID_NodeID_CMD/WEB:Relationship1:Relationship2
+        related  ID  5NB,3NB,CODING,HOMOLOG,SYNTENY               PAQURY_RELA_ProjectID_CMD/WEB_NodeID_Relationship
     job list                            PATASK_STAT_ProjectID_TaskID1_TaskID2
         status                          PATASK_STAT_ProjectID_TaskID
         result                          PATASK_RESU_ProjectID_TaskID
