@@ -250,11 +250,11 @@ class QueryManagement:
             # The overall set of matching gene nodes is extracted from column 1 and stored in a dict to enforce
             # uniqueness.
             for record in query_hits:
+                print(record)
                 gene_node_hits[record["g1"]["geneId"]] = \
                     [record["g1"][item] for item in ["species", " chromosome", "contig_name", " strand",
                                                      "start", "stop", "gene_name"]]
                 if record["rel"]:
-                    print("rel")
                     gene_node_rel.append((record["g1"]["geneId"], record["rel"].type, record["g2"]["geneId"]))
         # Search for protein nodes and protein-protein relationships
         # Proteins are always coded for by genes. The keyword query is therefore matched against the gene name, the
