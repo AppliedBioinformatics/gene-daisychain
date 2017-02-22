@@ -99,6 +99,8 @@ class QueryManagement:
         # "_" underscores were replaced by "\t" before being send to the server
         # Undo this here
         query_term = [item.strip().replace("\t", "_") for item in user_request[2:]]
+        # Replace * placeholders with empty string
+        query_term = [item if item != "*" else "" for item in query_term]
         #query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
         # Check if query term has expected length: ["Organism", "Chromosome", "Keyword", "Protein/Gene/Both]
         # Fields can be left empty, i.e. being ""
