@@ -250,11 +250,10 @@ class QueryManagement:
             # The overall set of matching gene nodes is extracted from column 1 and stored in a dict to enforce
             # uniqueness.
             for record in query_hits:
-                print(record["rel"] is None)
                 gene_node_hits[record["g1"]["geneId"]] = \
                     [record["g1"][item] for item in ["species", " chromosome", "contig_name", " strand",
                                                      "start", "stop", "gene_name"]]
-                if record["rel"]:
+                if record["rel"] is not None:
                     gene_node_rel.append((record["g1"]["geneId"], record["rel"].type, record["g2"]["geneId"]))
         # Search for protein nodes and protein-protein relationships
         # Proteins are always coded for by genes. The keyword query is therefore matched against the gene name, the
@@ -273,7 +272,7 @@ class QueryManagement:
                 # Check if protein p1 has a relationship to protein p2
                 # Possible types of relationship: HOMOLOG or SYNTENY,
                 # both with the additional attribute "sensitivity" (of clustering)
-                if record["rel"]:
+                if record["rel"] is not None:
                     protein_node_rel.append((record["p1"]["proteinId"], record["rel"].type,
                                              record["rel"]["sensitivity"], record["p2"]["proteinId"]))
 
