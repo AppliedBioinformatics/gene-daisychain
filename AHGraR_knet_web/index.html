@@ -6,6 +6,8 @@
       // Load list of available projects
          window.onload = function(){
              select_menu = document.getElementById("select_proj")
+             var prolist = AHGraRWebSocketConnect("proj_list");
+             alert(prolist);
              for(var i = 0; i <= 10; i++) {
                  option = document.createElement("option");
                  option.value = "a";
