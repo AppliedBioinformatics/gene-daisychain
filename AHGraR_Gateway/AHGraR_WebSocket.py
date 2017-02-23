@@ -7,14 +7,44 @@ async def handle(websocket, path):
     web_request = await websocket.recv()
     connection = socket.create_connection(
         (ahgrar_config['AHGraR_Gateway']['ip'], ahgrar_config['AHGraR_Gateway']['port']))
-    reply = "PMINFO"
+    if web_request == "Project_List":
+        reply = "PMINFO"
+    else:
+        reply = ""
     message = str(len(reply)) + "|" + reply
     connection.sendall(message.encode())
-    reply = connection.recv(1024).decode()
+    gw_reply = receive_data(connection)
     connection.close()
-    greeting = "Hello {}!".format(reply)
-    await websocket.send(greeting)
-    print("> {}".format(greeting))
+    await websocket.send(gw_reply)
+
+
+# Receive data coming in from gateway
+def receive_data(connection):
+    # First, determine the length of the message
+    # The message has a header containing the length
+    # of the actual message:
+    # e.g. 123|Data bla bla
+    # First, receive data bytewise until the "|" is detected
+    msg_header = ""
+    while True:
+        incoming_data = connection.recv(1).decode()
+        if incoming_data == "|":
+            break
+        else:
+            msg_header += incoming_data
+    # Store length of the actual message
+    msg_length = int(msg_header)
+    # Start to build up the actual message
+    msg = ""
+    # Receive chunks of data until the length of the received message equals the expected length
+    while msg_length > 0:
+        # Receive a max. of 1024 bytes
+        rcv_length = 1024 if msg_length >= 1024 else msg_length
+        msg_chunk = connection.recv(rcv_length).decode()
+        # Subtract the actual length of the received message from the overall message length
+        msg_length -= len(msg_chunk)
+        msg += msg_chunk
+    return(msg)
 
 ahgrar_config = configparser.ConfigParser()
 try:
