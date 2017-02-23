@@ -22,7 +22,7 @@
                var wsconn = new WebSocket("ws://146.118.99.190:7687/");
                wsconn.onopen = function () {wsconn.send(request);};
                wsconn.onopen = function() {wsconn.send(request);};
-               wsconn.onmessage = function (evt){ var received_msg = evt.data; return received_msg;};
+               wsconn.onmessage = function (evt){ var received_msg = evt.data; console.log(received_msg); return received_msg;};
 
             }
             else
