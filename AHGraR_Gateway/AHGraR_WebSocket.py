@@ -14,7 +14,9 @@ async def handle(websocket, path):
         exit(3)
     connection = socket.create_connection(
         (ahgrar_config['AHGraR_Gateway']['ip'], ahgrar_config['AHGraR_Gateway']['port']))
-    connection.send("PMINFO".encode())
+    reply = "PMINFO"
+    message = str(len(reply)) + "|" + reply
+    connection.sendall(message.encode())
     reply = connection.recv(1024).decode()
     connection.close()
     greeting = "Hello {}!".format(reply)
