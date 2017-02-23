@@ -15,7 +15,7 @@
                wsconn.onopen = function () {wsconn.send(request);};
                wsconn.onmessage = function (evt){
                received_msg = evt.data;
-               if (request == "proj_list")
+               if (request == "Project_List")
                {
                SetProjectList(received_msg);
                }
