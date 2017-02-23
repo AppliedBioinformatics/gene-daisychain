@@ -1,24 +1,28 @@
 <!DOCTYPE HTML>
 <html>
    <head>
-	
+      <meta charset=utf-8 />
       <script type="text/javascript">
+      // Load list of available projects
+         window.onload = function(){
+             select_menu = document.getElementById("select_proj")
+             for(var i = 0; i <= 10; i++) {
+                 option = document.createElement("option");
+                 next_year = parseInt(year, 10) + i;
+                 option.value = next_year;
+                 option.innerHTML = next_year;
+                 select.appendChild(option);
+             }
+      };
          function AHGraRWebSocketConnect(request)
          {
             if ("WebSocket" in window)
             {
-               // Open a web socket
-               var ws = new WebSocket("ws://146.118.99.190:7687/");
-               ws.onopen = function()
-               {
-                  // Web Socket is connected, send data using send()
-                  ws.send(request);
-               };
-               ws.onmessage = function (evt) 
-               { 
-                  var received_msg = evt.data;
-                  alert(received_msg);
-               };
+               var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+               wsconn.onopen = function () {wsconn.send(request);};
+               wsconn.onopen = function() {wsconn.send(request);};
+               wsconn.onmessage = function (evt){ var received_msg = evt.data;};
+               alert(received_msg);
             }
             else
             {
