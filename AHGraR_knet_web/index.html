@@ -3,6 +3,8 @@
    <head>
       <meta charset=utf-8 />
       <script type="text/javascript">
+      // Global variables
+      var project_id = "0";
       // Load list of available projects
          window.onload = function(){
              AHGraRWebSocketConnect("Project_List");
@@ -39,11 +41,17 @@
                  select_menu.appendChild(option);
              };
          };
+         function changeProjectID()
+         {
+                var selector = document.getElementById("select_proj");
+                project_id = selector.options[selector.selectedIndex].value;
+                Console.log("New PI: "+project_id);
+         }
       </script>
 		
    </head>
    <body>
-       <select id="select_proj">
+       <select id="select_proj" onChange="javascript:changeProjectID();">
        </select>
       <div id="sse">
          <a href="javascript:AHGraRWebSocketConnect('Hello')">Run WebSocket</a>
