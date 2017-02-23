@@ -23,7 +23,7 @@ async def handle(websocket, path):
     await websocket.send(greeting)
     print("> {}".format(greeting))
 
-start_server = websockets.serve(handle, '127.0.0.1', 8765)
+start_server = websockets.serve(handle, '0.0.0.0', 7687)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
