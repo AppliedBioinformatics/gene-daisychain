@@ -29,11 +29,13 @@
          function SetProjectList(received_msg)
          {
             select_menu = document.getElementById("select_proj");
-            alert("Select"+received_msg);
-             for(var i = 0; i <= 10; i++) {
+            project_items = received_msg.split("\n");
+            for(var i = 0; i < project_items.length; i++)
+            {
+                 project_item = project_items[i].split("\n");
                  option = document.createElement("option");
-                 option.value = "a";
-                 option.innerHTML = "abc";
+                 option.innerHTML = project_item[0];
+                 option.value = project_item[1];
                  select_menu.appendChild(option);
              };
          };
