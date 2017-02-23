@@ -20,10 +20,8 @@
                   alert(received_msg);
                };
             }
-            
             else
             {
-               // The browser doesn't support WebSocket
                alert("WebSocket NOT supported by your Browser!");
             }
          }
@@ -31,7 +29,12 @@
 		
    </head>
    <body>
-   
+       <select id="select_proj">
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="mercedes">Mercedes</option>
+        <option value="audi">Audi</option>
+       </select>
       <div id="sse">
          <a href="javascript:AHGraRWebSocketConnect('Hello')">Run WebSocket</a>
       </div>
