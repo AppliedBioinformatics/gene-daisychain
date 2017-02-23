@@ -5,16 +5,7 @@
       <script type="text/javascript">
       // Load list of available projects
          window.onload = function(){
-             select_menu = document.getElementById("select_proj")
-             var prolist = AHGraRWebSocketConnect("proj_list");
-             alert("Select"+prolist);
-             console.log("Select"+prolist);
-             for(var i = 0; i <= 10; i++) {
-                 option = document.createElement("option");
-                 option.value = "a";
-                 option.innerHTML = "abc";
-                 select_menu.appendChild(option);
-             }
+             AHGraRWebSocketConnect("proj_list");
       };
          function AHGraRWebSocketConnect(request)
          {
@@ -22,16 +13,30 @@
             {
                var wsconn = new WebSocket("ws://146.118.99.190:7687/");
                wsconn.onopen = function () {wsconn.send(request);};
-               wsconn.onopen = function() {wsconn.send(request);};
-               var received_msg;
-               wsconn.onmessage = function (evt){ received_msg = evt.data; console.log(received_msg);};
-               return received_msg;
+               wsconn.onmessage = function (evt){
+               received_msg = evt.data;
+               if (request == "proj_list")
+               {
+               SetProjectList(received_msg);
+               }
+               console.log(received_msg);};
             }
             else
             {
                alert("WebSocket NOT supported by your Browser!");
             }
-         }
+         };
+         function SetProjectList(received_msg)
+         {
+            select_menu = document.getElementById("select_proj");
+            alert("Select"+prolist);
+             for(var i = 0; i <= 10; i++) {
+                 option = document.createElement("option");
+                 option.value = "a";
+                 option.innerHTML = "abc";
+                 select_menu.appendChild(option);
+             };
+         };
       </script>
 		
    </head>
