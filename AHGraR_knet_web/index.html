@@ -32,7 +32,7 @@
             project_items = received_msg.split("\n");
             for(var i = 0; i < project_items.length; i++)
             {
-                 project_item = project_items[i].split("\n");
+                 project_item = project_items[i].split("\t");
                  option = document.createElement("option");
                  option.innerHTML = project_item[0];
                  option.value = project_item[1];
