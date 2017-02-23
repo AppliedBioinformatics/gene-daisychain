@@ -1,0 +1,2 @@
+var graphJSON= { "edges": [], "nodes": [{ "data": { "type": "Protein", "id": "1", "value": "AT2G27380.1", "conceptDisplay": "element"}},
+{ "data": { "type": "Gene", "id": "2", "value": "AT2G2", "conceptDisplay": "element"}}]};
