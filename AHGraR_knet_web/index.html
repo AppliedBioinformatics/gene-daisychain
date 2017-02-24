@@ -44,7 +44,7 @@
              // Update global project ID variable
              changeProjectID();
              // Load project-specific list of species
-             LoadSpeciesList();
+             // LoadSpeciesList();
          };
          // Update the global project ID in response to either
          // changing the value in the project select menu
@@ -63,7 +63,7 @@
          function LoadSpeciesList()
          {
             // Open websocket to retrieve list of projects
-            //var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request species list
             wsconn.onopen = function () {wsconn.send("SL_"+project_id);};
             // Receive and process project list
