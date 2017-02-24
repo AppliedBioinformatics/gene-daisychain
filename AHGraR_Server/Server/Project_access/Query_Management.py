@@ -69,17 +69,19 @@ class QueryManagement:
         # Init the return value container
         reply_container = []
         if user_request[1] == "SPECIES":
-            query_hits = project_db_conn.run("MATCH(gene:Gene) RETURN DISTINCT gene.species")
+            query_hits = project_db_conn.run("MATCH(gene:Gene) RETURN DISTINCT gene.species ORDER BY gene.species")
             for record in query_hits:
                 reply_container.append(record["gene.species"])
         if user_request[1] == "CHROMOSOME" and 2 <= len(user_request) <= 3:
             # If no species was defined, return the distinct chromosome names of all species
             # Else return only the chromosomes of the selected species
             if len(user_request) == 2:
-                query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.` chromosome`")
+                query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.` chromosome` "
+                                                 "ORDER BY gene.` chromosome`")
             elif len(user_request) == 3:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  WHERE gene.species = {species_name} RETURN "
-                                                 "DISTINCT gene.` chromosome`", {"species_name":user_request[2].replace("\t", "_")})
+                                                 "DISTINCT gene.` chromosome` ORDER BY gene.` chromosome`",
+                                                 {"species_name":user_request[2].replace("\t", "_")})
             else:
                 query_hits = []
             for record in query_hits:
