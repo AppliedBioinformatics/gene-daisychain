@@ -71,7 +71,7 @@ class GFF3Parser:
     # Mandatory fields: Start,Stop,Contig,Gene_name,Protein_name
     # Optional fields: Chromosome,Strand,Phase,Protein_desc
     # Input: String, example:
-    # gene::(Start:4),(Stop:5),(Contig:1),(Gene_name:Name),(Phase:8),(Strand:7);CDS::(Protein_name:Name),(Protein_desc:product)
+    # gene::(Start:4),(Stop:5),(Contig:1),(Gene_name:Name),(Phase:8),(Strand:7);CDS::(Protein_name:Name),(Protein_desc:product),(Gene_desc:product)
     def set_annotation_mapper(self, anno_map):
         # 0. Ensure that annotation mapping string has the right format
         # Ensure that there are no whitespaces in anno_map
@@ -196,6 +196,7 @@ class GFF3Parser:
                 gene_node.append(gene_annotation_dict.get("Chromosome", "?")[0])
                 gene_node.append(gene_annotation_dict.get("Strand", "?")[0])
                 gene_node.append(gene_annotation_dict.get("Phase", "?")[0])
+                gene_node.append(gene_annotation_dict.get("Gene_desc", "?")[0])
                 # Add this gene node annotation to overall list of gene nodes
                 self.gene_list.append(tuple(gene_node))
                 # Create protein node annotation
