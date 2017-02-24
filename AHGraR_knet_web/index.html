@@ -86,6 +86,12 @@
             {
             select_species_menu.remove(select_species_menu.length-1);
             }
+            // Add default option: All species
+            // Fill select option with data:
+            option.innerHTML = "All species";
+            option.value = "All";
+            // Add new option to select menu
+            select_species_menu.add(option);
             // Iterate through project data
             for(var i = 0; i < species_items.length; i++)
             {
