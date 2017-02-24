@@ -218,6 +218,8 @@ class DBBuilder:
         try:
             subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j-admin"),
                     "set-initial-password", neo4j_pw], check=True, stdout=subprocess.PIPE, stderr =subprocess.PIPE)
+            subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j"),
+                            "start"], check=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             # Change project status to DB_RUNNING
             self.main_db_conn.run(
                 "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
