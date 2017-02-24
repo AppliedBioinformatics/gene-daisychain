@@ -56,6 +56,8 @@
             // Change global variable
             project_id = select_menu.options[select_menu.selectedIndex].value;
             console.log("New PI: "+project_id);
+            // Load project-specific list of species
+            LoadSpeciesList();
          }
          // Load list of species for this project
          function LoadSpeciesList()
