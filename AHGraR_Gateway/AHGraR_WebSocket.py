@@ -14,6 +14,14 @@ async def handle(websocket, path):
     elif web_request.startswith("SL"):
         proj_id = web_request.split("_")[1]
         reply = "PAQURY_LIST_"+proj_id+"_SPECIES"
+    elif web_request.startswith("CL"):
+        web_request = web_request.split("_")
+        proj_id = web_request[1]
+        species_name = web_request[2]
+        if species_name == "ALL":
+            reply = "PAQURY_LIST_"+proj_id+"_CHROMOSOME"
+        else:
+            reply = "PAQURY_LIST_" + proj_id + "_CHROMOSOME_"+species_name
     else:
         reply = ""
     message = str(len(reply)) + "|" + reply

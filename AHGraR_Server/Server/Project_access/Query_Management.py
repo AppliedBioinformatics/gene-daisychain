@@ -75,6 +75,7 @@ class QueryManagement:
         if user_request[1] == "CHROMOSOME" and 2 <= len(user_request) <= 3:
             # If no species was defined, return the distinct chromosome names of all species
             # Else return only the chromosomes of the selected species
+            # Replace any tabs in species name with underscores
             if len(user_request) == 2:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.` chromosome` "
                                                  "ORDER BY gene.` chromosome`")

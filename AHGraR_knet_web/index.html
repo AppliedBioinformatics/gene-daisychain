@@ -5,7 +5,6 @@
       <script type="text/javascript">
       // Global variables
       var project_id = "0";
-      var wsconn = new WebSocket("ws://146.118.99.190:7687/");
       // Trigger load list of available projects
          window.onload = function(){
              LoadProjectList();
@@ -14,7 +13,7 @@
          function LoadProjectList()
          {
             // Open websocket to retrieve list of projects
-            //var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request project list
             wsconn.onopen = function () {wsconn.send("Project_List");};
             // Receive and process project list
@@ -43,8 +42,6 @@
              };
              // Update global project ID variable
              changeProjectID();
-             // Load project-specific list of species
-             // LoadSpeciesList();
          };
          // Update the global project ID in response to either
          // changing the value in the project select menu
@@ -58,7 +55,7 @@
             console.log("New PI: "+project_id);
             // Load project-specific list of species
             LoadSpeciesList();
-         }
+         };
          // Load list of species for this project
          function LoadSpeciesList()
          {
@@ -71,8 +68,21 @@
                 console.log("Recv species msg");
                 SetSpeciesList(evt.data);
                 };
-         }
-          // Fill species select menu with available species
+         };
+         // Load list of chromosomes for this species
+         function LoadChromosomeList(new_species)
+         {
+            // Open websocket to retrieve list of projects
+            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            // Request chromosome list, replace underscores in species name with tabs
+            wsconn.onopen = function () {wsconn.send("CL_"+project_id+"_"+new_species.split("_").join("\t"));};
+            // Receive and process project list
+            wsconn.onmessage = function (evt){
+                console.log("Recv chromosome msg");
+                SetChromosomeList(evt.data);
+                };
+         };
+         // Fill species select menu with available species
          // Data comes from websocket "SL" command
          function SetSpeciesList(received_msg)
          {
@@ -90,7 +100,7 @@
             option = document.createElement("option");
             // Fill select option with data:
             option.innerHTML = "All species";
-            option.value = "All";
+            option.value = "ALL";
             // Add new option to select menu
             select_species_menu.add(option);
             // Iterate through project data
@@ -104,7 +114,52 @@
                  // Add new option to select menu
                  select_species_menu.add(option);
              };
-         }
+         };
+         // React to a change in species selection
+         function changeSpecies()
+         {
+            // Find select menu and retrieve currently selected project
+            var select_spec_menu = document.getElementById("select_species");
+            // Change global variable
+            new_species = select_spec_menu.options[select_spec_menu.selectedIndex].value;
+            console.log("New Species selection: "+new_species);
+            // Load species-specific list of chromosomes
+            LoadChromosomeList(new_species);
+         };
+         // Fill species select menu with available species
+         // Data comes from websocket "SL" command
+         function SetChromosomeList(received_msg)
+         {
+            console.log("SetChromosomeList");
+            // Find select menu
+            select_chrom_menu = document.getElementById("select_chromosome");
+            // Each line of data contains one chromosome
+            chromosome_items = received_msg.split("\n");
+            // Delete old options
+            while (select_chrom_menu.length > 0)
+            {
+            select_chrom_menu.remove(select_chrom_menu.length-1);
+            }
+            // Add default option: All chromosomes
+            option = document.createElement("option");
+            // Fill select option with data:
+            option.innerHTML = "All chromosomes";
+            option.value = "ALL";
+            // Add new option to select menu
+            select_chrom_menu.add(option);
+            // Iterate through chromosome data
+            for(var i = 0; i < species_items.length; i++)
+            {
+                 // Create a new select option
+                 option = document.createElement("option");
+                 // Fill select option with data:
+                 option.innerHTML = chromosome_items[i];
+                 option.value = chromosome_items[i];
+                 // Add new option to select menu
+                 select_chrom_menu.add(option);
+             };
+         };
+
 
       </script>
 		
@@ -112,7 +167,7 @@
    <body>
        <select id="select_proj" onChange="javascript:changeProjectID();">
        </select>
-       <select id="select_species">
+       <select id="select_species" onChange="javascript:changeSpecies()";>
        </select>
        <select id="select_chromosome">
        </select>
