@@ -63,11 +63,12 @@
             // Open websocket to retrieve list of projects
             //var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request species list
-            console.log("LoadSpeciesList");
             wsconn.onopen = function () {wsconn.send("SL"+project_id);};
             // Receive and process project list
-            wsconn.onmessage = function (evt){SetSpeciesList(evt.data);};
-            console.log("LoadSpeciesList2");
+            wsconn.onmessage = function (evt){
+                console.log("Recv species msg");
+                SetSpeciesList(evt.data);
+                };
          }
           // Fill species select menu with available species
          // Data comes from websocket "SL" command
