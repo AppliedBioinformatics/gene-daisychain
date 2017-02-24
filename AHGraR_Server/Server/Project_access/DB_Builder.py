@@ -10,6 +10,7 @@ from Parser.FASTA_parser import FastaParser
 import Parser.GFF3_parser_gffutils
 from random import choice
 from neo4j.v1 import GraphDatabase, basic_auth
+import time
 
 
 class DBBuilder:
@@ -220,6 +221,16 @@ class DBBuilder:
                     "set-initial-password", neo4j_pw], check=True, stdout=subprocess.PIPE, stderr =subprocess.PIPE)
             subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j"),
                             "start"], check=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            # Wait for database to startup
+            while True:
+                print("Check db status")
+                status = subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j"),
+                                "status"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                if status.returncode == 0:
+                    break
+                else:
+                    print("Wait for DB")
+                    time.sleep(30)
             # Change project status to DB_RUNNING
             self.main_db_conn.run(
                 "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
