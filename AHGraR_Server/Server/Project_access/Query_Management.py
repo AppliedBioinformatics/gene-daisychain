@@ -79,7 +79,7 @@ class QueryManagement:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.` chromosome`")
             elif len(user_request) == 3:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  WHERE gene.species = {species_name} RETURN "
-                                                 "DISTINCT gene.` chromosome`", {"species_name":user_request[2]})
+                                                 "DISTINCT gene.` chromosome`", {"species_name":user_request[2].replace("\t", "_")})
             else:
                 query_hits = []
             for record in query_hits:
