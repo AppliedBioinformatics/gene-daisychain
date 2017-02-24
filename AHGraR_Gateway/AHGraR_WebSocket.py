@@ -26,7 +26,7 @@ async def handle(websocket, path):
         web_request = web_request.split("_")
         # Shorten Protein/Gene/Both to Prot/Gene/Both
         web_request[5] = web_request[5][:4]
-        reply = "PAQURY_SEAR_"+"_".join(web_request[1:])
+        reply = "PAQURY_SEAR_"+web_request[1]+"_WEB_"+"_".join(web_request[2:])
     else:
         reply = ""
     message = str(len(reply)) + "|" + reply
