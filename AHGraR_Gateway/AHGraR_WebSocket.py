@@ -18,6 +18,7 @@ async def handle(websocket, path):
     message = str(len(reply)) + "|" + reply
     connection.sendall(message.encode())
     gw_reply = receive_data(connection)
+    print(gw_reply)
     connection.close()
     await websocket.send(gw_reply)
 
