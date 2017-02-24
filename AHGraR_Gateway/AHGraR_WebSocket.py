@@ -5,6 +5,7 @@ import socket
 
 async def handle(websocket, path):
     web_request = await websocket.recv()
+    print(web_request)
     connection = socket.create_connection(
         (ahgrar_config['AHGraR_Gateway']['ip'], ahgrar_config['AHGraR_Gateway']['port']))
     if web_request == "Project_List":
