@@ -84,7 +84,7 @@
             // Delete old options
             for(var i = 0; i < select_species_menu.childNodes.length; i++)
             {
-                select_species_menu.remove(i);
+                //select_species_menu.remove(i);
             }
             // Iterate through project data
             for(var i = 0; i < species_items.length; i++)
@@ -94,8 +94,8 @@
                  // Fill select option with data:
                  option.innerHTML = species_items[i];
                  option.value = species_items[i];
-                 // Add new option as child to select menu
-                 select_species_menu.appendChild(option);
+                 // Add new option to select menu
+                 select_species_menu.add(option);
              };
          }
 
