@@ -279,7 +279,7 @@ def db_runner(connection, accessed_project, user_input):
 
 def query_management(connection, accessed_project, user_input):
     # Check user command for correct syntax
-    if 4 <= len(user_input) <=5:
+    if 2 <= len(user_input) <=5:
         if user_input[0] == "search" and len(user_input) == 5:
             # Convert user-input into search term:
             # Input: e.g. E.coli, "Plasmid A1", Keyword, Gene/Protein/Both
@@ -295,6 +295,22 @@ def query_management(connection, accessed_project, user_input):
             send_data(connection, "PAQURY_RELA_"+ str(accessed_project)+"_CMD_"+"_".join(user_input[1:]))
             recv = receive_data(connection)
             print(recv)
+        if user_input[0] == "list" and user_input[1] == "species":
+            send_data(connection, "PAQURY_LIST_"+str(accessed_project)+"_SPECIES")
+            recv = receive_data(connection)
+            print(recv)
+        if user_input[0] == "list" and user_input[1] == "chromosomes":
+            # If no species name was defined, search for chromosome names in all species:
+            if len(user_input)==2:
+                send_data(connection, "PAQURY_LIST_"+str(accessed_project)+"_CHROMOSOME")
+                recv = receive_data(connection)
+                print(recv)
+            # Else search only for chromosome names belonging to one species
+            if len(user_input) == 3:
+                send_data(connection, "PAQURY_LIST_" + str(accessed_project) + "_CHROMOSOME"+user_input[2])
+                recv = receive_data(connection)
+                print(recv)
+
 
 
 
