@@ -182,7 +182,7 @@ def project_access(connection, user_input):
                 send_data(connection,"PMINFO_"+accessed_project)
                 project_status = receive_data(connection)
                 print(project_status)
-            if user_input[0] == "file":
+            if user_input[0] == "file" and len(user_input) > 1:
                 file_management(connection, accessed_project, user_input[1:])
             if user_input[0] == "build":
                 build_management(connection, accessed_project, user_input[1:])

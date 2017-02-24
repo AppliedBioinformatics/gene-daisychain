@@ -9,6 +9,7 @@ from CSV_creator.protein_cluster_to_csv import ClusterToCSV
 from Parser.FASTA_parser import FastaParser
 import Parser.GFF3_parser_gffutils
 from random import choice
+from neo4j.v1 import GraphDatabase, basic_auth
 
 
 class DBBuilder:
@@ -228,7 +229,30 @@ class DBBuilder:
                 , {"proj_id": int(proj_id), "new_status": "DB_START_FAILED"})
             print(err.stdout)
             print(err.stderr)
+        # Build indices on node properties
+        # First connect to the newly build database
+        # Retrieve the bolt port number
+        print("5. Create Indices")
+        self.task_mngr.set_task_status(proj_id, task_id, "Start building indices on project db")
+        bolt_port = self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj)={proj_id} "
+                                          "RETURN proj.bolt_port", {"proj_id": int(proj_id)}).single()[0]
+        # Connect to the project DB
+        project_db_driver = GraphDatabase.driver("bolt://localhost:" + str(bolt_port),
+                                                 auth=basic_auth("neo4j", neo4j_pw), encrypted=False)
+        project_db_conn = project_db_driver.session()
+        # Build indices
+        project_db_conn.run("CREATE INDEX ON :Gene(gene_name)")
+        project_db_conn.run("CREATE INDEX ON :Gene(geneId)")
+        project_db_conn.run("CREATE INDEX ON :Gene(species)")
+        project_db_conn.run("CREATE INDEX ON :Gene(chromosome)")
+        project_db_conn.run("CREATE INDEX ON :Gene(gene_descr)")
+        project_db_conn.run("CREATE INDEX ON :Protein(protein_descr)")
+        project_db_conn.run("CREATE INDEX ON :Protein(proteinId)")
+        project_db_conn.run("CREATE INDEX ON :Protein(protein_name)")
+        project_db_conn.close()
+        self.task_mngr.set_task_status(proj_id, task_id, "Finished")
         print("Finished")
+
 
 
     # For one GFF3 file (or all GFF3 files) in a project, set the annotation mapper and the feature hierarchy
