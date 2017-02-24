@@ -125,9 +125,9 @@
             var select_spec_menu = document.getElementById("select_species");
             // Change global variable
             species = select_spec_menu.options[select_spec_menu.selectedIndex].value;
-            console.log("New Species selection: "+new_species);
+            console.log("New Species selection: "+species);
             // Load species-specific list of chromosomes
-            LoadChromosomeList(new_species);
+            LoadChromosomeList();
          };
          // Fill species select menu with available species
          // Data comes from websocket "SL" command
