@@ -308,7 +308,7 @@ def query_management(connection, accessed_project, user_input):
             # Else search only for chromosome names belonging to one species
             if len(user_input) == 3:
                 # Replace underscores in species name with tabs
-                send_data(connection, "PAQURY_LIST_" + str(accessed_project) + "_CHROMOSOME"+user_input[2].replace("_", "\t"))
+                send_data(connection, "PAQURY_LIST_" + str(accessed_project) + "_CHROMOSOME_"+user_input[2].replace("_", "\t"))
                 recv = receive_data(connection)
                 print(recv)
 
