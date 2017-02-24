@@ -67,6 +67,7 @@
             wsconn.onopen = function () {wsconn.send("SL"+project_id);};
             // Receive and process project list
             wsconn.onmessage = function (evt){SetSpeciesList(evt.data);};
+            console.log("LoadSpeciesList2");
          }
           // Fill species select menu with available species
          // Data comes from websocket "SL" command
