@@ -11,6 +11,8 @@
 # The returned protein/gene node(s) contain an unique ID. This ID is used to retrieve 5'/3' neighbours, coding genes,
 # homologs, synteny-homologs etc. For these queries, only the project ID, the node ID and the relationship type are
 # needed
+# Return a list of species associated with a project
+# Return a list of chromosomes found in one or all species of a project
 import os
 from neo4j.v1 import GraphDatabase, basic_auth
 
@@ -53,8 +55,38 @@ class QueryManagement:
             self.find_node(user_request[1:])
         elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 6:
             self.find_node_relations(user_request[1:])
+        elif user_request[0] == "LIST" and user_request[1].isdigit() and 3 <=len(user_request) <= 4:
+            self.list_items(user_request[1:])
         else:
             self.send_data("-8")
+
+    # List properties of data stored in project db:
+    # 1. List all species in a project
+    # 2. List chromsome labels of one or all species in a project
+    def list_items(self, user_request):
+        # Connect to the project-db
+        project_db_conn = self.get_project_db_connection(user_request[0])
+        # Init the return value container
+        reply_container = []
+        if user_request[1] == "SPECIES":
+            query_hits = project_db_conn.run("MATCH(gene:Gene) RETURN DISTINCT gene.species")
+            for record in query_hits:
+                reply_container.append(record["gene.species"])
+        if user_request[1] == "CHROMOSOME" and 2 <= len(user_request) <= 3:
+            # If no species was defined, return the distinct chromosome names of all species
+            # Else return only the chromosomes of the selected species
+            if len(user_request) == 2:
+                query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.` chromosome`")
+            if len(user_request) == 3:
+                query_hits = project_db_conn.run("MATCH (gene:Gene)  WHERE gene.species = {species_name} RETURN "
+                                                 "DISTINCT gene.` chromosome`", {"species_name":user_request[2]})
+            else:
+                query_hits = []
+            for record in query_hits:
+                reply_container.append(record["gene.` chromosome`"])
+        self.send_data("\n".join(reply_container))
+
+
 
     # Find a nodes relation(s)
     # Input: Node-ID plus type of relation
@@ -206,10 +238,12 @@ class QueryManagement:
             return
         # "_" underscores were replaced by "\t" before being send to the server
         # Undo this here
-        query_term = [item.strip().replace("\t", "_") for item in user_request[2:]]
+        # Also replace any question marks with "" as question marks are used in the project graph db
+        # to represent missing data, i.e. could cause false hits
+        query_term = [item.strip().replace("\t", "_").replace("?", "") for item in user_request[2:]]
         # Replace * placeholders with empty string
         query_term = [item if item != "*" else "" for item in query_term]
-        #query_term = [item.strip().replace("\t", "_") for item in user_request[2].split(":")]
+
         # Check if query term has expected length: ["Organism", "Chromosome", "Keyword", "Protein/Gene/Both]
         # Fields can be left empty, i.e. being ""
         # Keyword looks in both gene/protein name and gene/protein annotation

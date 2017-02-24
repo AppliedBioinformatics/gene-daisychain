@@ -9,7 +9,7 @@
 # dict[prot_name]=(protein_id, protein_desc, gene_id)
 # Some annotation is mandatory, i.e. GFF3 file has to contain these fields, others are optional:
 # Mandatory: Gene-name, Protein-name, contig-name, start-index, stop-index
-# Optional: Protein-description, chromosome-name, strand-orientation, coding frame
+# Optional: Protein-description, Gene-description, chromosome-name, strand-orientation, coding frame
 import gffutils
 import os
 

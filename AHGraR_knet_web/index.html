@@ -28,24 +28,39 @@
                alert("WebSocket NOT supported by your Browser!");
             }
          };
+         // Fill select menu with available projects
+         // Data comes from websocket "Project_List" command
          function SetProjectList(received_msg)
          {
+            // Find select menu
             select_menu = document.getElementById("select_proj");
+            // Each line of data contains one project
+            // Each line has project name, project ID and project status
             project_items = received_msg.split("\n");
+            // Iterate through project data
             for(var i = 0; i < project_items.length; i++)
             {
                  project_item = project_items[i].split("\t");
+                 // Create a new select option
                  option = document.createElement("option");
+                 // Fill select option with data:
                  option.innerHTML = project_item[0];
                  option.value = project_item[1];
+                 // Add new option as child to select menu
                  select_menu.appendChild(option);
              };
+             // Update global project ID variable
              changeProjectID();
          };
+         // Update the global project ID in response to either
+         // changing the value in the project select menu
+         // or on initial loading of the page
          function changeProjectID()
          {
-                var selector = document.getElementById("select_proj");
-                project_id = selector.options[selector.selectedIndex].value;
+                // Find select menu and retrieve currently selected project
+                var select_menu = document.getElementById("select_proj");
+                // Change global variable
+                project_id = select_menu.options[select_menu.selectedIndex].value;
                 console.log("New PI: "+project_id);
          }
       </script>
@@ -53,6 +68,8 @@
    </head>
    <body>
        <select id="select_proj" onChange="javascript:changeProjectID();">
+       </select>
+       <select id="select_species" onChange="javascript:changeProjectID();">
        </select>
       <div id="sse">
          <a href="javascript:AHGraRWebSocketConnect('Hello')">Run WebSocket</a>

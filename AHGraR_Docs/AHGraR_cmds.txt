@@ -26,6 +26,8 @@ access project "project_id"
         search  Org Chromosome Keyword Protein/Gene/Both   PAQURY_SEAR_ProjectID/ProjectName_CMD/WEB_Organism_Chromosome_Keyword_Prot/Gene/Both
         blast   Org,Name,Protein,Seq
         related  Gene/Protein ID  5_NB,3_NB,CODING,HOMOLOG,SYNTENY               PAQURY_RELA_ProjectID_CMD/WEB_Gene/Protein_NodeID_Relationship
+        list    species                 PAQURY_LIST_ProjectID_SPECIES
+        list chromosomes                PAQURY_LIST_ProjectID_CHROMOSOME_Species
     job list                            PATASK_STAT_ProjectID_TaskID1_TaskID2
         status                          PATASK_STAT_ProjectID_TaskID
         result                          PATASK_RESU_ProjectID_TaskID
