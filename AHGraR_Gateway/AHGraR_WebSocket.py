@@ -9,6 +9,10 @@ async def handle(websocket, path):
         (ahgrar_config['AHGraR_Gateway']['ip'], ahgrar_config['AHGraR_Gateway']['port']))
     if web_request == "Project_List":
         reply = "PMINFO"
+        # Web request for species list: "SL_projID"
+    elif web_request.startswith("SL"):
+        proj_id = web_request.split("_")[1]
+        reply = "PAQURY_LIST_"+proj_id+"_SPECIES"
     else:
         reply = ""
     message = str(len(reply)) + "|" + reply

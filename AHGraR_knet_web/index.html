@@ -5,28 +5,20 @@
       <script type="text/javascript">
       // Global variables
       var project_id = "0";
-      // Load list of available projects
+      var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+      // Trigger load list of available projects
          window.onload = function(){
-             AHGraRWebSocketConnect("Project_List");
+             LoadProjectList();
       };
-         function AHGraRWebSocketConnect(request)
+         // Load list of available projects
+         function LoadProjectList()
          {
-            if ("WebSocket" in window)
-            {
-               var wsconn = new WebSocket("ws://146.118.99.190:7687/");
-               wsconn.onopen = function () {wsconn.send(request);};
-               wsconn.onmessage = function (evt){
-               received_msg = evt.data;
-               if (request == "Project_List")
-               {
-               SetProjectList(received_msg);
-               }
-               console.log(received_msg);};
-            }
-            else
-            {
-               alert("WebSocket NOT supported by your Browser!");
-            }
+            // Open websocket to retrieve list of projects
+            //var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            // Request project list
+            wsconn.onopen = function () {wsconn.send("Project_List");};
+            // Receive and process project list
+            wsconn.onmessage = function (evt){SetProjectList(evt.data);};
          };
          // Fill select menu with available projects
          // Data comes from websocket "Project_List" command
@@ -51,18 +43,53 @@
              };
              // Update global project ID variable
              changeProjectID();
+             // Load project-specific list of species
+             LoadSpeciesList();
          };
          // Update the global project ID in response to either
          // changing the value in the project select menu
          // or on initial loading of the page
          function changeProjectID()
          {
-                // Find select menu and retrieve currently selected project
-                var select_menu = document.getElementById("select_proj");
-                // Change global variable
-                project_id = select_menu.options[select_menu.selectedIndex].value;
-                console.log("New PI: "+project_id);
+            // Find select menu and retrieve currently selected project
+            var select_menu = document.getElementById("select_proj");
+            // Change global variable
+            project_id = select_menu.options[select_menu.selectedIndex].value;
+            console.log("New PI: "+project_id);
          }
+         // Load list of species for this project
+         function LoadSpeciesList()()
+         {
+            // Open websocket to retrieve list of projects
+            //var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            // Request species list
+            wsconn.onopen = function () {wsconn.send("SL"+project_id);};
+            // Receive and process project list
+            wsconn.onmessage = function (evt){SetSpeciesList(evt.data);};
+         }
+          // Fill species select menu with available species
+         // Data comes from websocket "SL" command
+         function SetSpeciesList(received_msg)
+         {
+         // Find select menu
+            select_species_menu = document.getElementById("select_species");
+            // Each line of data contains one species
+            species_items = received_msg.split("\n");
+            // Iterate through project data
+            for(var i = 0; i < species_items.length; i++)
+            {
+                 // Create a new select option
+                 option = document.createElement("option");
+                 // Fill select option with data:
+                 option.innerHTML = species_items[i];
+                 option.value = species_items[i];
+                 // Add new option as child to select menu
+                 select_species_menu.appendChild(option);
+             };
+             // Update global project ID variable
+             changeProjectID();
+         }
+
       </script>
 		
    </head>
@@ -74,14 +101,11 @@
        <select id="select_chromosome">
        </select>
        <input type="text" name="firstname">
-      <select id="select_type">
+       <select id="select_type">
             <option value="Both">Genes and Proteins</option>
             <option value="Gene">Genes only</option>
             <option value="Prot">Proteins only</option>
        </select>
-      <div id="sse">
-         <a href="javascript:AHGraRWebSocketConnect('Hello')">Run WebSocket</a>
-      </div>
-      
+        <button type="button">Search!</button>
    </body>
 </html>
