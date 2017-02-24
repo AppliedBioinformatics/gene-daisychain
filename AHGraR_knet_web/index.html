@@ -69,7 +69,15 @@
    <body>
        <select id="select_proj" onChange="javascript:changeProjectID();">
        </select>
-       <select id="select_species" onChange="javascript:changeProjectID();">
+       <select id="select_species">
+       </select>
+       <select id="select_chromosome">
+       </select>
+       <input type="text" name="firstname">
+      <select id="select_type">
+            <option value="Both">Genes and Proteins</option>
+            <option value="Gene">Genes only</option>
+            <option value="Prot">Proteins only</option>
        </select>
       <div id="sse">
          <a href="javascript:AHGraRWebSocketConnect('Hello')">Run WebSocket</a>
