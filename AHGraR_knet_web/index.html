@@ -5,6 +5,7 @@
       <script type="text/javascript">
       // Global variables
       var project_id = "0";
+      var species = "";
       // Trigger load list of available projects
          window.onload = function(){
              LoadProjectList();
@@ -69,13 +70,13 @@
                 SetSpeciesList(evt.data);
                 };
          };
-         // Load list of chromosomes for this species
-         function LoadChromosomeList(new_species)
+         // Load list of chromosomes for current species (global variable)
+         function LoadChromosomeList()
          {
             // Open websocket to retrieve list of projects
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request chromosome list, replace underscores in species name with tabs
-            wsconn.onopen = function () {wsconn.send("CL_"+project_id+"_"+new_species.split("_").join("\t"));};
+            wsconn.onopen = function () {wsconn.send("CL_"+project_id+"_"+species.split("_").join("\t"));};
             // Receive and process project list
             wsconn.onmessage = function (evt){
                 console.log("Recv chromosome msg");
@@ -123,7 +124,7 @@
             // Find select menu and retrieve currently selected project
             var select_spec_menu = document.getElementById("select_species");
             // Change global variable
-            new_species = select_spec_menu.options[select_spec_menu.selectedIndex].value;
+            species = select_spec_menu.options[select_spec_menu.selectedIndex].value;
             console.log("New Species selection: "+new_species);
             // Load species-specific list of chromosomes
             LoadChromosomeList(new_species);
@@ -161,6 +162,12 @@
                  select_chrom_menu.add(option);
              };
          };
+         // Search for genes/proteins in the project database
+         // Collects current settings in select menus and text field
+         function searchNow()
+         {
+
+         };
 
 
       </script>
@@ -179,6 +186,6 @@
             <option value="Gene">Genes only</option>
             <option value="Prot">Proteins only</option>
        </select>
-        <button type="button">Search!</button>
+        <button type="button" onclick="searchNow()">Search!</button>
    </body>
 </html>
