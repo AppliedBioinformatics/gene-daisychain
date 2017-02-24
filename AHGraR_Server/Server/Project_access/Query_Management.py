@@ -77,13 +77,12 @@ class QueryManagement:
             # Else return only the chromosomes of the selected species
             if len(user_request) == 2:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.` chromosome`")
-            if len(user_request) == 3:
+            elif len(user_request) == 3:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  WHERE gene.species = {species_name} RETURN "
                                                  "DISTINCT gene.` chromosome`", {"species_name":user_request[2]})
             else:
                 query_hits = []
             for record in query_hits:
-                print(record)
                 reply_container.append(record["gene.` chromosome`"])
         self.send_data("\n".join(reply_container))
 
