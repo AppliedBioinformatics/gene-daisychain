@@ -63,7 +63,7 @@
          function LoadSpeciesList()
          {
             // Open websocket to retrieve list of projects
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            //var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request species list
             wsconn.onopen = function () {wsconn.send("SL_"+project_id);};
             // Receive and process project list
