@@ -224,13 +224,13 @@ class DBBuilder:
             # Wait for database to startup
             while True:
                 print("Check db status")
+                time.sleep(60)
                 status = subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j"),
                                 "status"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if status.returncode == 0:
                     break
                 else:
                     print("Wait for DB")
-                    time.sleep(30)
             # Change project status to DB_RUNNING
             self.main_db_conn.run(
                 "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
