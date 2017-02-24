@@ -82,9 +82,9 @@
             // Each line of data contains one species
             species_items = received_msg.split("\n");
             // Delete old options
-            for(var i = 0; i < select_species_menu.childNodes.length; i++)
+            while(select_species_menu.childNodes)
             {
-                select_species_menu.removeChild(select_species_menu.childNodes[i]);
+                select_species_menu.removeChild(select_species_menu.firstChild);
             }
             // Iterate through project data
             for(var i = 0; i < species_items.length; i++)
