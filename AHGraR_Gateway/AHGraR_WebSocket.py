@@ -22,6 +22,11 @@ async def handle(websocket, path):
             reply = "PAQURY_LIST_"+proj_id+"_CHROMOSOME"
         else:
             reply = "PAQURY_LIST_" + proj_id + "_CHROMOSOME_"+species_name
+    elif web_request.startswith("QS"):
+        web_request = web_request.split("_")
+        # Shorten Protein/Gene/Both to Prot/Gene/Both
+        web_request[5] = web_request[5][:4]
+        reply = "PAQURY_SEAR_"+"_".join(web_request[1:])
     else:
         reply = ""
     message = str(len(reply)) + "|" + reply

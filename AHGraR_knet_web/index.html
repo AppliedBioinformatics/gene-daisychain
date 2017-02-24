@@ -172,7 +172,16 @@
             var chromosome = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
             var keyword = document.getElementById("keyword").value;
             var type = document.getElementById("select_type").value;
-            console.log(project_id + ", " + species + ", " + chromosome + ", " + keyword + ", " + type);
+            // Open websocket to send query to server
+            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            // Replace underscores in queries with tabs
+            wsconn.onopen = function () {wsconn.send("QS_"+project_id+"_"+species.split("_").join("\t")+"_"+
+            chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);};
+             // Receive and process query result
+            wsconn.onmessage = function (evt){
+                console.log(evt.data);
+                };
+
          };
 
 
