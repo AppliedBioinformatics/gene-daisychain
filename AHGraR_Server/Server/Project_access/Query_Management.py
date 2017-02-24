@@ -83,6 +83,7 @@ class QueryManagement:
             else:
                 query_hits = []
             for record in query_hits:
+                print(record)
                 reply_container.append(record["gene.` chromosome`"])
         self.send_data("\n".join(reply_container))
 
