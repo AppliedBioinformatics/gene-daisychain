@@ -296,7 +296,7 @@ class QueryManagement:
             # uniqueness.
             for record in query_hits:
                 gene_node_hits[record["g1"]["geneId"]] = \
-                    [record["g1"][item] for item in ["species", " chromosome", "contig_name", " strand",
+                    [record["g1"][item] for item in ["species", "chromosome", "contig_name", "strand",
                                                      "start", "stop", "gene_name"]]
                 if record["rel"] is not None:
                     gene_node_rel.append((record["g1"]["geneId"], record["rel"].type, record["g2"]["geneId"]))
