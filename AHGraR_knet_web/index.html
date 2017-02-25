@@ -33,6 +33,8 @@
             for(var i = 0; i < project_items.length; i++)
             {
                  project_item = project_items[i].split("\t");
+                 if (project_item[2] != "DB_RUNNING")
+                 {continue;};
                  // Create a new select option
                  option = document.createElement("option");
                  // Fill select option with data:
