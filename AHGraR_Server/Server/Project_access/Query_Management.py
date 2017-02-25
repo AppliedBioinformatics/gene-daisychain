@@ -335,6 +335,11 @@ class QueryManagement:
                                              {"query_species": query_species, "query_keyword": query_keyword})
             for record in query_hits:
                 protein_gene_node_rel.append((record["gene.geneId"], "CODING", record["prot.proteinId"]))
+        print(len(gene_node_hits))
+        print(len(protein_node_hits))
+        print(len(gene_node_rel))
+        print(len(protein_node_rel))
+        print(len(protein_gene_node_rel))
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
         if return_format == "CMD":
             self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
