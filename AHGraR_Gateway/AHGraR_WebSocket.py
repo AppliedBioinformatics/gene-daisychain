@@ -26,6 +26,11 @@ async def handle(websocket, path):
         web_request = web_request.split("_")
         # Shorten Protein/Gene/Both to Prot/Gene/Both
         web_request[5] = web_request[5][:4]
+        # Replace "ALL" in species and chromosome name with ""
+        if web_request[2] == "ALL":
+            web_request[2] == ""
+        if web_request[3] == "ALL":
+            web_request[3] == ""
         reply = "PAQURY_SEAR_"+web_request[1]+"_WEB_"+"_".join(web_request[2:])
     else:
         reply = ""
