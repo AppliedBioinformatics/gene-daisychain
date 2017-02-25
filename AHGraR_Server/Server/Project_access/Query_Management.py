@@ -77,7 +77,7 @@ class QueryManagement:
             # Else return only the chromosomes of the selected species
             # Replace any tabs in species name with underscores
             if len(user_request) == 2:
-                query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.chromosome"
+                query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.chromosome "
                                                  "ORDER BY gene.chromosome")
             elif len(user_request) == 3:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  WHERE gene.species = {species_name} RETURN "
