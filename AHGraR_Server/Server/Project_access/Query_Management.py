@@ -284,7 +284,9 @@ class QueryManagement:
         # Search for gene node(s) and gene-gene relationships
         if query_type in ["gene", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
-                                             "AND LOWER(gene.gene_name) CONTAINS {query_keyword} WITH COLLECT(gene) AS "
+                                             "AND LOWER(gene.chromosome) CONTAINS {query_chromosome} "
+                                             "AND (LOWER(gene.gene_name) CONTAINS {query_keyword} OR "
+                                             "LOWER(gene.gene_descr) CONTAINS {query kewyord}) WITH COLLECT(gene) AS "
                                              "genes UNWIND genes AS g1 UNWIND genes AS g2 "
                                              "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
                                              {"query_species": query_species, "query_keyword": query_keyword,
