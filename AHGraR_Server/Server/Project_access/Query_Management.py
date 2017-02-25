@@ -200,6 +200,11 @@ class QueryManagement:
     # Reformat node and edge data to fit the format expected by AHGraR-web
     def send_data_web(self, gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
                       protein_gene_node_rel):
+        print(gene_node_hits)
+        print(protein_node_hits)
+        print(gene_node_rel)
+        print(protein_node_rel)
+        print(protein_gene_node_rel)
         # Transfer gene node and protein node dicts into list structures
         # Sort gene node list by species,chromosome, contig, start
         gene_node_hits = [[item[0]] + item[1] for item in gene_node_hits.items()]
