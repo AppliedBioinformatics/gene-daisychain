@@ -263,7 +263,7 @@ class QueryManagement:
         query_chromosome = str(query_term[1]).lower()
         query_keyword = str(query_term[2]).lower()
         query_type = str(query_term[3].lower())
-        if query_type not in ["gene", "protein", "both"]:
+        if query_type not in ["gene", "prot", "both"]:
             self.send_data("-11")
             return
         # Collect gene node hits and protein node hits
