@@ -305,7 +305,7 @@ class QueryManagement:
         # Search for protein nodes and protein-protein relationships
         # Proteins are always coded for by genes. The keyword query is therefore matched against the gene name, the
         # protein name and the protein description.
-        if query_type in ["protein", "both"]:
+        if query_type in ["prot", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
                                              "CONTAINS {query_species} AND (LOWER(prot.protein_name) CONTAINS "
                                              "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword} "
