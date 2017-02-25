@@ -249,6 +249,7 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "Start building indices on project db")
         bolt_port = self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj)={proj_id} "
                                           "RETURN proj.bolt_port", {"proj_id": int(proj_id)}).single()[0]
+        print(bolt_port)
         # Connect to the project DB
         project_db_driver = GraphDatabase.driver("bolt://localhost:" + str(bolt_port),
                                                  auth=basic_auth("neo4j", neo4j_pw), encrypted=False)
