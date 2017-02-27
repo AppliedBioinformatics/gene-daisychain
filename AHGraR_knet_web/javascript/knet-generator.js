@@ -52,15 +52,15 @@ function initializeNetworkView() {
         .css({
           'content': 'data(type)', // label for edges (arrows).
           'font-size': '4px',
-          'curve-style': 'unbundled-bezier', /* options: bezier (curved) (default), unbundled-bezier (curved with manual control points), haystack (straight edges) */
+          'curve-style': function(edge){if (edge.data('type') == 'HOMOLOG'){return "bezier";} else {return "unbundled-bezier";}}, /* options: bezier (curved) (default), unbundled-bezier (curved with manual control points), haystack (straight edges) */
           'control-point-step-size': '10px', // specifies the distance between successive bezier edges.
           'control-point-distance': '20px', /* overrides control-point-step-size to curves single edges as well, in addition to parallele edges */
           'control-point-weight': '50', // '0': curve towards source node, '1': curve towards target node.
           'width': '1', // 'mapData(relationSize, 70, 100, 2, 6)',
           'line-color': 'black',
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
-          'target-arrow-shape': 'triangle',
-          'target-arrow-color': 'gray',
+          'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
+          'target-arrow-color': 'black',
           'display': 'show', // 'element' (show) or 'none' (hide).
           'text-opacity': '1' // to make the label visible by default.
         })

@@ -27,6 +27,7 @@
         <script src="javascript/knet-toggleFullScreen.js"></script>
         <script src="javascript/knet-itemInfo.js"></script>
         <script src="javascript/knet-generator.js"></script>
+        <script src="javascript/select_sensitivity.js"></script>
         <!-- test page js -->
         <script src="js/launchNetwork.js"></script>
         <title>AHGraR-web with KnetMaps.js</title>
@@ -36,6 +37,13 @@
     <button onclick="generateNetworkGraph('data/gene.json')">Give me genes</button>
     <button onclick="generateNetworkGraph('data/prot.json')">Give me proteins</button>
     <button onclick="generateNetworkGraph('data/gene_prot.json')">Give me genes and proteins</button>
+    <select id="select_sensitivity" onChange="javascript:changeSensitivity(this.value)";>
+            <option value="1.4">Very large clusters</option>
+            <option value="2.0">Large clusters</option>
+            <option value="4.0">Medium clusters</option>
+            <option value="6.0">Small clusters</option>
+            <option value="10.0">Very small clusters</option>
+       </select>
    <!-- KnetMaps -->
             <div id="knet-maps">
                 <div id="itemInfo" class="infoDiv" style="display:none;"><!-- Item Info pane -->
