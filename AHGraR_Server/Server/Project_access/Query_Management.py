@@ -224,16 +224,17 @@ class QueryManagement:
         prot_prot_rel_undirected = []
         for prot_prot_rel in protein_node_rel:
             start_node = prot_prot_rel[0]
+            sensitivity = prot_prot_rel[2]
             end_node = prot_prot_rel[3]
             # If reverse edge is already in edge collection, skip this edge
             # To save time while traversing the list remove the reverse edge
             # from the (temporary) edge_collection
-            if (end_node, start_node) in edge_collection:
-                edge_collection.remove((end_node, start_node))
+            if (end_node, start_node, sensitivity) in edge_collection:
+                edge_collection.remove((end_node, start_node, sensitivity))
                 continue
             else:
                 prot_prot_rel_undirected.append(prot_prot_rel)
-                edge_collection.append((end_node, start_node))
+                edge_collection.append((end_node, start_node, sensitivity))
 
 
         protein_protein_rel_json = ['{"data": {"source":"p' + prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
