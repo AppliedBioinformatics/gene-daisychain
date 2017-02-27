@@ -221,7 +221,7 @@ class QueryManagement:
                                     '", "sensitivity":"' + prot_prot_rel[2] + '", "target":"p' + prot_prot_rel[
                                         3] + '"}}'
                                     for prot_prot_rel in protein_node_rel]
-        gene_protein_rel_json = ['{"data": {"source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"g' +
+        gene_protein_rel_json = ['{"data": {"source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"p' +
                                  prot_gene_rel[2] + '"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": [' + ', '.join(
             gene_gene_rel_json + protein_protein_rel_json + gene_protein_rel_json) + ']'
