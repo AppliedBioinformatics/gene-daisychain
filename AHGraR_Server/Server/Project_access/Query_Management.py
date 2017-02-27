@@ -220,6 +220,7 @@ class QueryManagement:
         # Remove self-Homology loops
         protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
         # Reduce protein-protein relations to one edge per pairwise relation
+        print(protein_node_rel[:5])
         for rel in protein_node_rel:
             protein_node_rel.remove([rel[3], rel[1], rel[2], rel[0]])
         protein_protein_rel_json = ['{"data": {"source":"p' + prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
