@@ -222,7 +222,10 @@ class QueryManagement:
         # Reduce protein-protein relations to one edge per pairwise relation
         print(protein_node_rel[:5])
         for rel in protein_node_rel:
-            protein_node_rel.remove([rel[3], rel[1], rel[2], rel[0]])
+            try:
+                protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
+            except ValueError:
+                continue
         protein_protein_rel_json = ['{"data": {"source":"p' + prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
                                     '", "sensitivity":"' + prot_prot_rel[2] + '", "target":"p' + prot_prot_rel[
                                         3] + '"}}'
