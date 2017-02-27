@@ -282,6 +282,8 @@ class QueryManagement:
         protein_node_rel = []
         protein_gene_node_rel = []
         # Search for gene node(s) and gene-gene relationships
+        # Gene nodes are matched by species, chromosome location and a keyword that is searched against in
+        # gene name and gene description
         if query_type in ["gene", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                                              "AND LOWER(gene.chromosome) CONTAINS {query_chromosome} "
@@ -303,13 +305,13 @@ class QueryManagement:
                 if record["rel"] is not None:
                     gene_node_rel.append((record["g1"]["geneId"], record["rel"].type, record["g2"]["geneId"]))
         # Search for protein nodes and protein-protein relationships
-        # Proteins are always coded for by genes. The keyword query is therefore matched against the gene name, the
-        # protein name and the protein description.
+        # Proteins are always coded for by genes. The keyword query is matched against the protein name and
+        # the protein description. Species and chromosome information is retrieved from the gene node
         if query_type in ["prot", "both"]:
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
                                              "CONTAINS {query_species} AND (LOWER(prot.protein_name) CONTAINS "
                                              "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword} "
-                                             "OR LOWER(gene.gene_name) CONTAINS {query_keyword}) WITH "
+                                             ") WITH "
                                              "COLLECT(prot) AS prots UNWIND prots as p1 UNWIND prots as p2 "
                                              "OPTIONAL MATCH (p1)-[rel]->(p2) RETURN p1,rel,p2",
                                              {"query_species":query_species, "query_keyword":query_keyword})
@@ -330,7 +332,8 @@ class QueryManagement:
         # term are found (the search for protein nodes also checks the gene_name of the coding gene)
         if query_type == "both":
             query_hits = project_db_conn.run("MATCH coding_path = (gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
-                                             "CONTAINS {query_species} AND LOWER(gene.gene_name) CONTAINS {query_keyword} "
+                                             "CONTAINS {query_species} AND (LOWER(gene.gene_name) CONTAINS {query_keyword} OR "
+                                             "LOWER(gene.gene_descr)  CONTAINS {query_keyword} )"
                                              "RETURN gene.geneId, prot.proteinId",
                                              {"query_species": query_species, "query_keyword": query_keyword})
             for record in query_hits:

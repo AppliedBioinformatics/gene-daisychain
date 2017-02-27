@@ -139,7 +139,7 @@ cy.elements().qtip({
       var qtipMsg= "";
      try {
       if(this.isNode()) {
-         qtipMsg= "<b>Name:</b> "+ this.data('value') +", <b>Type:</b> "+ this.data('type');
+         qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type');
         }
       else if(this.isEdge()) {
               qtipMsg= "<b>Relation:</b> "+ this.data('label');

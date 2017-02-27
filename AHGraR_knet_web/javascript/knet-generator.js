@@ -1,7 +1,6 @@
 
 // initialize and generate the network
 function generateNetworkGraph(jsonFileName) {
-   console.log("do it now");
     var json_File= jsonFileName;
    //console.log("Dataset file path: "+ json_File);
 
@@ -29,7 +28,7 @@ function initializeNetworkView() {
    var networkStylesheet= cytoscape.stylesheet()
       .selector('node')
         .css({
-          'content': 'data(value)',
+          'content': 'data(name)',
           'text-background-color': 'black',
           'text-background-opacity': '0', // default: '0' (disabled).
           'text-wrap': 'wrap', // for manual and/or autowrapping the label text.
@@ -45,25 +44,25 @@ function initializeNetworkView() {
            * in cytoscapeJS. Using 'data[conceptColor]' is hence preferred as it limits the scope of 
            * assigning a property value only if it is defined in cytoscapeJS as well. */
           'display': 'show', // 'element' (show) or 'none' (hide).
-          'text-opacity': '1', // to make the label invisible by default.
+          'text-opacity': '1', // to make the label visible by default.
           'text-halign': 'center',
           'text-valign': 'center'
          })
       .selector('edge')
         .css({
-          'content': 'data(label)', // label for edges (arrows).
-          'font-size': '16px',
+          'content': 'data(type)', // label for edges (arrows).
+          'font-size': '4px',
           'curve-style': 'unbundled-bezier', /* options: bezier (curved) (default), unbundled-bezier (curved with manual control points), haystack (straight edges) */
           'control-point-step-size': '10px', // specifies the distance between successive bezier edges.
           'control-point-distance': '20px', /* overrides control-point-step-size to curves single edges as well, in addition to parallele edges */
           'control-point-weight': '50', // '0': curve towards source node, '1': curve towards target node.
-          'width': '5', // 'mapData(relationSize, 70, 100, 2, 6)',
+          'width': '1', // 'mapData(relationSize, 70, 100, 2, 6)',
           'line-color': 'black',
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
           'target-arrow-shape': 'triangle',
           'target-arrow-color': 'gray',
           'display': 'show', // 'element' (show) or 'none' (hide).
-          'text-opacity': '0' // to make the label invisible by default.
+          'text-opacity': '1' // to make the label visible by default.
         })
       .selector('.highlighted')
         .css({
