@@ -220,27 +220,12 @@ class QueryManagement:
         # Remove self-Homology loops
         protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
         # Reduce protein-protein relations to one edge per pairwise relation
-        edge_collection = []
-        prot_prot_rel_undirected = []
-        for prot_prot_rel in protein_node_rel:
-            start_node = prot_prot_rel[0]
-            sensitivity = prot_prot_rel[2]
-            end_node = prot_prot_rel[3]
-            # If reverse edge is already in edge collection, skip this edge
-            # To save time while traversing the list remove the reverse edge
-            # from the (temporary) edge_collection
-            if (end_node, start_node, sensitivity) in edge_collection:
-                edge_collection.remove((end_node, start_node, sensitivity))
-                continue
-            else:
-                prot_prot_rel_undirected.append(prot_prot_rel)
-                edge_collection.append((end_node, start_node, sensitivity))
-
-
+        for rel in protein_node_rel:
+            protein_node_rel.remove([rel[3], rel[1], rel[2], rel[0]])
         protein_protein_rel_json = ['{"data": {"source":"p' + prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
                                     '", "sensitivity":"' + prot_prot_rel[2] + '", "target":"p' + prot_prot_rel[
                                         3] + '"}}'
-                                    for prot_prot_rel in prot_prot_rel_undirected]
+                                    for prot_prot_rel in protein_node_rel]
         gene_protein_rel_json = ['{"data": {"source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"p' +
                                  prot_gene_rel[2] + '"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": [' + ', '.join(
