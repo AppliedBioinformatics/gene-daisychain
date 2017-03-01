@@ -139,14 +139,20 @@ cy.elements().qtip({
       var qtipMsg= "";
      try {
       if(this.isNode()) {
-         qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type');
+          if(this.data('type')=="Gene")
+          {
+         qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
+         +", <b>Species:</b> "+ this.data('species')
+         +", <b>Chromosome:</b> "+ this.data('chromosome');     
+        }
+         else
+         {
+             qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
+             +", <b>Description:</b> "+ this.data('description');
+        }
         }
       else if(this.isEdge()) {
-              qtipMsg= "<b>Relation:</b> "+ this.data('label');
-              var fromID= this.data('source'); // relation source ('fromConcept')
-              qtipMsg= qtipMsg +", <b>From:</b> "+ cy.$('#'+fromID).data('value') +" ("+ cy.$('#'+fromID).data('conceptType').toLowerCase() +"), ";
-              var toID= this.data('target'); // relation source ('toConcept')
-              qtipMsg= qtipMsg +"<b>To:</b> "+ cy.$('#'+toID).data('value') +" ("+ cy.$('#'+toID).data('conceptType').toLowerCase() +")";
+              qtipMsg= "<b>Relation:</b> "+ this.data('type');
              }
       }
       catch(err) { qtipMsg= "Selected element is neither a Concept nor a Relation"; }

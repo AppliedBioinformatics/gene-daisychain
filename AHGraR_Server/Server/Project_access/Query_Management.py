@@ -213,14 +213,15 @@ class QueryManagement:
                           gene_node[7] + '", "description":"' + gene_node[8]+ '"}}'
                           for gene_node in gene_node_hits]
         protein_node_json = ['{"data": {"id":"p' + protein_node[0] + '", "type":"Protein", "name":"' + protein_node[1] +
-                             '", "description":"' + protein_node[2] + '"}}' for protein_node in protein_node_hits]
+                             '", "description":"' + protein_node[2] +
+                             '", "species":"' + protein_node[3] +
+                             '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": [' + ', '.join(gene_node_json + protein_node_json) + ']'
         gene_gene_rel_json = ['{"data": {"source":"g' + gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
                               '", "target":"g' + gene_gene_rel[2] + '"}}' for gene_gene_rel in gene_node_rel]
         # Remove self-Homology loops
         protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
         # Reduce protein-protein relations to one edge per pairwise relation
-        print(protein_node_rel[:5])
         for rel in protein_node_rel:
             try:
                 protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
@@ -324,6 +325,7 @@ class QueryManagement:
         # As for genes, for every matched node all its relations are returned in a separate row (if there are no
         # relations there will be a single row with rel=None)
         # Matched protein nodes are initially stored in a dict to enforce uniqueness
+        # Query also returns information about the species and the chromosome coding for this protein
         if query_type in ["prot", "both"]:
             # query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
             #                                  "CONTAINS {query_species} AND (LOWER(prot.protein_name) CONTAINS "
@@ -336,12 +338,14 @@ class QueryManagement:
                                              "CONTAINS {query_species} AND LOWER(gene.chromosome) CONTAINS "
                                              "{query_chromosome} AND (LOWER(prot.protein_name) CONTAINS "
                                              "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword}) "
-                                             "OPTIONAL MATCH (prot)-[rel]->(prot_nb:Protein) RETURN prot,rel,prot_nb",
+                                             "OPTIONAL MATCH (prot)-[rel]->(prot_nb:Protein) "
+                                             "RETURN prot,rel,prot_nb,gene.species,gene.chromosome",
                                              {"query_species": query_species, "query_keyword": query_keyword,
                                               "query_chromosome": query_chromosome})
             for record in query_hits:
                 protein_node_hits[record["prot"]["proteinId"]] = \
-                    [record["prot"]["protein_name"], record["prot"]["protein_descr"]]
+                    [record["prot"]["protein_name"], record["prot"]["protein_descr"],
+                     record["gene.species"], record["gene.chromosome"]]
                 # Check if protein p1 has a relationship to protein p2
                 # Possible types of relationship: HOMOLOG or SYNTENY,
                 # both with the additional attribute "sensitivity" (of clustering)
@@ -372,11 +376,11 @@ class QueryManagement:
                                               "query_keyword": query_keyword})
             for record in query_hits:
                 protein_gene_node_rel.append((record["gene.geneId"], "CODING", record["prot.proteinId"]))
-        print(len(gene_node_hits))
-        print(len(protein_node_hits))
-        print(len(gene_node_rel))
-        print(len(protein_node_rel))
-        print(len(protein_gene_node_rel))
+        print("Gene nodes: "+str(len(gene_node_hits)))
+        print("Protein nodes: "+str(len(protein_node_hits)))
+        print("Gene-gene relations: "+str(len(gene_node_rel)))
+        print("Prot-prot relations: "+str(len(protein_node_rel)))
+        print("Gene-prot relations: "+str(len(protein_gene_node_rel)))
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
         if return_format == "CMD":
             self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,

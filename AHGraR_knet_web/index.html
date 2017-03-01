@@ -64,7 +64,7 @@
             <option value="Gene">Genes only</option>
             <option value="Prot">Proteins only</option>
        </select>
-        <button type="button" onclick="searchNow()">Search!</button>
+        <button type="button" onclick="searchNow(this)">Search!</button>
       <button onclick="generateNetworkGraph('data/gene_prot_undirected.json')">Give me genes and proteins undirected</button>
       <button onclick="addData()">Add a node, please</button>
     <select id="select_sensitivity" onChange="javascript:changeSensitivity()";>
@@ -94,8 +94,9 @@
         <script>
            //generateNetworkGraph("data/test_data.json");
            
-var project_id = "0";
+      var project_id = "0";
       var species = "";
+      var color_map = {};
       LoadProjectList();
       // Trigger load list of available projects
          
