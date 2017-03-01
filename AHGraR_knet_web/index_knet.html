@@ -28,17 +28,22 @@
         <script src="javascript/knet-itemInfo.js"></script>
         <script src="javascript/knet-generator.js"></script>
         <script src="javascript/select_sensitivity.js"></script>
+        <script src="javascript/extend_graph.js"></script>
         <!-- test page js -->
         <script src="js/launchNetwork.js"></script>
+        <script>var networkJSON = {}
+        var networkStylesheet= cytoscape.stylesheet()
+        </script>
         <title>AHGraR-web with KnetMaps.js</title>
 </head>
 <!-- KnetMaps -->
    <body> 
-    <button onclick="generateNetworkGraph('data/gene.json')">Give me genes</button>
-    <button onclick="generateNetworkGraph('data/prot.json')">Give me proteins</button>
-    <button onclick="generateNetworkGraph('data/gene_prot.json')">Give me genes and proteins</button>
+    <!--<button onclick="generateNetworkGraph('data/gene.json')">Give me genes</button>-->
+    <!--<button onclick="generateNetworkGraph('data/prot.json')">Give me proteins</button>-->
+    <!--<button onclick="generateNetworkGraph('data/gene_prot.json')">Give me genes and proteins</button>-->
       <button onclick="generateNetworkGraph('data/gene_prot_undirected.json')">Give me genes and proteins undirected</button>
-    <select id="select_sensitivity" onChange="javascript:changeSensitivity(this.value)";>
+      <button onclick="addData()">Add a node, please</button>
+    <select id="select_sensitivity" onChange="javascript:changeSensitivity()";>
             <option value="1.4">Very large clusters</option>
             <option value="2.0">Large clusters</option>
             <option value="4.0">Medium clusters</option>

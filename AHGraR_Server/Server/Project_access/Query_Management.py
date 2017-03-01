@@ -289,45 +289,65 @@ class QueryManagement:
         # Gene nodes are matched by species, chromosome location and a keyword that is searched against in
         # gene name and gene description
         if query_type in ["gene", "both"]:
+            # query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
+            #                                  "AND LOWER(gene.chromosome) CONTAINS {query_chromosome} "
+            #                                  "AND (LOWER(gene.gene_name) CONTAINS {query_keyword} OR "
+            #                                  "LOWER(gene.gene_descr) CONTAINS {query_keyword}) WITH COLLECT(gene) AS "
+            #                                  "genes UNWIND genes AS g1 UNWIND genes AS g2 "
+            #                                  "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
+            #                                  {"query_species": query_species, "query_keyword": query_keyword,
+            #                                   "query_chromosome": query_chromosome, "query_anno": query_keyword})
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                                              "AND LOWER(gene.chromosome) CONTAINS {query_chromosome} "
                                              "AND (LOWER(gene.gene_name) CONTAINS {query_keyword} OR "
-                                             "LOWER(gene.gene_descr) CONTAINS {query_keyword}) WITH COLLECT(gene) AS "
-                                             "genes UNWIND genes AS g1 UNWIND genes AS g2 "
-                                             "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
+                                             "LOWER(gene.gene_descr) CONTAINS {query_keyword}) "
+                                             "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
                                              {"query_species": query_species, "query_keyword": query_keyword,
-                                              "query_chromosome": query_chromosome, "query_anno": query_keyword})
-            # The record format is a n x m matrix of all possible relations between gene nodes
+                                              "query_chromosome": query_chromosome})
+            # The record format lists every node matching the query together with one relationship to another gene node.
+            # Multiple relationships are split into separate rows, e.g. row 1 contains the 5` relation of g1 with g2,
+            # row 2 contains the 3` relation of g1 with g3. If there is no gene-gene relationship going out from g1
+            # there is only one unique row for g1 with rel= None.
             # First column is gene node 1, third is gene node 2 and the middle column is the relationship between
             # g1 and g2. This relationship can be None, i.e. there is no relationship.
             # The overall set of matching gene nodes is extracted from column 1 and stored in a dict to enforce
             # uniqueness.
             for record in query_hits:
-                gene_node_hits[record["g1"]["geneId"]] = \
-                    [record["g1"][item] for item in ["species", "chromosome", "contig_name", "strand",
-                                                     "start", "stop", "gene_name", "gene_descr"]]
+                gene_node_hits[record["gene"]["geneId"]] = \
+                    [record["gene"][item] for item in ["species", "chromosome", "contig_name", "strand",
+                                                       "start", "stop", "gene_name", "gene_descr"]]
                 if record["rel"] is not None:
-                    gene_node_rel.append((record["g1"]["geneId"], record["rel"].type, record["g2"]["geneId"]))
+                    gene_node_rel.append((record["gene"]["geneId"], record["rel"].type, record["gene_nb"]["geneId"]))
         # Search for protein nodes and protein-protein relationships
         # Proteins are always coded for by genes. The keyword query is matched against the protein name and
-        # the protein description. Species and chromosome information is retrieved from the gene node
+        # the protein description. Species and chromosome information is retrieved from the gene node.
+        # As for genes, for every matched node all its relations are returned in a separate row (if there are no
+        # relations there will be a single row with rel=None)
+        # Matched protein nodes are initially stored in a dict to enforce uniqueness
         if query_type in ["prot", "both"]:
+            # query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
+            #                                  "CONTAINS {query_species} AND (LOWER(prot.protein_name) CONTAINS "
+            #                                  "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword} "
+            #                                  ") WITH "
+            #                                  "COLLECT(prot) AS prots UNWIND prots as p1 UNWIND prots as p2 "
+            #                                  "OPTIONAL MATCH (p1)-[rel]->(p2) RETURN p1,rel,p2",
+            #                                  {"query_species":query_species, "query_keyword":query_keyword})
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
-                                             "CONTAINS {query_species} AND (LOWER(prot.protein_name) CONTAINS "
-                                             "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword} "
-                                             ") WITH "
-                                             "COLLECT(prot) AS prots UNWIND prots as p1 UNWIND prots as p2 "
-                                             "OPTIONAL MATCH (p1)-[rel]->(p2) RETURN p1,rel,p2",
-                                             {"query_species":query_species, "query_keyword":query_keyword})
+                                             "CONTAINS {query_species} AND LOWER(gene.chromosome) CONTAINS "
+                                             "{query_chromosome} AND (LOWER(prot.protein_name) CONTAINS "
+                                             "{query_keyword} OR LOWER(prot.protein_descr) CONTAINS {query_keyword}) "
+                                             "OPTIONAL MATCH (prot)-[rel]->(prot_nb:Protein) RETURN prot,rel,prot_nb",
+                                             {"query_species": query_species, "query_keyword": query_keyword,
+                                              "query_chromosome": query_chromosome})
             for record in query_hits:
-                protein_node_hits[record["p1"]["proteinId"]] = \
-                    [record["p1"]["protein_name"], record["p1"]["protein_descr"]]
+                protein_node_hits[record["prot"]["proteinId"]] = \
+                    [record["prot"]["protein_name"], record["prot"]["protein_descr"]]
                 # Check if protein p1 has a relationship to protein p2
                 # Possible types of relationship: HOMOLOG or SYNTENY,
                 # both with the additional attribute "sensitivity" (of clustering)
                 if record["rel"] is not None:
-                    protein_node_rel.append((record["p1"]["proteinId"], record["rel"].type,
-                                             record["rel"]["sensitivity"], record["p2"]["proteinId"]))
+                    protein_node_rel.append((record["prot"]["proteinId"], record["rel"].type,
+                                             record["rel"]["sensitivity"], record["prot_nb"]["proteinId"]))
 
 
         # Search for gene-protein relationships (only if looking for both protein and gene nodes)
@@ -335,11 +355,21 @@ class QueryManagement:
         # Since both genes and proteins need to be found, it is sufficient that the species term and the gene_name
         # term are found (the search for protein nodes also checks the gene_name of the coding gene)
         if query_type == "both":
-            query_hits = project_db_conn.run("MATCH coding_path = (gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
-                                             "CONTAINS {query_species} AND (LOWER(gene.gene_name) CONTAINS {query_keyword} OR "
-                                             "LOWER(gene.gene_descr)  CONTAINS {query_keyword} )"
+            # query_hits = project_db_conn.run("MATCH coding_path = (gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
+            #                                  "CONTAINS {query_species} AND (LOWER(gene.gene_name) CONTAINS {query_keyword} OR "
+            #                                  "LOWER(gene.gene_descr)  CONTAINS {query_keyword} )"
+            #                                  "RETURN gene.geneId, prot.proteinId",
+            #                                  {"query_species": query_species, "query_keyword": query_keyword})
+            query_hits = project_db_conn.run("MATCH coding_path = (gene:Gene)-[:CODING]->(prot:Protein) "
+                                             "WHERE LOWER(gene.species) CONTAINS {query_species} "
+                                             "AND LOWER(gene.chromosome) CONTAINS {query_chromosome} AND "
+                                             "(LOWER(gene.gene_name) CONTAINS {query_keyword} OR "
+                                             "LOWER(gene.gene_descr)  CONTAINS {query_keyword}) AND "
+                                             "(LOWER(prot.protein_name) CONTAINS {query_keyword} OR "
+                                             "LOWER(prot.protein_descr) CONTAINS {query_keyword}) "
                                              "RETURN gene.geneId, prot.proteinId",
-                                             {"query_species": query_species, "query_keyword": query_keyword})
+                                             {"query_species": query_species, "query_chromosome": query_chromosome,
+                                              "query_keyword": query_keyword})
             for record in query_hits:
                 protein_gene_node_rel.append((record["gene.geneId"], "CODING", record["prot.proteinId"]))
         print(len(gene_node_hits))

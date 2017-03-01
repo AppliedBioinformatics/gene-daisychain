@@ -1,8 +1,35 @@
-<!DOCTYPE HTML>
 <html>
-   <head>
-      <meta charset=utf-8 />
-      <script type="text/javascript">
+<head>
+        <link href="css/index-style.css" rel="stylesheet" /> <!-- page stylesheet -->
+        <link href="css/knet-style.css" rel="stylesheet" /> <!-- Network Viewer stylesheet -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+        <link href="css/maskloader.css" rel="stylesheet">
+        <meta charset=utf-8 />
+        <script src="libs/jquery-1.11.2.min.js"></script>
+        <script src="libs/cytoscapejs_2.4.0/cytoscape.min.js"></script>
+        <script src="libs/jquery-ui.js"></script>
+        <script src="libs/cytoscape-cxtmenu.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
+        <script src="libs/cytoscape-qtip.js"></script>
+        <script src="libs/jquery.maskloader.js"></script>
+        <!-- Layouts -->
+        <script src="libs/cose_bilkent/cytoscape-cose-bilkent.js"></script>
+        <script src="libs/ngraph_forceLayout/cytoscape-ngraph.forcelayout.js"></script>
+        <!-- URL mappings config file used for generating url's in Item Info -->
+        <script type="text/javascript" src="config/url_mappings.json"></script>
+        <!-- KnetMaps code -->
+        <script src="javascript/knet-maskLoader.js"></script>
+        <script src="javascript/knet-layouts-defaultParams.js"></script>
+        <script src="javascript/knet-layouts.js"></script>
+        <script src="javascript/knet-menu.js"></script> <!-- KnetMaps menubar -->
+        <script src="javascript/knet-counts-legend.js"></script>
+        <script src="javascript/knet-container.js"></script>
+        <script src="javascript/knet-toggleFullScreen.js"></script>
+        <script src="javascript/knet-itemInfo.js"></script>
+        <script src="javascript/knet-generator.js"></script>
+        <script src="javascript/select_sensitivity.js"></script>
+        <script src="javascript/extend_graph.js"></script>
+        <script type="text/javascript">
       // Global variables
       var project_id = "0";
       var species = "";
@@ -10,188 +37,22 @@
          window.onload = function(){
              LoadProjectList();
       };
-         // Load list of available projects
-         function LoadProjectList()
-         {
-            // Open websocket to retrieve list of projects
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
-            // Request project list
-            wsconn.onopen = function () {wsconn.send("Project_List");};
-            // Receive and process project list
-            wsconn.onmessage = function (evt){SetProjectList(evt.data);};
-         };
-         // Fill select menu with available projects
-         // Data comes from websocket "Project_List" command
-         function SetProjectList(received_msg)
-         {
-            // Find select menu
-            select_menu = document.getElementById("select_proj");
-            // Each line of data contains one project
-            // Each line has project name, project ID and project status
-            project_items = received_msg.split("\n");
-            // Iterate through project data
-            for(var i = 0; i < project_items.length; i++)
-            {
-                 project_item = project_items[i].split("\t");
-                 if (project_item[2] != "DB_RUNNING")
-                 {continue;};
-                 // Create a new select option
-                 option = document.createElement("option");
-                 // Fill select option with data:
-                 option.innerHTML = project_item[0];
-                 option.value = project_item[1];
-                 // Add new option as child to select menu
-                 select_menu.appendChild(option);
-             };
-             // Update global project ID variable
-             changeProjectID();
-         };
-         // Update the global project ID in response to either
-         // changing the value in the project select menu
-         // or on initial loading of the page
-         function changeProjectID()
-         {
-            // Find select menu and retrieve currently selected project
-            var select_menu = document.getElementById("select_proj");
-            // Change global variable
-            project_id = select_menu.options[select_menu.selectedIndex].value;
-            console.log("New PI: "+project_id);
-            // Load project-specific list of species
-            LoadSpeciesList();
-         };
-         // Load list of species for this project
-         function LoadSpeciesList()
-         {
-            // Open websocket to retrieve list of projects
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
-            // Request species list
-            wsconn.onopen = function () {wsconn.send("SL_"+project_id);};
-            // Receive and process project list
-            wsconn.onmessage = function (evt){
-                console.log("Recv species msg");
-                SetSpeciesList(evt.data);
-                };
-         };
-         // Load list of chromosomes for current species (global variable)
-         function LoadChromosomeList()
-         {
-            // Open websocket to retrieve list of projects
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
-            // Request chromosome list, replace underscores in species name with tabs
-            wsconn.onopen = function () {wsconn.send("CL_"+project_id+"_"+species.split("_").join("\t"));};
-            // Receive and process project list
-            wsconn.onmessage = function (evt){
-                console.log("Recv chromosome msg");
-                SetChromosomeList(evt.data);
-                };
-         };
-         // Fill species select menu with available species
-         // Data comes from websocket "SL" command
-         function SetSpeciesList(received_msg)
-         {
-            console.log("SetSpeciesList");
-            // Find select menu
-            select_species_menu = document.getElementById("select_species");
-            // Each line of data contains one species
-            species_items = received_msg.split("\n");
-            // Delete old options
-            while (select_species_menu.length > 0)
-            {
-            select_species_menu.remove(select_species_menu.length-1);
-            }
-            // Add default option: All species
-            option = document.createElement("option");
-            // Fill select option with data:
-            option.innerHTML = "All species";
-            option.value = "ALL";
-            // Add new option to select menu
-            select_species_menu.add(option);
-            // Iterate through project data
-            for(var i = 0; i < species_items.length; i++)
-            {
-                 // Create a new select option
-                 option = document.createElement("option");
-                 // Fill select option with data:
-                 option.innerHTML = species_items[i];
-                 option.value = species_items[i];
-                 // Add new option to select menu
-                 select_species_menu.add(option);
-             };
-             // Call function changeSpecies() to update chromosome list
-             changeSpecies();
-         };
-         // React to a change in species selection
-         function changeSpecies()
-         {
-            // Find select menu and retrieve currently selected project
-            var select_spec_menu = document.getElementById("select_species");
-            // Change global variable
-            species = select_spec_menu.options[select_spec_menu.selectedIndex].value;
-            console.log("New Species selection: "+species);
-            // Load species-specific list of chromosomes
-            LoadChromosomeList();
-         };
-         // Fill species select menu with available species
-         // Data comes from websocket "SL" command
-         function SetChromosomeList(received_msg)
-         {
-            console.log("SetChromosomeList");
-            // Find select menu
-            select_chrom_menu = document.getElementById("select_chromosome");
-            // Each line of data contains one chromosome
-            chromosome_items = received_msg.split("\n");
-            // Delete old options
-            while (select_chrom_menu.length > 0)
-            {
-            select_chrom_menu.remove(select_chrom_menu.length-1);
-            }
-            // Add default option: All chromosomes
-            option = document.createElement("option");
-            // Fill select option with data:
-            option.innerHTML = "All chromosomes";
-            option.value = "ALL";
-            // Add new option to select menu
-            select_chrom_menu.add(option);
-            // Iterate through chromosome data
-            for(var i = 0; i < species_items.length; i++)
-            {
-                 // Create a new select option
-                 option = document.createElement("option");
-                 // Fill select option with data:
-                 option.innerHTML = chromosome_items[i];
-                 option.value = chromosome_items[i];
-                 // Add new option to select menu
-                 select_chrom_menu.add(option);
-             };
-         };
-         // Search for genes/proteins in the project database
-         // Collects current settings in select menus and text field
-         function searchNow()
-         {
-            // Project ID and species selection are global variables,
-            // retrieve chromosome selection and keyword
-            var select_chrom_menu = document.getElementById("select_chromosome");
-            var chromosome = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
-            var keyword = document.getElementById("keyword").value;
-            var type = document.getElementById("select_type").value;
-            // Open websocket to send query to server
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
-            // Replace underscores in queries with tabs
-            wsconn.onopen = function () {wsconn.send("QS_"+project_id+"_"+species.split("_").join("\t")+"_"+
-            chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);};
-             // Receive and process query result
-            wsconn.onmessage = function (evt){
-                console.log(evt.data);
-                };
-
-         };
-
-
+         
       </script>
-		
-   </head>
-   <body>
-       <select id="select_proj" onChange="javascript:changeProjectID();">
+      <script src="javascript/searchbar.js"></script>
+        <!-- test page js -->
+        <script src="js/launchNetwork.js"></script>
+        <script>var networkJSON = {}
+        var networkStylesheet= cytoscape.stylesheet()
+        </script>
+        <script>var networkJSON = {}
+        var networkStylesheet= cytoscape.stylesheet()
+        </script>
+        <title>AHGraR-web with KnetMaps.js</title>
+</head>
+<!-- KnetMaps -->
+   <body> 
+        <select id="select_proj" onChange="javascript:changeProjectID();">
        </select>
        <select id="select_species" onChange="javascript:changeSpecies()";>
        </select>
@@ -204,5 +65,40 @@
             <option value="Prot">Proteins only</option>
        </select>
         <button type="button" onclick="searchNow()">Search!</button>
-   </body>
+      <button onclick="generateNetworkGraph('data/gene_prot_undirected.json')">Give me genes and proteins undirected</button>
+      <button onclick="addData()">Add a node, please</button>
+    <select id="select_sensitivity" onChange="javascript:changeSensitivity()";>
+            <option value="1.4">Very large clusters</option>
+            <option value="2.0">Large clusters</option>
+            <option value="4.0">Medium clusters</option>
+            <option value="6.0">Small clusters</option>
+            <option value="10.0">Very small clusters</option>
+       </select>
+   <!-- KnetMaps -->
+            <div id="knet-maps">
+                <div id="itemInfo" class="infoDiv" style="display:none;"><!-- Item Info pane -->
+                    <table id="itemInfo_Table" class="infoTable" cellspacing=1>
+                        <thead><th>Item Info:</th>
+                    <th><button id="btnCloseItemInfoPane" onclick="closeItemInfoPane();">Close</button></th>
+                        </thead><tbody></tbody></table>
+                </div>
+                <!-- KnetMaps Menubar -->
+                <div id="knetmaps-menu"></div>
+                <!-- The core cytoscapeJS container -->
+                <div id="cy"></div><br/>
+                <!-- dynamically updated Legend to show number of shown/ hidden concepts; and by type -->
+                <div id="countsLegend"><span>KnetMaps</span></div>
+                <!-- popup dialog -->
+                <div id="infoDialog"></div>
+            </div>
+        <script>
+           //generateNetworkGraph("data/test_data.json");
+           
+var project_id = "0";
+      var species = "";
+      LoadProjectList();
+      // Trigger load list of available projects
+         
+            </script>
+    </body>
 </html>

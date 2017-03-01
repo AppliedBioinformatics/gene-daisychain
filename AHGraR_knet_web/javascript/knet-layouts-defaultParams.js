@@ -1,5 +1,5 @@
 
- var animate_layout= true; // global variable for layout animation setting (default: true).
+ var animate_layout= false; // global variable for layout animation setting (default: true).
 
  // CoSE layout.
  var coseNetworkLayout= {
@@ -10,7 +10,7 @@
   stop: function(){ },
 
   // Whether to animate while running the layout
-  animate: animate_layout/*true*/,
+  animate: false,//animate_layout/*true*/,
   // The layout animates only after this many milliseconds
   // (prevents flashing on fast runs)
   animationThreshold: 250,
@@ -26,7 +26,7 @@
   boundingBox: undefined,
 
   // Randomize the initial positions of the nodes (true) or use existing positions (false)
-  randomize: /*false*/true,
+  randomize: false,
 
   // Extra spacing between components in non-compound graphs
   componentSpacing: 100,

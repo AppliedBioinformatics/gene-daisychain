@@ -17,15 +17,17 @@ function generateNetworkGraph(jsonFileName) {
 //     setDefaultLayout();
      // update "cy" legend with some stats.
      updateCyLegend();
+     // Show only homolog/synteny edges of selected cluster size
+    changeSensitivity();
    });
   }
 
 // initialize the network
 function initializeNetworkView() {
-   var networkJSON= graphJSON; // using the dynamically included graphJSON object directly.
+   networkJSON= graphJSON; // using the dynamically included graphJSON object directly.
 
    // Define the stylesheet to be used for nodes & edges in the cytoscape.js container.
-   var networkStylesheet= cytoscape.stylesheet()
+    networkStylesheet= cytoscape.stylesheet()
       .selector('node')
         .css({
           'content': 'data(name)',
