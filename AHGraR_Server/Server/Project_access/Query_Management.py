@@ -217,7 +217,8 @@ class QueryManagement:
                              '", "species":"' + protein_node[3] +
                              '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": [' + ', '.join(gene_node_json + protein_node_json) + ']'
-        gene_gene_rel_json = ['{"data": {"source":"g' + gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
+        gene_gene_rel_json = ['{"data": {"id":"g'+gene_gene_rel[0]+'_g'+gene_gene_rel[2]+'", "source":"g' +
+                              gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
                               '", "target":"g' + gene_gene_rel[2] + '"}}' for gene_gene_rel in gene_node_rel]
         # Remove self-Homology loops
         protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
@@ -227,11 +228,12 @@ class QueryManagement:
                 protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
             except ValueError:
                 continue
-        protein_protein_rel_json = ['{"data": {"source":"p' + prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
+        protein_protein_rel_json = ['{"data": {"id":"p'+prot_prot_rel[0]+'_p'+prot_prot_rel[3]+'", "source":"p' +
+                                    prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
                                     '", "sensitivity":"' + prot_prot_rel[2] + '", "target":"p' + prot_prot_rel[
                                         3] + '"}}'
                                     for prot_prot_rel in protein_node_rel]
-        gene_protein_rel_json = ['{"data": {"source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"p' +
+        gene_protein_rel_json = ['{"data": {"id":"g'+prot_gene_rel[0]+'_p'+prot_gene_rel[2]+'", "source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"p' +
                                  prot_gene_rel[2] + '"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": [' + ', '.join(
             gene_gene_rel_json + protein_protein_rel_json + gene_protein_rel_json) + ']'

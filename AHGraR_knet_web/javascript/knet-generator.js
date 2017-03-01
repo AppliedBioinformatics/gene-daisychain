@@ -35,13 +35,13 @@ function initializeNetworkView() {
           'text-background-opacity': '0', // default: '0' (disabled).
           'text-wrap': 'wrap', // for manual and/or autowrapping the label text.
           'border-style': 'solid', // node border, can be 'solid', 'dotted', 'dashed' or 'double'.
-          'border-width': '1px',
-          'border-color': function(node){if (node.data('type') == 'Protein'){return "green";} else {return "blue";}},
+          'border-width': '2px',
+          'border-color': function(node){return color_node(node.data('species'), node.data('chromosome')); },//function(node){if (node.data('type') == 'Protein'){return "green";} else {return "blue";}},
           'font-size': '4px', // '8px',
-          'shape': 'ellipse', 
+          'shape': function(node){if (node.data('type') == 'Protein'){return "roundrectangle";} else{return "ellipse";};}, //'ellipse', 
           'width': '30px', // '18px',
           'height': '18px', // '18px',
-          'background-color': function(node){if (node.data('type') == 'Protein'){return "yellow";} else {return "grey";}},
+          'background-color': function(node){if (node.data('type') == 'Protein'){return "#90ee90";} else {return "#ffffe0";}},
           /** Using 'data(conceptColor)' leads to a "null" mapping error if that attribute is not defined 
            * in cytoscapeJS. Using 'data[conceptColor]' is hence preferred as it limits the scope of 
            * assigning a property value only if it is defined in cytoscapeJS as well. */

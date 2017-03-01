@@ -148,7 +148,9 @@ cy.elements().qtip({
          else
          {
              qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
-             +", <b>Description:</b> "+ this.data('description');
+             +", <b>Description:</b> "+ this.data('description')
+                    +", <b>Species:</b> "+ this.data('species')
+          +", <b>Chromosome:</b> "+ this.data('chromosome'); 
         }
         }
       else if(this.isEdge()) {
@@ -199,7 +201,7 @@ cy.elements().qtip({
     /** Note: Specify selector: 'node' or 'edge' to restrict the context menu to a specific type of element. e.g, 
      * selector: 'node', // to have context menu only for nodes.
      * selector: 'edge', // to have context menu only for edges. */
-    selector: '*',
+    selector: 'node',
     commands: [ // an array of commands to list in the menu
         {
          content: 'Show Info',
@@ -235,6 +237,22 @@ cy.elements().qtip({
         },
 
         {
+         content: "Show 5'",
+         select: function()
+            {
+            console.log(this); 
+            console.log(this.id()); 
+            console.log(this.position("x"));
+             console.log(this.position("y"));
+            cy.add([
+  { group: "nodes", data: { id: "n0" }, position: { x: 100, y: 100 } },
+  { group: "nodes", data: { id: "n1" }, position: { x: 200, y: 200 } },
+  { group: "edges", data: { id: "e0", source: this.data("id"), target: "n0" } },
+  { group: "edges", data: { id: "e0", source: this.data("id"), target: "n1" } },                   
+]);
+            } 
+        },
+        /*{
          content: 'Hide by Type',
          select: function() { // Hide all concepts (nodes) of the same type.
              if(this.isNode()) {
@@ -266,7 +284,7 @@ cy.elements().qtip({
   			// Refresh network legend.
             updateCyLegend();
            }
-        },
+        },*/
 
         /*{
          content: 'Show Selections',
