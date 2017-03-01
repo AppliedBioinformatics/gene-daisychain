@@ -240,6 +240,14 @@ cy.elements().qtip({
          content: "Show 5'",
          select: function()
             {
+                var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            // Request species list
+            wsconn.onopen = function () {wsconn.send("REL_"+project_id+"_"+this.id()+"_5NB");};
+            // Receive and process project list
+            wsconn.onmessage = function (evt){
+                console.log(evt.data);
+                SetSpeciesList(evt.data);
+                };
             console.log(this); 
             console.log(this.id()); 
             console.log(this.position("x"));

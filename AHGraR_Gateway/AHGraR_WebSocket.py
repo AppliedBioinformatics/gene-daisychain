@@ -32,6 +32,13 @@ async def handle(websocket, path):
         if web_request[3] == "ALL":
             web_request[3] = ""
         reply = "PAQURY_SEAR_"+web_request[1]+"_WEB_"+"_".join(web_request[2:])
+    #PAQURY_RELA_ProjectID_CMD/WEB_Gene/Protein_NodeID_Relationship
+    elif web_request.startswith("REL"):
+        web_request = web_request.split("_")
+        node_id = web_request[2]
+        node_type = "Gene" if node_id[0]=="g" else "Protein"
+        node_id = node_id[1:]
+        reply = "PAQURY_RELA_"+web_request[1]+"_WEB_"+node_type+"_"+node_id+"_"+web_request[3]
     else:
         reply = ""
     message = str(len(reply)) + "|" + reply
