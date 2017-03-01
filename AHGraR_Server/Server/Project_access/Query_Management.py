@@ -131,8 +131,8 @@ class QueryManagement:
                                              {"geneId": node_id} )
             for record in query_hits:
                 gene_node_hits[record["targetGene"]["geneId"]] = \
-                    [record["targetGene"][item] for item in ["species", " chromosome", "contig_name", " strand",
-                                                     "start", "stop", "gene_name"]]
+                    [record["targetGene"][item] for item in ["species", "chromosome", "contig_name", "strand",
+                                                       "start", "stop", "gene_name", "gene_descr"]]
                 gene_node_rel.append((record["gene"]["geneId"], record["rel"].type, record["targetGene"]["geneId"]))
         # Search for a "CODING" relationship between a gene node and a protein node
         if relationship_type == "CODING" and node_type == "Gene":
@@ -141,8 +141,9 @@ class QueryManagement:
                                              {"geneId": node_id})
             for record in query_hits:
                 protein_node_hits[record["targetProt"]["proteinId"]] = \
-                    [record["targetProt"]["protein_name"], record["targetProt"]["protein_descr"]]
-                protein_gene_node_rel.append((record["gene.geneId"], "CODING", record["targetProt.proteinId"]))
+                    [record["targetProt"]["protein_name"], record["targetProt"]["protein_descr"],
+                     record["gene"]["species"], record["gene"]["chromosome"]]
+                protein_gene_node_rel.append((record["gene"]["geneId"], "CODING", record["targetProt"]["proteinId"]))
         # Search for a "CODING" relationship between a protein node and a gene node
         if relationship_type == "CODING" and node_type == "Protein":
             query_hits = project_db_conn.run("MATCH(targetGene:Gene)-[rel:CODING]->(prot:Protein) "
@@ -150,9 +151,9 @@ class QueryManagement:
                                              {"protId": node_id})
             for record in query_hits:
                 gene_node_hits[record["targetGene"]["geneId"]] = \
-                    [record["targetGene"][item] for item in ["species", " chromosome", "contig_name", " strand",
-                                                             "start", "stop", "gene_name"]]
-                protein_gene_node_rel.append((record["targetGene.geneId"], "CODING", record["prot.proteinId"]))
+                    [record["targetGene"][item] for item in ["species", "chromosome", "contig_name", "strand",
+                                                       "start", "stop", "gene_name", "gene_descr"]]
+                protein_gene_node_rel.append((record["targetGene"]["geneId"], "CODING", record["prot"]["proteinId"]))
         # Search for a "HOMOLOG" or "SYNTENY" relationship between a protein node and other protein nodes
         if relationship_type in ["HOMOLOG", "SYNTENY"] and node_type == "Protein":
             query_hits = project_db_conn.run("MATCH(prot:Protein)-[rel:"+relationship_type+"]->(targetProt:Protein) "
@@ -160,7 +161,8 @@ class QueryManagement:
                                              {"protId": node_id})
             for record in query_hits:
                 protein_node_hits[record["targetProt"]["proteinId"]] = \
-                    [record["targetProt"]["protein_name"], record["targetProt"]["protein_descr"]]
+                    [record["targetProt"]["protein_name"], record["targetProt"]["protein_descr"],
+                     record["gene"]["species"], record["gene"]["chromosome"]]
                 protein_node_rel.append((record["prot"]["proteinId"], record["rel"].type,
                                          record["rel"]["sensitivity"], record["targetProt"]["proteinId"]))
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
