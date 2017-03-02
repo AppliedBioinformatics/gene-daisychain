@@ -160,7 +160,7 @@ class QueryManagement:
                                              "prot.proteinId = {protId} MATCH "
                                              "(gene_new:Gene)-[:CODING]->(prot_new)-[rel:"+relationship_type+"]->"
                                              "(prot_new_homolog:Protein) RETURN DISTINCT gene_new.species, "
-                                             "gene_new.chromosome, prot_new, rel, prot_new_homolog.proteinId LIMIT(20)",
+                                             "gene_new.chromosome, prot_new, rel, prot_new_homolog.proteinId",
                                              {"protId": node_id})
 
             # query_hits = project_db_conn.run("MATCH(prot:Protein)-[rel:"+relationship_type+"]->(targetProt:Protein) "
@@ -234,13 +234,10 @@ class QueryManagement:
         protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
         # Reduce protein-protein relations to one edge per pairwise relation
         # Always keep the relation from the lexico. smaller node to the lexico. bigger node
-        # e.g., always keep 123 to 456 and always remove 456 to 123
+        # e.g., always keep p123 to p456 and always remove p456 to p123
         for rel in protein_node_rel:
             try:
-                if (rel[0] < rel[3]):
-                    protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
-                else:
-                    protein_node_rel.remove((rel[0], rel[1], rel[2], rel[3]))
+                protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
             except ValueError:
                 continue
         protein_protein_rel_json = ['{"data": {"id":"p'+prot_prot_rel[0]+'_'+prot_prot_rel[1]+prot_prot_rel[2]+'_p'+prot_prot_rel[3]+'", "source":"p' +
