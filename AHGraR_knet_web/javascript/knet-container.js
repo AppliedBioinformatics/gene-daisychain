@@ -243,44 +243,29 @@ cy.elements().qtip({
                 addPath(this, "5NB");
             } 
         },
-
-
-
-
         {
-         content: 'Label on/ off by Type',
-         select: function() {
-             var thisElementType, eleType, elements;
-             if(this.isNode()) {
-                thisElementType= this.data('conceptType'); // get all concept Types.
-                eleType= 'conceptType';
-                elements= cy.nodes(); // fetch all the nodes.
-               }
-             else if(this.isEdge()) {
-                thisElementType= this.data('label'); // get all relation Labels.
-                eleType= 'label';
-                elements= cy.edges(); // fetch all the edges.
-               }
-             console.log("Toggle Label on/ off by type: "+ thisElementType);
-
-             if(this.isNode() || this.isEdge()) {
-                if(this.style('text-opacity') === '0') {
-                   elements.forEach(function( ele ) {
-                    if(ele.data(eleType) === thisElementType) {
-                       ele.style({'text-opacity': '1'}); // show the concept/ relation Label.
-                      }
-                   });
-                  }
-                  else {
-                   elements.forEach(function( ele ) {
-                    if(ele.data(eleType) === thisElementType) {
-                       ele.style({'text-opacity': '0'}); // hide the concept/ relation Label.
-                      }
-                   });
-                  }
-               }
-            }
+         content: "Show 3'",
+         select: function()
+            {
+                addPath(this, "3NB");
+            } 
         },
+        {
+         content: "Show CODING",
+         select: function()
+            {
+                addPath(this, "CODING");
+            } 
+        },
+        {
+         content: "Show HOMOLOG",
+         select: function()
+            {
+                addPath(this, "HOMOLOG");
+            } 
+        },
+
+
 
         {
          content: 'Label on/ off',

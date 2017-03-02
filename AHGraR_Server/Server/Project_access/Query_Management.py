@@ -156,15 +156,22 @@ class QueryManagement:
                 protein_gene_node_rel.append((record["targetGene"]["geneId"], "CODING", record["prot"]["proteinId"]))
         # Search for a "HOMOLOG" or "SYNTENY" relationship between a protein node and other protein nodes
         if relationship_type in ["HOMOLOG", "SYNTENY"] and node_type == "Protein":
-            query_hits = project_db_conn.run("MATCH(prot:Protein)-[rel:"+relationship_type+"]->(targetProt:Protein) "
-                                             "WHERE prot.proteinId = {protId} RETURN prot, rel, targetProt",
+            query_hits = project_db_conn.run("MATCH (prot:Protein)-[:"+relationship_type+"]->(prot_new:Protein) WHERE "
+                                             "prot.proteinId = {protId} MATCH "
+                                             "(gene_new:Gene)-[:CODING]->(prot_new)-[rel:"+relationship_type+"]->"
+                                             "(prot_new_homolog:Protein) RETURN DISTINCT gene_new.species, "
+                                             "gene_new.chromosome, prot_new, rel, prot_new_homolog.proteinId",
                                              {"protId": node_id})
+
+            # query_hits = project_db_conn.run("MATCH(prot:Protein)-[rel:"+relationship_type+"]->(targetProt:Protein) "
+            #                                  "WHERE prot.proteinId = {protId} RETURN prot, rel, targetProt",
+            #                                  {"protId": node_id})
             for record in query_hits:
-                protein_node_hits[record["targetProt"]["proteinId"]] = \
-                    [record["targetProt"]["protein_name"], record["targetProt"]["protein_descr"],
-                     record["gene"]["species"], record["gene"]["chromosome"]]
-                protein_node_rel.append((record["prot"]["proteinId"], record["rel"].type,
-                                         record["rel"]["sensitivity"], record["targetProt"]["proteinId"]))
+                protein_node_hits[record["prot_new"]["proteinId"]] = \
+                    [record["prot_new"]["protein_name"], record["prot_new"]["protein_descr"],
+                     record["gene_new.species"], record["gene_new.chromosome"]]
+                protein_node_rel.append((record["prot_new"]["proteinId"], record["rel"].type,
+                                         record["rel"]["sensitivity"], record["prot_new_homolog.proteinId"]))
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
         if return_format == "CMD":
             self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
