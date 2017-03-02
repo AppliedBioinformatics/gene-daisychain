@@ -240,19 +240,20 @@ cy.elements().qtip({
          content: "Show 5'",
          select: function()
             {
+                addPath(this, "5NB");
+                /*
                 var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request species list
                 node_id = this.id();
+                node_x = this.position("x");
+                node_y = this.position("y");
             wsconn.onopen = function () {wsconn.send("REL_"+project_id+"_"+node_id+"_5NB");};
             // Receive and process project list
             wsconn.onmessage = function (evt){
                 console.log(evt.data);
-                cy.add(JSON.parse(evt.data));
-                };
-            console.log(this); 
-            console.log(this.id()); 
-            console.log(this.position("x"));
-             console.log(this.position("y"));
+                cy.add({group: "nodes", "data": {"id":"g7973", "type":"Gene", "species":"E.coli_SE1111111", "chromosome":"chromosome", "contig":"NC_002695.1", "strand":"-", "start":2786492, "stop":2787274, "name":"ECs2845", "description":"glycosyl transferase family protein"},position: { x: node_x+50, y: node_y+50 }});
+                //cy.add(JSON.parse(evt.data));*/
+                //};
            // cy.add([
  // { group: "nodes", data: { id: "n0" }, position: { x: 100, y: 100 } },
   //{ group: "nodes", data: { id: "n1" }, position: { x: 200, y: 200 } },
