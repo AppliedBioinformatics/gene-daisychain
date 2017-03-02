@@ -241,82 +241,11 @@ cy.elements().qtip({
          select: function()
             {
                 addPath(this, "5NB");
-                /*
-                var wsconn = new WebSocket("ws://146.118.99.190:7687/");
-            // Request species list
-                node_id = this.id();
-                node_x = this.position("x");
-                node_y = this.position("y");
-            wsconn.onopen = function () {wsconn.send("REL_"+project_id+"_"+node_id+"_5NB");};
-            // Receive and process project list
-            wsconn.onmessage = function (evt){
-                console.log(evt.data);
-                cy.add({group: "nodes", "data": {"id":"g7973", "type":"Gene", "species":"E.coli_SE1111111", "chromosome":"chromosome", "contig":"NC_002695.1", "strand":"-", "start":2786492, "stop":2787274, "name":"ECs2845", "description":"glycosyl transferase family protein"},position: { x: node_x+50, y: node_y+50 }});
-                //cy.add(JSON.parse(evt.data));*/
-                //};
-           // cy.add([
- // { group: "nodes", data: { id: "n0" }, position: { x: 100, y: 100 } },
-  //{ group: "nodes", data: { id: "n1" }, position: { x: 200, y: 200 } },
- // { group: "edges", data: { id: "e0", source: this.data("id"), target: "n0" } },
- // { group: "edges", data: { id: "e0", source: this.data("id"), target: "n1" } },                   
-//]);
             } 
         },
-        /*{
-         content: 'Hide by Type',
-         select: function() { // Hide all concepts (nodes) of the same type.
-             if(this.isNode()) {
-                var thisConceptType= this.data('conceptType');
-                console.log("Hide Concept by Type: "+ thisConceptType);
-                cy.nodes().forEach(function( ele ) {
-                 if(ele.data('conceptType') === thisConceptType) {
-                    //ele.hide();
-			        ele.removeClass('ShowItAll');
-					ele.addClass('HideThis');
-                   }
-                });
-                // Relayout the graph.
-                //rerunLayout();
-               }
-             else if(this.isEdge()) { // Hide all relations (edges) of the same type.
-                var thisRelationType= this.data('label');
-                console.log("Hide Relation (by Label type): "+ thisRelationType);
-                cy.edges().forEach(function( ele ) {
-                 if(ele.data('label') === thisRelationType) {
-                    //ele.hide();
-			        ele.removeClass('ShowItAll');
-					ele.addClass('HideIt');
-                   }
-                });
-                // Relayout the graph.
-                rerunLayout();
-               }
-  			// Refresh network legend.
-            updateCyLegend();
-           }
-        },*/
 
-        /*{
-         content: 'Show Selections',
-         select: function() {
-             $("#infoDialog").dialog(); // initialize a dialog box.
-             // Display details of all the selected elements: nodes & edges.
-             var selections= "";
-             cy.nodes().forEach(function( ele ) {
-                if(ele.selected()) {
-                   selections += ele.data('conceptType') +" : "+ ele.data('value') +" , PID: "+ ele.data('pid') + "<br/><br/>";
-                  }
-             });
 
-             cy.edges().forEach(function( ele ) {
-                if(ele.selected()) {
-                   selections += "Relation: "+ ele.data('label') +" , From: "+ ele.data('source') +" , To: "+ ele.data('target') +"<br/>";
-                  }
-             });
-             console.log("ShowSelections (Shift+click): selections= "+ selections);
-             $("#infoDialog").html(selections);
-            }
-        },*/
+
 
         {
          content: 'Label on/ off by Type',
