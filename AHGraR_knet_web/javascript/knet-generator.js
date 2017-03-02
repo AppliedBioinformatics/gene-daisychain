@@ -35,12 +35,12 @@ function initializeNetworkView() {
           'text-background-opacity': '0', // default: '0' (disabled).
           'text-wrap': 'wrap', // for manual and/or autowrapping the label text.
           'border-style': 'solid', // node border, can be 'solid', 'dotted', 'dashed' or 'double'.
-          'border-width': '2px',
+          'border-width': '4px',
           'border-color': function(node){return color_node(node.data('species'), node.data('chromosome')); },//function(node){if (node.data('type') == 'Protein'){return "green";} else {return "blue";}},
-          'font-size': '4px', // '8px',
+          'font-size': '8px', // '8px',
           'shape': function(node){if (node.data('type') == 'Protein'){return "roundrectangle";} else{return "ellipse";};}, //'ellipse', 
-          'width': '30px', // '18px',
-          'height': '18px', // '18px',
+          'width': '60px', // '18px',
+          'height': '36px', // '18px',
           'background-color': function(node){if (node.data('type') == 'Protein'){return "#90ee90";} else {return "#ffffe0";}},
           /** Using 'data(conceptColor)' leads to a "null" mapping error if that attribute is not defined 
            * in cytoscapeJS. Using 'data[conceptColor]' is hence preferred as it limits the scope of 
@@ -53,7 +53,7 @@ function initializeNetworkView() {
       .selector('edge')
         .css({
           'content': 'data(type)', // label for edges (arrows).
-          'font-size': '4px',
+          'font-size': '8px',
           'curve-style': function(edge){if (edge.data('type') == 'HOMOLOG'){return "bezier";} else {return "unbundled-bezier";}}, /* options: bezier (curved) (default), unbundled-bezier (curved with manual control points), haystack (straight edges) */
           'control-point-step-size': '10px', // specifies the distance between successive bezier edges.
           'control-point-distance': '20px', /* overrides control-point-step-size to curves single edges as well, in addition to parallele edges */
