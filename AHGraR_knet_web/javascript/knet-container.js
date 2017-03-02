@@ -215,22 +215,11 @@ cy.elements().qtip({
         },
             
         {
-         content: 'Show Links',
-         select: function() {
-             if(this.isNode()) {
-                showLinks(this);
-  			    // Refresh network legend.
-                updateCyLegend();
-               }
-           }
-        },
-
-        {
-         content: 'Hide',
+         content: 'Delete',
          select: function() {
              //this.hide(); // hide the selected 'node' or 'edge' element.
-			 this.removeClass('ShowItAll');
-			 this.addClass('HideThis');
+             console.log(this);
+            cy.remove(this);
 			 // Refresh network legend.
              updateCyLegend();
             }

@@ -291,6 +291,11 @@ def query_management(connection, accessed_project, user_input):
             send_data(connection, "_".join(["PAQURY", "SEAR", str(accessed_project), "CMD"]+user_input))
             recv = receive_data(connection)
             print(recv)
+        # PAQURY_BLAS_ProjectID_CMD/WEB_Organism_Sequence
+        if user_input[0] == "BLAST" and len(user_input) == 3:
+            send_data(connection, "PAQURY_BLAS_" + str(accessed_project) + "_CMD_" + "_".join(user_input[1:]))
+            recv = receive_data(connection)
+            print(recv)
         if user_input[0] == "related" and len(user_input) == 4:
             send_data(connection, "PAQURY_RELA_"+ str(accessed_project)+"_CMD_"+"_".join(user_input[1:]))
             recv = receive_data(connection)

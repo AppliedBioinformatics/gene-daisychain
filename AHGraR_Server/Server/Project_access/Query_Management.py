@@ -15,6 +15,7 @@
 # Return a list of chromosomes found in one or all species of a project
 import os
 from neo4j.v1 import GraphDatabase, basic_auth
+import subprocess
 
 
 class QueryManagement:
@@ -57,8 +58,31 @@ class QueryManagement:
             self.find_node_relations(user_request[1:])
         elif user_request[0] == "LIST" and user_request[1].isdigit() and 3 <=len(user_request) <= 4:
             self.list_items(user_request[1:])
+        elif user_request[0] == "BLAS" and user_request[1].isdigit() and len(user_request) ==5:
+            self.blast(user_request[1:])
         else:
             self.send_data("-8")
+
+    # BLAST a protein sequence against the project-specific BLAST protein database
+    # to find matching proteins
+    # 1. Blast
+    # 2. Retrieve list of hits
+    # 3. Filter for target organisms (one or all)
+    # 4. Retrieve nodes for hits + their relations
+    # 5. Return
+    def blast(self, user_request):
+        proj_id = user_request[0]
+        query_seq = user_request[3]
+        BlastDB_path = os.path.join("Projects", str(proj_id), "BlastDB")
+        # Write protein sequence to temp. file
+        with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
+            tmp_fasta_file.write(">query_seq\n"+query_seq)
+        subprocess.run(["blastp", "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
+                        os.path.join(BlastDB_path, "BlastPDB"), "-outfmt", "6 sseqid evalue",
+                        "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "0.05",
+                        "-num_threads", "8", "-parse_deflines"])
+        self.send_data("Finished")
+
 
     # List properties of data stored in project db:
     # 1. List all species in a project
