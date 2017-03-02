@@ -31,7 +31,7 @@ async def handle(websocket, path):
             web_request[3] = ""
         # Do a BLAST search?
         if (web_request[5]=="BLAST"):
-            reply = "PAQURY_BLAS_" + web_request[1] + "_WEB_" + "_".join(web_request[2:])
+            reply = "PAQURY_BLAS_" + web_request[1] + "_WEB_" + "_".join(web_request[2:-1])
         else:
             # Shorten Protein/Gene/Both to Prot/Gene/Both
             web_request[5] = web_request[5][:4]
