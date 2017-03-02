@@ -86,19 +86,19 @@ class QueryManagement:
                         "-num_threads", "8", "-parse_deflines"])
         with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
             protein_names = [line.strip().lower() for line in tmp_res_file]
-        print(protein_names)
         project_db_conn = self.get_project_db_connection(proj_id)
         gene_node_hits = {}
         gene_node_rel = []
         protein_node_hits = {}
         protein_node_rel = []
         protein_gene_node_rel = []
+        # Search for protein names in project db. Only take the first 20 protein names.
         query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
                                          "CONTAINS {query_species} AND LOWER(gene.chromosome) CONTAINS "
                                          "{query_chromosome} AND LOWER(prot.protein_name) IN {query_name_list} "
                                          "OPTIONAL MATCH (prot)-[rel]->(prot_nb:Protein) "
                                          "RETURN prot,rel,prot_nb,gene.species,gene.chromosome",
-                                         {"query_species": query_species, "query_name_list": protein_names,
+                                         {"query_species": query_species, "query_name_list": protein_names[:20],
                                           "query_chromosome": query_chromosome})
         for record in query_hits:
             protein_node_hits[record["prot"]["proteinId"]] = \
@@ -110,9 +110,15 @@ class QueryManagement:
             if record["rel"] is not None:
                 protein_node_rel.append((record["prot"]["proteinId"], record["rel"].type,
                                          record["rel"]["sensitivity"], record["prot_nb"]["proteinId"]))
-        print(protein_node_hits)
-        print(protein_node_rel)
-        self.send_data("Finished")
+        # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
+        if return_format == "CMD":
+            self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
+                               protein_gene_node_rel)
+        else:
+            self.send_data_web(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
+                               protein_gene_node_rel)
+        # Close connection to the project-db
+        project_db_conn.close()
 
 
     # List properties of data stored in project db:
