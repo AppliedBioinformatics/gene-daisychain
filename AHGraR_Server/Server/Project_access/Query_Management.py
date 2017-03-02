@@ -152,7 +152,7 @@ class QueryManagement:
         # Search for a "CODING" relationship between a protein node and a gene node
         if relationship_type == "CODING" and node_type == "Protein":
             query_hits = project_db_conn.run("MATCH(targetGene:Gene)-[rel:CODING]->(prot:Protein) "
-                                             "WHERE prot.proteinId = {protId} RETURN gene, rel, prot",
+                                             "WHERE prot.proteinId = {protId} RETURN targetGene, rel, prot",
                                              {"protId": node_id})
             for record in query_hits:
                 gene_node_hits[record["targetGene"]["geneId"]] = \
