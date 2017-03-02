@@ -24,14 +24,18 @@ async def handle(websocket, path):
             reply = "PAQURY_LIST_" + proj_id + "_CHROMOSOME_"+species_name
     elif web_request.startswith("QS"):
         web_request = web_request.split("_")
-        # Shorten Protein/Gene/Both to Prot/Gene/Both
-        web_request[5] = web_request[5][:4]
         # Replace "ALL" in species and chromosome name with ""
         if web_request[2] == "ALL":
             web_request[2] = ""
         if web_request[3] == "ALL":
             web_request[3] = ""
-        reply = "PAQURY_SEAR_"+web_request[1]+"_WEB_"+"_".join(web_request[2:])
+        # Do a BLAST search?
+        if (web_request[5]=="BLAST"):
+            reply = "PAQURY_BLAS_" + web_request[1] + "_WEB_" + "_".join(web_request[2:])
+        else:
+            # Shorten Protein/Gene/Both to Prot/Gene/Both
+            web_request[5] = web_request[5][:4]
+            reply = "PAQURY_SEAR_"+web_request[1]+"_WEB_"+"_".join(web_request[2:])
     #PAQURY_RELA_ProjectID_CMD/WEB_Gene/Protein_NodeID_Relationship
     elif web_request.startswith("REL"):
         web_request = web_request.split("_")
