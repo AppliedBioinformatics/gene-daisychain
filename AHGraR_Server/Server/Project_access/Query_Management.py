@@ -99,8 +99,8 @@ class QueryManagement:
                                          "{query_chromosome} AND LOWER(prot.protein_name) IN {query_name_list} "
                                          "OPTIONAL MATCH (prot)-[rel]->(prot_nb:Protein) "
                                          "RETURN prot,rel,prot_nb,gene.species,gene.chromosome",
-                                         {"query_species": query_species, "query_name_list": protein_names[:20],
-                                          "query_chromosome": query_chromosome})
+                                         {"query_species": query_species.lower(), "query_name_list": protein_names[:20],
+                                          "query_chromosome": query_chromosome.lower()})
         for record in query_hits:
             protein_node_hits[record["prot"]["proteinId"]] = \
                 [record["prot"]["protein_name"], record["prot"]["protein_descr"],
