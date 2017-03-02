@@ -237,7 +237,10 @@ class QueryManagement:
         # e.g., always keep p123 to p456 and always remove p456 to p123
         for rel in protein_node_rel:
             try:
-                protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
+                if rel[0]<rel[3]:
+                    protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
+                else:
+                    protein_node_rel.remove((rel[0], rel[1], rel[2], rel[3]))
             except ValueError:
                 continue
         protein_protein_rel_json = ['{"data": {"id":"p'+prot_prot_rel[0]+'_'+prot_prot_rel[1]+prot_prot_rel[2]+'_p'+prot_prot_rel[3]+'", "source":"p' +
