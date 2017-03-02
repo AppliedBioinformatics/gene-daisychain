@@ -160,7 +160,7 @@ class QueryManagement:
                                              "prot.proteinId = {protId} MATCH "
                                              "(gene_new:Gene)-[:CODING]->(prot_new)-[rel:"+relationship_type+"]->"
                                              "(prot_new_homolog:Protein) RETURN DISTINCT gene_new.species, "
-                                             "gene_new.chromosome, prot_new, rel, prot_new_homolog.proteinId LIMIT(1)",
+                                             "gene_new.chromosome, prot_new, rel, prot_new_homolog.proteinId",
                                              {"protId": node_id})
 
             # query_hits = project_db_conn.run("MATCH(prot:Protein)-[rel:"+relationship_type+"]->(targetProt:Protein) "
