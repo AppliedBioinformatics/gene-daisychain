@@ -78,9 +78,12 @@ class QueryManagement:
         with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
             tmp_fasta_file.write(">query_seq\n"+query_seq)
         subprocess.run(["blastp", "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
-                        os.path.join(BlastDB_path, "BlastPDB"), "-outfmt", "6 sseqid evalue",
+                        os.path.join(BlastDB_path, "BlastPDB"), "-outfmt", "6 sseqid",
                         "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "0.05",
                         "-num_threads", "8", "-parse_deflines"])
+        with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
+            protein_names = [line.strip() for line in tmp_res_file]
+        print(protein_names)
         self.send_data("Finished")
 
 
