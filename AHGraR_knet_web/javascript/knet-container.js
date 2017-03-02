@@ -247,18 +247,18 @@ cy.elements().qtip({
             // Receive and process project list
             wsconn.onmessage = function (evt){
                 console.log(evt.data);
-                SetSpeciesList(evt.data);
+                cy.add(JSON.parse(evt.data));
                 };
             console.log(this); 
             console.log(this.id()); 
             console.log(this.position("x"));
              console.log(this.position("y"));
-            cy.add([
-  { group: "nodes", data: { id: "n0" }, position: { x: 100, y: 100 } },
-  { group: "nodes", data: { id: "n1" }, position: { x: 200, y: 200 } },
-  { group: "edges", data: { id: "e0", source: this.data("id"), target: "n0" } },
-  { group: "edges", data: { id: "e0", source: this.data("id"), target: "n1" } },                   
-]);
+           // cy.add([
+ // { group: "nodes", data: { id: "n0" }, position: { x: 100, y: 100 } },
+  //{ group: "nodes", data: { id: "n1" }, position: { x: 200, y: 200 } },
+ // { group: "edges", data: { id: "e0", source: this.data("id"), target: "n0" } },
+ // { group: "edges", data: { id: "e0", source: this.data("id"), target: "n1" } },                   
+//]);
             } 
         },
         /*{

@@ -200,6 +200,7 @@ class QueryManagement:
         self.send_data(reply)
 
     # Reformat node and edge data to fit the format expected by AHGraR-web
+    # Each node and each edge gets an unique and reproducible ID
     def send_data_web(self, gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
                       protein_gene_node_rel):
         # Transfer gene node and protein node dicts into list structures
@@ -230,7 +231,7 @@ class QueryManagement:
                 protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
             except ValueError:
                 continue
-        protein_protein_rel_json = ['{"data": {"id":"p'+prot_prot_rel[0]+'_p'+prot_prot_rel[3]+'", "source":"p' +
+        protein_protein_rel_json = ['{"data": {"id":"p'+prot_prot_rel[0]+'_'+prot_prot_rel[1]+prot_prot_rel[2]+'_p'+prot_prot_rel[3]+'", "source":"p' +
                                     prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
                                     '", "sensitivity":"' + prot_prot_rel[2] + '", "target":"p' + prot_prot_rel[
                                         3] + '"}}'
