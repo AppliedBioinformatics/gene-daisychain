@@ -58,7 +58,7 @@ class QueryManagement:
             self.find_node_relations(user_request[1:])
         elif user_request[0] == "LIST" and user_request[1].isdigit() and 3 <=len(user_request) <= 4:
             self.list_items(user_request[1:])
-        elif user_request[0] == "BLAS" and user_request[1].isdigit() and len(user_request) ==5:
+        elif user_request[0] == "BLAS" and user_request[1].isdigit() and len(user_request) ==6:
             self.blast(user_request[1:])
         else:
             self.send_data("-8")
@@ -72,7 +72,10 @@ class QueryManagement:
     # 5. Return
     def blast(self, user_request):
         proj_id = user_request[0]
-        query_seq = user_request[3]
+        return_format = user_request[1]
+        query_species = user_request[2] if user_request[2] != "*" else ""
+        query_chromosome = user_request[3] if user_request[3] != "*" else ""
+        query_seq = user_request[4]
         BlastDB_path = os.path.join("Projects", str(proj_id), "BlastDB")
         # Write protein sequence to temp. file
         with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
@@ -82,8 +85,33 @@ class QueryManagement:
                         "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "0.05",
                         "-num_threads", "8", "-parse_deflines"])
         with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
-            protein_names = [line.strip() for line in tmp_res_file]
+            protein_names = [line.strip().lower() for line in tmp_res_file]
         print(protein_names)
+        project_db_conn = self.get_project_db_connection(proj_id)
+        gene_node_hits = {}
+        gene_node_rel = []
+        protein_node_hits = {}
+        protein_node_rel = []
+        protein_gene_node_rel = []
+        query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
+                                         "CONTAINS {query_species} AND LOWER(gene.chromosome) CONTAINS "
+                                         "{query_chromosome} AND LOWER(prot.protein_name) IN {query_name_list} "
+                                         "OPTIONAL MATCH (prot)-[rel]->(prot_nb:Protein) "
+                                         "RETURN prot,rel,prot_nb,gene.species,gene.chromosome",
+                                         {"query_species": query_species, "query_name_list": protein_names,
+                                          "query_chromosome": query_chromosome})
+        for record in query_hits:
+            protein_node_hits[record["prot"]["proteinId"]] = \
+                [record["prot"]["protein_name"], record["prot"]["protein_descr"],
+                 record["gene.species"], record["gene.chromosome"]]
+            # Check if protein p1 has a relationship to protein p2
+            # Possible types of relationship: HOMOLOG or SYNTENY,
+            # both with the additional attribute "sensitivity" (of clustering)
+            if record["rel"] is not None:
+                protein_node_rel.append((record["prot"]["proteinId"], record["rel"].type,
+                                         record["rel"]["sensitivity"], record["prot_nb"]["proteinId"]))
+        print(protein_node_hits)
+        print(protein_node_rel)
         self.send_data("Finished")
 
 
