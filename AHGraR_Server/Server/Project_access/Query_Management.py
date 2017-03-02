@@ -126,8 +126,9 @@ class QueryManagement:
         protein_gene_node_rel = []
         # Search for a "5_NB" pr "3_NB" relationship between gene node and gene node
         if relationship_type in ["5_NB", "3_NB"]and node_type == "Gene":
-            query_hits = project_db_conn.run("MATCH(gene:Gene)-[rel:`"+relationship_type+"`]->(targetGene:Gene) "
-                                             "WHERE gene.geneId = {geneId} RETURN gene, rel, targetGene",
+            query_hits = project_db_conn.run("MATCH(gene:Gene)-[:`"+relationship_type+"`]->(targetGene:Gene) "
+                                             "WHERE gene.geneId = {geneId} MATCH (gene)-[rel]-(targetGene) "
+                                                                                      "RETURN gene, rel, targetGene",
                                              {"geneId": node_id} )
             for record in query_hits:
                 gene_node_hits[record["targetGene"]["geneId"]] = \
