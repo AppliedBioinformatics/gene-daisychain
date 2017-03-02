@@ -293,7 +293,7 @@ def query_management(connection, accessed_project, user_input):
             print(recv)
         # PAQURY_BLAS_ProjectID_CMD/WEB_Organism_Chromosome_Sequence
         if user_input[0] == "BLAST" and len(user_input) == 4:
-            send_data(connection, "PAQURY_BLAS_" + str(accessed_project) + "_CMD_" + "_".join(user_input[1:]))
+            send_data(connection, "PAQURY_BLAS_" + str(accessed_project) + "_CMD_" + "_".join([item.replace("_", "\t") for item in user_input[1:]]))
             recv = receive_data(connection)
             print(recv)
         if user_input[0] == "related" and len(user_input) == 4:

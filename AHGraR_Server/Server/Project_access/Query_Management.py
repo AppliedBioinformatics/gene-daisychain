@@ -71,6 +71,7 @@ class QueryManagement:
     # 4. Retrieve nodes for hits + their relations
     # 5. Return
     def blast(self, user_request):
+        user_request = [item.replace("\t", "_") for item in user_request]
         proj_id = user_request[0]
         return_format = user_request[1]
         query_species = user_request[2] if user_request[2] != "*" else ""
