@@ -5,6 +5,11 @@
 import configparser
 import socketserver
 import threading
+import shutil
+import os
+import subprocess
+import time
+from random import choice
 from neo4j.v1 import GraphDatabase, basic_auth
 from Server.Project_management.Project_Delete import DeleteProject
 from Server.Project_management.Project_Create import CreateProject
@@ -107,9 +112,9 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         task_manager.close_connection()
 
     def get_db_conn(self):
-        driver = GraphDatabase.driver("bolt://localhost:"+self.ahgrar_config["AHGraR_Server"]["proj_db_port"],
-                                      auth=basic_auth(self.ahgrar_config["AHGraR_Server"]["proj_db_login"],
-                                                      self.ahgrar_config["AHGraR_Server"]["proj_db_pw"]),encrypted=False)
+        with open("main_db_access", "r") as pw_file:
+            driver = GraphDatabase.driver("bolt://localhost:"+self.ahgrar_config["AHGraR_Server"]["main_db_bolt_port"],
+                                          auth=basic_auth("neo4j",pw_file.read()),encrypted=False)
         return(driver.session())
 
     # Send data to gateway
@@ -161,33 +166,123 @@ class AHGraRServerThread(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 if __name__ == '__main__':
-    # This server hosts the Neo4j databases and
-    # performs all computations
-    # A main Neo4j DB contains information about the projects
-    # AHGraR_Gateway is the only computer making a direct connection to AHGraR_Server
+    # Main function to start up the Server-side of AHGraR
+    # One Neo4j instance is used as internal database to manage individual projects ("main db")
+    # Each project has an independent Neo4j instance to host project data
+    # The main db can only be access from localhost
     # Load config file
     ahgrar_config = configparser.ConfigParser()
+    ahgrar_config.read('AHGraR_config.txt')
+    # Check paths
     try:
-        ahgrar_config.read('AHGraR_config.txt')
-    except OSError:
-        print("Config file not found. Exiting.")
+        # Check path to MCL
+        if not os.path.isfile(ahgrar_config['AHGraR_Server']['mcl_path']):
+            print("Invalid MCL path")
+            exit(3)
+        # Check path to Neo4j
+        # Look for Neo4j binary to ensure that neo4j_path is pointing to the uppermost directory
+        if not os.path.isfile(os.path.join(ahgrar_config['AHGraR_Server']['neo4j_path'], "bin", "neo4j")):
+            print("Invalid Neo4j path")
+            exit(3)
+        # Check path to blast+
+        # Look for blastn binary and makeblastdb
+        if not os.path.isfile(os.path.join(ahgrar_config['AHGraR_Server']['blast+_path'], "blastn")):
+            print("Invalid blast+ path - can't find blastn")
+            exit(3)
+        if not os.path.isfile(os.path.join(ahgrar_config['AHGraR_Server']['blast+_path'], "makeblastdb")):
+            print("Invalid blast+ path - can't find makeblastdb")
+            exit(3)
+    except KeyError:
+        print("Config file error: Can not retrieve path names")
         exit(3)
-    # TODO Check if main database is running
-    #subprocess.run(["./AHGraR_main_db/bin/neo4j", "start"])
+    # Check if main db is set up
+    if not os.path.exists("main_db"):
+        # If not, initiate a new Neo4j instance as main db
+        print("Main DB does not exist\nCreating a new main DB instance")
+        # Create a new Neo4j copy
+        try:
+            shutil.copytree(ahgrar_config['AHGraR_Server']['neo4j_path'], "main_db")
+        except (KeyError, OSError):
+            print("Error while initializing main db")
+            print("Could not create database copy")
+            exit(3)
+        # Edit Neo4j config
+        # Change some lines in config file, collect all lines, changed and unchanged in a list
+        neo4j_conf_content = []
+        try:
+            with open(os.path.join("main_db", "conf", "neo4j.conf"), "r") as conf_file:
+                for line in conf_file:
+                    if line == "#dbms.connector.bolt.listen_address=:7687\n":
+                        neo4j_conf_content.append("dbms.connector.bolt.listen_address=:" + ahgrar_config['AHGraR_Server']['main_db_bolt_port'] + "\n")
+                    elif line == "#dbms.connector.http.listen_address=:7474\n":
+                        neo4j_conf_content.append("dbms.connector.http.listen_address=:" + ahgrar_config['AHGraR_Server']['main_db_http_port'] + "\n")
+                    elif line == "dbms.connector.https.enabled=true\n":
+                        neo4j_conf_content.append("dbms.connector.https.enabled=false\n")
+                    else:
+                        neo4j_conf_content.append(line)
+        except (KeyError, OSError):
+            print("Error while initializing main db")
+            print("Could not create database copy")
+            exit(3)
+        # Write lines to a new file to replace the original config file
+        with open(os.path.join("main_db", "conf", "neo4j.conf"), "w") as conf_file:
+            for line in neo4j_conf_content:
+                conf_file.write(line)
+        # Generate a random password for main db access
+        chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+        neo4j_pw = ''.join(choice(chars) for _ in range(50))
+        # Write password to file
+        with open("main_db_access", "w") as file:
+            file.write(neo4j_pw)
+        try:
+            subprocess.run([os.path.join("main_db", "bin", "neo4j-admin"),
+                    "set-initial-password", neo4j_pw], check=True, stdout=subprocess.PIPE, stderr =subprocess.PIPE)
+        except subprocess.CalledProcessError as err:
+            print("Error while initializing main db")
+            print(err.stdout)
+            print(err.stderr)
+            exit(3)
+    # Check status of main db
+    status = subprocess.run([os.path.join("main_db", "bin", "neo4j"), "status"], stdout=subprocess.PIPE)
+    if status.returncode != 0:
+        main_db_start_code = subprocess.run([os.path.join("main_db", "bin", "neo4j"), "start"], stdout=subprocess.PIPE)
+        if main_db_start_code.returncode != 0:
+            print("Error while starting up main db")
+            exit(3)
+        # Wait 60 seconds for database to load
+        print("Waiting for main db to start")
+        time.sleep(60)
+        # Check status again
+        status = subprocess.run([os.path.join("main_db", "bin", "neo4j"), "status"], stdout=subprocess.PIPE)
+        if status.returncode != 0:
+            print("Error while starting up main db")
+            exit(3)
+    print("Main DB is running")
+
     # Update ports usable for project graph dbs
     # Retrieve ports from config file
-    port_list = ahgrar_config['AHGraR_Server']['proj_graph_db_ports']
-    ports = port_list.split(",")
+    try:
+        port_list = ahgrar_config['AHGraR_Server']['project_ports']
+    except KeyError:
+        print("Config file error: Can not retrieve list of ports for projects")
+        exit(3)
+    ports = [item.strip() for item in port_list.split(",")]
     port_numbers = []
     for port in ports:
         if "-" in port:
-            port = port.split("-")
+            port = [item.strip() for item in port.split("-")]
+            if not port[0].isdigit() or not port[1].isdigit():
+                continue
             port_numbers.extend(list(range(int(port[0]), int(port[1]) + 1)))
         else:
+            if not port.isdigit():
+                continue
             port_numbers.append(int(port))
     # Open connection to AHGraR-DB
-    main_db_conn = GraphDatabase.driver("bolt://localhost:"+ahgrar_config["AHGraR_Server"]["proj_db_port"],
-                                      auth=basic_auth(ahgrar_config["AHGraR_Server"]["proj_db_login"], ahgrar_config["AHGraR_Server"]["proj_db_pw"])).session()
+    print("Importing available project ports")
+    with open("main_db_access", "r") as pw_file:
+        main_db_conn = GraphDatabase.driver("bolt://localhost:"+ahgrar_config["AHGraR_Server"]["main_db_bolt_port"],
+                                          auth=basic_auth("neo4j", pw_file.read()), encrypted=False).session()
     # All ports are child nodes of Port_Manager-node
     main_db_conn.run("MERGE (:Port_Manager)")
     # Add ports to database, set status of newly added ports to "inactive"
@@ -201,16 +296,24 @@ if __name__ == '__main__':
     main_db_conn.run("MATCH (p:Port) WHERE NOT (p.nr IN ($ports)) AND NOT (p.status = 'active') DETACH DELETE (p)  ",
                 {"ports": port_numbers})
     main_db_conn.close()
-    server_address = ahgrar_config['AHGraR_Server']['ip']
-    server_port = int(ahgrar_config['AHGraR_Server']['port'])
+    # Start to listen for connections
+    try:
+        server_address = ahgrar_config['AHGraR_Server']['server_app_ip']
+        server_address = "0.0.0.0"
+        server_port = int(ahgrar_config['AHGraR_Server']['server_app_port'])
+    except KeyError:
+        print("Config file error: Can not retrieve server listening address and/or port")
+        exit(3)
     server = AHGraRServerThread((server_address,server_port), AHGraRServer)
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.daemon = True
     server_thread.start()
+    print("Listening for incomming connections at "+server_address+":"+str(server_port))
+    print("Type 'exit' to shutdown server")
     # Keep server running
-    # TODO: Add routine to allow proper server start and shutdown
     while True:
         user_input = input(">: ").strip()
         if user_input == "exit": break
+    server.socket.shutdown(0)
     server.socket.close()
     exit(0)

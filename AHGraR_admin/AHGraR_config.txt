@@ -1,0 +1,27 @@
+# AHGraR config file
+# Combines all configurable options for AHGraR server and AHGraR web
+[AHGraR_Server]
+# Local paths on server to MCL, blast+ and the folder containing the (empty) Neo4j database
+# Path to MCL binary
+mcl_path = /usr/bin/mcl
+# Path to Neo4j parent directory
+neo4j_path = /mnt/AHGraR2/neo4j-community-3.1.1
+# Path to blast+ binaries
+blast+_path = /mnt/oliver/ncbi_blast_2.5.0+/ncbi-blast-2.5.0+/bin
+# The server accepts connection from AHGRaR-web (and any other application) on this port:
+server_app_port = 5000
+# Server address (to receive conneection from the outside)
+server_app_ip = 146.118.99.191
+# The server needs two internal ports for internal access to project information stored
+# in the AHGraR-main DB
+# One is a HTTP port (unused, but required to be set by Neo4j)
+# The other is a BOLT port
+main_db_http_port = 5001
+main_db_bolt_port = 5002
+
+# Each individual project requires two unused ports (one for HTTP, the other for BOLT)
+# Set a range of free ports here.
+# If there are insufficient numbers of free ports, addition of new projects will not be possible anymore
+# Enter a range of ports or individual port numbers, e.g.:
+# project_ports = 5550-5560,5570,5580-5590
+project_ports = 5550-5560

@@ -2,7 +2,7 @@
 # Main function "run" sends project ID back to user to signal that deletion has started, "-1" if project was not found
 # or project database could not be shutdown
 # Finally, project is marked in main-db as deleted
-import os, subprocess, shutil
+import os, subprocess, shutil, time
 
 
 class DeleteProject:
@@ -40,8 +40,6 @@ class DeleteProject:
             # Else Send project_id back to user to signal that project was found and is now going to be deleted
             else:
                 self.send_data(str(self.proj_id))
-            # Continue to delete project folder
-            shutil.rmtree(project_path, ignore_errors=True)
             # Delete main db entry for project
             # this includes the entries for files, edits and tasks
             # Delete project file manager and files
@@ -76,8 +74,13 @@ class DeleteProject:
 
             # Delete project graph db port entry and set project status to deleted
             self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
-                        "REMOVE del_proj.port "
-                        "SET del_proj.status='DELETED'", {"proj_id": self.proj_id})
+                        "DETACH DELETE del_proj "
+                        , {"proj_id": self.proj_id})
+
+            # Finally delete project folder
+            # Wait 60 seconds for Neo4j shutdown
+            time.sleep(60)
+            shutil.rmtree(project_path, ignore_errors=True)
         except:
             pass
         finally:

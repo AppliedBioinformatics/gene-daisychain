@@ -1,7 +1,6 @@
 # Provides file management functions to AHGraR-Server
 # All functions return either a String or Null
 # Functions directly accessible by user send back a string via socket connection
-import time
 import os
 import urllib.request
 import shutil
@@ -22,8 +21,6 @@ class FileManagement:
     # User_request is a list produced by the "_" split command
     # e.g. [STAT, ProjectID, TaskID1, TaskID2]
     def evaluate_user_request(self, user_request):
-        if user_request[0]=="SLEE" and len(user_request)==2 and user_request[1].isdigit():
-            self.sleep(user_request[1])
         if user_request[0]=="DWNF" and len(user_request)==6 and user_request[1].isdigit():
             self.download_file(user_request[1],user_request[2],user_request[3],user_request[4],user_request[5])
         if user_request[0]=="LIST" and len(user_request)==2 and user_request[1].isdigit():
@@ -224,20 +221,6 @@ class FileManagement:
         self.task_mngr.add_task_results(proj_id, task_id, "imported "+str(imported_file_counter))
         self.task_mngr.set_task_status(proj_id, task_id, "finished ")
 
-    # Test function
-    # Sleep (remove before flight)
-    def sleep(self, project_id):
-        # Call task_manager to define a new task
-        task_id = self.task_mngr.define_task(project_id, "Sleep")
-        # Send task-id to user
-        self.send_data(task_id)
-        # Start task
-        self.task_mngr.set_task_status(project_id, task_id, "running")
-        # Do work
-        time.sleep(60)
-        # Store results in main-db
-        self.task_mngr.add_task_results(project_id, task_id, "woke up :-)")
-        # Define task as finished
-        self.task_mngr.set_task_status(project_id, task_id, "finished")
+
 
 
