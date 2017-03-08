@@ -27,7 +27,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         # Load AHGraR config file
         self.ahgrar_config = configparser.ConfigParser()
         try:
-            self.ahgrar_config.read('AHGraR_config.txt')
+            self.ahgrar_config.read('AHGraR_config_new.txt')
         except OSError:
             print("Config file not found. Exiting.")
             exit(3)
@@ -172,7 +172,7 @@ if __name__ == '__main__':
     # The main db can only be access from localhost
     # Load config file
     ahgrar_config = configparser.ConfigParser()
-    ahgrar_config.read('AHGraR_config.txt')
+    ahgrar_config.read('AHGraR_config_new.txt')
     # Check paths
     try:
         # Check path to MCL

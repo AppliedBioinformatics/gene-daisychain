@@ -120,7 +120,7 @@ if __name__ == '__main__':
     print("Welcome to AHGraR")
     # Load config file
     ahgrar_config = configparser.ConfigParser()
-    ahgrar_config.read('AHGraR_config.txt')
+    ahgrar_config.read('AHGraR_config_new.txt')
     # Print options
     print_options()
     while True:

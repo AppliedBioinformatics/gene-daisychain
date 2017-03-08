@@ -172,20 +172,14 @@ class FileManagement:
 
     # Batch import files from Import directory
     # Import file describes the files:
-    # species,variant,filetype,filename
-    # Import file needs to be stored in Import directory together with files
-    # Multiple import files in Import directory are possible
-    # Therefore import file name needs to be specified when calling
-    # this function
-    def file_import(self, proj_id, import_file_name):
+    # species,variant,filetype,filepath
+    def file_import(self, proj_id, import_file_path):
         # Restore file_name by replacing "\t" with "_"
-        import_file_name = import_file_name.replace("\t", "_")
+        import_file_path = import_file_path.replace("\t", "_")
         # Call task_manager to define a new task
-        task_id = self.task_mngr.define_task(proj_id, "Import files from " + import_file_name)
+        task_id = self.task_mngr.define_task(proj_id, "Import files from " + import_file_path)
         # Send task-id to user
-        self.send_data(task_id)
-        # Set path to import file
-        import_file_path =  os.path.join("Import", import_file_name)
+        self.send_data("Importing files. Task-ID: "+str(task_id))
         # Try to open import file
         try:
             import_file = open(import_file_path, "r")
@@ -200,14 +194,12 @@ class FileManagement:
             line = "".join(line.split(" "))
             new_file_desc = line.strip().split(",")
             if len(new_file_desc) != 4: continue
-            new_file_path = os.path.join("Import", new_file_desc[3])
+            new_file_path = new_file_desc[3]
             # Check if next file has valid file_type
-            if new_file_desc[2] not in ["gff3", "csv", "nt", "prot"]:
+            if new_file_desc[2] not in ["annotation", "genome", "transcript"]:
                continue
-            if new_file_desc[2] == "gff3":
+            if new_file_desc[2] == "annotation":
                 file_ending = ".gff3"
-            elif new_file_desc[2] == "csv":
-                file_ending = ".csv"
             else:
                 file_ending = ".faa"
             file_name = "_".join([new_file_desc[0], new_file_desc[1]]) + file_ending

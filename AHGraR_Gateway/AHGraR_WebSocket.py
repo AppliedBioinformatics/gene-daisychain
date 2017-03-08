@@ -83,7 +83,7 @@ def receive_data(connection):
 
 ahgrar_config = configparser.ConfigParser()
 try:
-    ahgrar_config.read('AHGraR_config.txt')
+    ahgrar_config.read('AHGraR_config_new.txt')
 except OSError:
     print("Config file not found. Exiting.")
     exit(3)

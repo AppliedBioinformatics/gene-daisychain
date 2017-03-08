@@ -11,7 +11,7 @@ class GatewayServer(socketserver.BaseRequestHandler):
     def setup(self):
         self.ahgrar_config = configparser.ConfigParser()
         try:
-            self.ahgrar_config.read('AHGraR_config.txt')
+            self.ahgrar_config.read('AHGraR_config_new.txt')
         except OSError:
             exit(3)
     # Handling user requests
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     # Open config file
     ahgrar_config = configparser.ConfigParser()
     try:
-        ahgrar_config.read('AHGraR_config.txt')
+        ahgrar_config.read('AHGraR_config_new.txt')
     except OSError:
         print("Config file not found. Exiting.")
         exit(3)
