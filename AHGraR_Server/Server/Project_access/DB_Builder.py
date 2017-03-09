@@ -277,7 +277,12 @@ class DBBuilder:
     # and the feature hierarchy string and then uses the GFF3-parser to parse the beginning of one GFF3 file.
     # Result returned by this function is the first gene and protein node retrieved by the parsing test.
     def set_gff3_parser(self, proj_id, parent_feat, sub_features, name_attr, desc_attr, file_name):
-        # Restore file name
+        # Restore function parameters by replacing "\t" back to "_"
+        proj_id = proj_id.rep.replace("\t", "_")
+        parent_feat = parent_feat.replace("\t", "_")
+        sub_features = sub_features.replace("\t", "_")
+        name_attr = name_attr.replace("\t", "_")
+        desc_attr = desc_attr.replace("\t", "_")
         file_name = file_name.replace("\t", "_")
         # Create a new task and return task-id to user
         task_id = self.task_mngr.define_task(proj_id, "Configure GFF3 parser")
