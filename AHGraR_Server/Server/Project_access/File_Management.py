@@ -99,7 +99,7 @@ class FileManagement:
                               "variant:{variant},"
                               "filetype:{filetype},"
                               "filename:{file_name},"
-                              "feat_attr:{feat_attr},"
+                              "feat_attr:{feat_attr}"
                               "}) "
                               "SET newFile.hidden = 'False' ",
                               {"proj_id": int(proj_id), "variant": variant, "filetype": filetype,
