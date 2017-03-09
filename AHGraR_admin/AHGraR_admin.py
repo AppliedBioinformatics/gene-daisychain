@@ -209,7 +209,8 @@ class AHGraRAdmin:
             print("Next, we need to know where a gene's name is stored. Select one attribute from one feature.")
             print("Enter in this format: feature:attribute, e.g. gene:Name")
             print("If unsure which attribute to take, select ID")
-            selected_features = [parent_feature].extend(subfeature_list)
+            selected_features = [parent_feature]
+            selected_features.extend(subfeature_list)
             available_attributes = [item for item in feat_attr if item[0] in selected_features]
             print(available_attributes)
 
