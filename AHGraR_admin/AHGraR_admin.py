@@ -253,7 +253,7 @@ class AHGraRAdmin:
             print(descr_feat_attr)
             # Send this data
             #PABULD_GFF3_ProjectID_annotationmapping_featurehierarchy_file1_file2
-            print(self.send_data("PABULD_GFF3_"+proj_id+"_"+parent_feature+",".join(subfeature_list)+
+            print(self.send_data("PABULD_GFF3_"+proj_id+"_"+parent_feature+"_"+",".join(subfeature_list)+
                            "_"+":".join(name_feat_attr)+"_"+":".join(descr_feat_attr)+"_"+anno_file[0].replace("_","\t")))
 
 
