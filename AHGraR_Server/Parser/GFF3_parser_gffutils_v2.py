@@ -44,10 +44,11 @@ class GFF3Parser_v2:
         # Set the name of the uppermost gene/transcript feature type (e.g. gene or mRNA)
         self.parent_feature_type = parent_feature_type
         # Set the list of all subfeatures of parent_feature that can be included in the final transcript
-        self.subfeatures = subfeatures
-        # Attribute location is a tuple
-        self.name_attribute = name_attribute
-        self.descr_attribute = descr_attribute
+        # Input format: subfeat1,subfeat2,subfeat3
+        self.subfeatures = subfeatures.split(",")
+        # Attribute location is converted from feat:attr to a tuple
+        self.name_attribute = name_attribute.split(":")
+        self.descr_attribute = descr_attribute.split(":")
         # Load GFF3 file
         gffutils.create_db(self.gff3_file_path, "gff3utils.db", merge_strategy="create_unique", force=True)
         self.gff3_db = gffutils.FeatureDB('gff3utils.db', keep_order=False)
@@ -82,6 +83,8 @@ class GFF3Parser_v2:
 
     def parse_gff3_file(self):
         print("Features as they arive")
+        print(self.parent_feature_type)
+        print(self.subfeatures)
         print(self.name_attribute)
         print(self.descr_attribute)
         output_nt = open(self.species_name+"_transcripts.fa", "w")

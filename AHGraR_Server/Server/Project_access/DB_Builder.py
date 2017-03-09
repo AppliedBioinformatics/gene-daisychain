@@ -332,7 +332,7 @@ class DBBuilder:
             for line in head:
                 head_gff3_file.write(line)
         gff3_parser_v2 = GFF3Parser_v2(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"), "", False, 0,
-                                       parent_feat, sub_features.split(","), name_attr, desc_attr)
+                                       parent_feat, sub_features.split, name_attr, desc_attr)
         gene_list = gff3_parser_v2.parse_gff3_file()
         # Delete head of file
         os.remove(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"))
