@@ -161,10 +161,12 @@ class AHGraRAdmin:
         os.system('cls' if os.name == 'nt' else 'clear')
 
 if __name__ == '__main__':
-
     # Load config file
     ahgrar_config = configparser.ConfigParser()
     ahgrar_config.read('AHGraR_config_new.txt')
+    # Initialize new class of AHGraR-admin
+    ahgrar_admin = AHGraRAdmin("localhost", ahgrar_config['AHGraR_Server']['server_app_port'])
+    ahgrar_admin.cmdline_menu()
 
 
 
