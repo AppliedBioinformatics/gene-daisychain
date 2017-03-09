@@ -212,7 +212,9 @@ class AHGraRAdmin:
             selected_features = [parent_feature]
             selected_features.extend(subfeature_list)
             available_attributes = [item for item in feat_attr if item[0] in selected_features]
-            print(available_attributes)
+            for available_attribute in available_attributes:
+                print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
+
 
 
 
