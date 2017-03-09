@@ -124,6 +124,8 @@ class AHGraRAdmin:
         print("\n\nEnter ID of project to access files")
         print("Enter '0' to cancel")
         proj_id = input("[Project-ID]>: ").strip()
+        if proj_id == "0":
+            return
         file_list = self.send_data("PAFILE_LIST_"+proj_id)
         print(file_list)
 
