@@ -82,26 +82,26 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         # These are: Job status and job deletion queries and retrieval of results
         if user_request[0] == "TASK" and len(user_request) >= 4:
             task_manager.evaluate_user_request(user_request[1:])
-        if user_request[0] == "FILE" and 3 <= len(user_request) <= 7:
+        elif user_request[0] == "FILE" and 3 <= len(user_request) <= 7:
             # Initialize file manager
             file_manager = FileManagement(self.get_db_conn(), task_manager, self.send_data)
             # Evaluate user request
             file_manager.evaluate_user_request(user_request[1:])
             # Close file manager connection to main-db
             file_manager.close_connection()
-        if user_request[0] == "BULD":
+        elif user_request[0] == "BULD":
             # Initialize build manager
             build_manager = DBBuilder(self.get_db_conn(), task_manager, self.send_data)
             # Evaluate user request
             build_manager.evaluate_user_request(user_request[1:])
             # Close file manager connection to main-db
             build_manager.close_connection()
-        if user_request[0] == "DABA":
+        elif user_request[0] == "DABA":
             # Initialize Database runner, providing start/stop/restart/status functionality
             db_runner = DBRunner(self.get_db_conn(), self.send_data)
             # Evaluate user request
             db_runner.evaluate_user_request(user_request[1:])
-        if user_request[0] == "QURY":
+        elif user_request[0] == "QURY":
             # Initialize query manager
             query_manager = QueryManagement(self.get_db_conn(), self.send_data)
             # Evaluate user request
