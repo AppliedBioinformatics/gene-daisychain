@@ -173,12 +173,16 @@ class AHGraRAdmin:
         # Get file list for current project
         file_list = self.send_data("PAFILE_LIST_"+str(proj_id))
         files = [item.split("\t") for item in file_list.split("\n")]
+        print(files)
         genome_files = [item for item in files if item[1]=="genome"]
         anno_files  = [item for item in files if item[1]=="annotation"]
         print(genome_files)
         print(anno_files)
         print("Found "+ str(len(genome_files))+" genome files")
         print("Found " + str(len(anno_files)) + " annotation files")
+        print("We need to collect some information to parse the annotation files, is that ok?")
+      #  for anno_file in anno_files:
+
 
 
 
