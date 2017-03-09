@@ -31,7 +31,8 @@ class DBBuilder:
         # Set GFF3 parser for some or all GFF3 files in a project
         if user_request[0] == "GFF3" and len(user_request) == 7 and user_request[1].isdigit():
             # Call format: ProjectID, parent_feat, sub_feature, name_attr, descr_attr
-            self.set_gff3_parser(user_request[1],user_request[2], user_request[3], user_request[4], user_request[5])
+            self.set_gff3_parser(user_request[1],user_request[2], user_request[3],
+                                 user_request[4], user_request[5], user_request[6])
         # Build the neo4j-based project database from the previously added files
         if user_request[0] == "DB" and len(user_request) == 2 and user_request[1].isdigit():
             self.build_db(user_request[1])
