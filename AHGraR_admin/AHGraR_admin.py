@@ -6,6 +6,7 @@
 import configparser
 import os
 import socket
+import time
 
 
 class AHGraRAdmin:
@@ -156,7 +157,8 @@ class AHGraRAdmin:
                         file_content = file.read()
                     # Replace any underscores by "\t"
                     file_content = file_content.replace("_","\t")
-                    self.send_data("PAFILE_IMPO_ProjectID_"+file_content)
+                    print(self.send_data("PAFILE_IMPO_ProjectID_"+file_content))
+                    time.sleep(20)
                 else:
                     print("try again")
 
