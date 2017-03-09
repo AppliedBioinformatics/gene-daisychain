@@ -136,9 +136,9 @@ class AHGraRAdmin:
 
 
 
-    def delete_project(self, maindb_conn):
+    def delete_project(self):
         self.clear_console()
-        self.list_projects(maindb_conn)
+        self.list_projects()
         print("Enter ID of project to delete it")
         print("Enter '0' to cancel")
         proj_id = input("[Delete]>: ").strip()
