@@ -29,6 +29,8 @@ class DBBuilder:
     # e.g. [STAT, ProjectID, TaskID1, TaskID2]
     def evaluate_user_request(self, user_request):
         # Set GFF3 parser for some or all GFF3 files in a project
+        print(user_request)
+        print(len(user_request))
         if user_request[0] == "GFF3" and len(user_request) == 7 and user_request[1].isdigit():
             # Call format: ProjectID, parent_feat, sub_feature, name_attr, descr_attr
             self.set_gff3_parser(user_request[1],user_request[2], user_request[3],
