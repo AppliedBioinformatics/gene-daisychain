@@ -214,7 +214,21 @@ class AHGraRAdmin:
             available_attributes = [item for item in feat_attr if item[0] in selected_features]
             for available_attribute in available_attributes:
                 print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
-
+            while True:
+                name_feat_attr = input(">:").strip()
+                if ":" in name_feat_attr:
+                    name_feat_attr = name_feat_attr.split(":")
+                else:
+                    continue
+                if name_feat_attr[0] not in selected_features:
+                    continue
+                else:
+                    selected_feat_attr = [item for item in available_attributes if item[0] == name_feat_attr[0]][0][1:]
+                    if name_feat_attr[1] not in selected_feat_attr:
+                        continue
+                    else:
+                        break
+            print(name_feat_attr)
 
 
 
