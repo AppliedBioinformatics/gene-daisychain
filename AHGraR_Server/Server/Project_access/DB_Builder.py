@@ -278,7 +278,7 @@ class DBBuilder:
     # Result returned by this function is the first gene and protein node retrieved by the parsing test.
     def set_gff3_parser(self, proj_id, parent_feat, sub_features, name_attr, desc_attr, file_name):
         # Restore function parameters by replacing "\t" back to "_"
-        proj_id = proj_id.rep.replace("\t", "_")
+        proj_id = proj_id.replace("\t", "_")
         parent_feat = parent_feat.replace("\t", "_")
         sub_features = sub_features.replace("\t", "_")
         name_attr = name_attr.replace("\t", "_")
