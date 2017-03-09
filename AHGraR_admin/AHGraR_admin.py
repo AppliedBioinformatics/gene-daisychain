@@ -182,9 +182,38 @@ class AHGraRAdmin:
         print("Found " + str(len(anno_files)) + " annotation files")
         print("We need to collect some information to parse the annotation files, is that ok?")
         for anno_file in anno_files:
+            print(anno_file[0])
             feat_attr= [item.split("§") for item in anno_file[2].split("$")]
             features = [item[0] for item in feat_attr]
-            print(features)
+            print("First, we need to know which feature represents whole genes (e.g. 'gene' or 'mRNA')")
+            print("Available features: ")
+            print(",".join(features))
+            parent_feature = ""
+            while parent_feature not in features:
+                parent_feature = input(">:").strip()
+            print("Next, we need to know which features build up a gene and which of them you want to include")
+            print("Examples: 'CDS' and 'UTR'")
+            reduced_features = [item for item in features if item != parent_feature]
+            print("Available features: ")
+            print(",".join(reduced_features))
+            print("Select features to include, one at a time, type 'done' to go to the next step")
+            subfeature_list = []
+            while True:
+                sub_feature = input(">:").strip()
+                if sub_feature == "done":
+                    break
+                else:
+                    subfeature_list.append(sub_feature)
+            # Filter out wrong subfeatures
+            subfeature_list = [item for item in subfeature_list if item in reduced_features]
+            print("Next, we need to know where a gene's name is stored. Select one attribute from one feature.")
+            print("Enter in this format: feature:attribute, e.g. gene:Name")
+            print("If unsure which attribute to take, select ID")
+            selected_features = [parent_feature].extend(subfeature_list)
+            available_attributes = [item for item in feat_attr if item[0] in selected_features]
+            print(available_attributes)
+
+
 
 
 
