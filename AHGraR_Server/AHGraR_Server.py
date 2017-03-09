@@ -172,7 +172,7 @@ if __name__ == '__main__':
     # The main db can only be access from localhost
     # Load config file
     ahgrar_config = configparser.ConfigParser()
-    ahgrar_config.read('AHGraR_config_new.txt')
+    ahgrar_config.read('AHGraR_config.txt')
     # Check paths
     try:
         # Check path to MCL
