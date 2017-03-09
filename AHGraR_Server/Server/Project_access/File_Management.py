@@ -91,7 +91,7 @@ class FileManagement:
         # If file is an annotation file, collect additional information about its
         # features and attributes
         if filetype == "annotation":
-            anno_feat_attr = self.get_annotation_features_attributes(file_name)
+            anno_feat_attr = self.get_annotation_features_attributes(os.path.join("Projects", proj_id, "Files", file_name))
         else:
             anno_feat_attr = ""
         self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
