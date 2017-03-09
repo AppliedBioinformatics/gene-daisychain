@@ -192,7 +192,8 @@ if __name__ == '__main__':
         if not os.path.isfile(os.path.join(ahgrar_config['AHGraR_Server']['blast+_path'], "makeblastdb")):
             print("Invalid blast+ path - can't find makeblastdb")
             exit(3)
-    except KeyError:
+    except KeyError as e:
+        print(e)
         print("Config file error: Can not retrieve path names")
         exit(3)
     # Check if main db is set up
