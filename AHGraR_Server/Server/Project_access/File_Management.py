@@ -213,6 +213,8 @@ class FileManagement:
         project_file_path = os.path.join("Projects", proj_id, "Files")
         self.task_mngr.set_task_status(proj_id, task_id, "running")
         for line in import_csv_table:
+            print("Importing now")
+            print(line)
             # Remove whitespaces
             line = "".join(line.split(" "))
             new_file_desc = line.strip().split(",")
