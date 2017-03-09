@@ -173,7 +173,6 @@ class AHGraRAdmin:
         # Get file list for current project
         file_list = self.send_data("PAFILE_LIST_"+str(proj_id))
         files = [item.split("\t") for item in file_list.split("\n")]
-        print(files)
         genome_files = [item for item in files if item[1]=="genome"]
         anno_files  = [item for item in files if item[1]=="annotation"]
         print("Found "+ str(len(genome_files))+" genome files")
@@ -255,7 +254,7 @@ class AHGraRAdmin:
             # Send this data
             #PABULD_GFF3_ProjectID_annotationmapping_featurehierarchy_file1_file2
             print(self.send_data("PABULD_GFF3_"+proj_id+"_"+parent_feature+",".join(subfeature_list)+
-                           "_"+name_feat_attr+"_"+descr_feat_attr+"_"+anno_file[0]))
+                           "_"+":".join(name_feat_attr)+"_"+":".join(descr_feat_attr)+"_"+anno_file[0]))
 
 
 
