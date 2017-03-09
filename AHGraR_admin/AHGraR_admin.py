@@ -95,6 +95,7 @@ class AHGraRAdmin:
 
     def list_projects(self):
         proj_list = self.send_data("PMINFO")
+        print(5*"\n")
         print(20*"#")
         print("Available projects: ")
         print(20 * "#")
@@ -118,13 +119,17 @@ class AHGraRAdmin:
             print("Invalid project name")
 
 
-    def change_project_files(self, maindb_conn):
-        print("Change files")
+    def change_project_files(self):
+        self.list_projects()
+        print("\n\nEnter ID of project to access files")
+        print("Enter '0' to cancel")
+        proj_id = input("[Project-ID]>: ").strip()
+        file_list = self.send_data("PAFILE_LIST_"+proj_id)
+        print(file_list)
 
 
-
-    def build_project_db(self, maindb_conn):
-        self.list_projects(maindb_conn)
+    def build_project_db(self):
+        self.list_projects()
         print("Enter ID of project to access files")
         print("Enter '0' to cancel")
         proj_id = input("[Project-ID]>: ").strip()
