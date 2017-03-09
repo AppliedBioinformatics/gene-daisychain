@@ -229,7 +229,26 @@ class AHGraRAdmin:
                     else:
                         break
             print(name_feat_attr)
-
+            print("Finally, we need to know where a gene's description is stored. Select one attribute from one feature.")
+            print("Enter in this format: feature:attribute, e.g. gene:Name")
+            print("If you don't want this, enter 'skip'")
+            for available_attribute in available_attributes:
+                print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
+            while True:
+                descr_feat_attr = input(">:").strip()
+                if ":" in descr_feat_attr:
+                    descr_feat_attr = descr_feat_attr.split(":")
+                else:
+                    continue
+                if descr_feat_attr[0] not in selected_features:
+                    continue
+                else:
+                    selected_feat_attr = [item for item in available_attributes if item[0] == descr_feat_attr[0]][0][1:]
+                    if descr_feat_attr[1] not in selected_feat_attr:
+                        continue
+                    else:
+                        break
+            print(descr_feat_attr)
 
 
 
