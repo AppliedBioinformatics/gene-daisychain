@@ -27,7 +27,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         # Load AHGraR config file
         self.ahgrar_config = configparser.ConfigParser()
         try:
-            self.ahgrar_config.read('AHGraR_config_new.txt')
+            self.ahgrar_config.read('AHGraR_config.txt')
         except OSError:
             print("Config file not found. Exiting.")
             exit(3)
