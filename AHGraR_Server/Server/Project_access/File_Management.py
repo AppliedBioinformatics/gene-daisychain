@@ -4,7 +4,7 @@
 import os
 import urllib.request
 import shutil
-
+import gffutils
 
 class FileManagement:
 
@@ -66,16 +66,44 @@ class FileManagement:
         self.file_manager_add_file(proj_id, species, variant, file_name, filetype)
         self.task_mngr.set_task_status(proj_id, task_id, "finished")
 
+    # Return a list of all features and their attributes contained in a GFF3 file
+    def get_annotation_features_attributes(self, gff3_file_path):
+        gffutils.create_db(gff3_file_path, "gff3utils.db", merge_strategy="create_unique", force=True)
+        gff3_db = gffutils.FeatureDB('gff3utils.db', keep_order=False)
+        features_attributes = []
+        # Iterate over all features
+        for feature in gff3_db.featuretypes():
+            # Extract attributes for each feature
+            attribute_list = []
+            for item in gff3_db.features_of_type(feature):
+                attribute_list.extend(list(item.attributes.keys()))
+            # Make list of attributes unique
+            attribute_list = list(set(attribute_list))
+            # Collect all features and their attributes
+            features_attributes.append((feature, attribute_list))
+        # Convert information into a string:
+        # feature1\tattr1\tattr2\tattr\n
+        # feature2\tattr1\tattr2\tattr\n
+        return_str = "\n".join([item[0] + "\t" + "\t".join(item[1]) for item in features_attributes])
+        return return_str
+
     def file_manager_add_file(self, proj_id, species, variant, file_name, filetype):
+        # If file is an annotation file, collect additional information about its
+        # features and attributes
+        if filetype == "annotation":
+            anno_feat_attr = self.get_annotation_features_attributes(file_name)
+        else:
+            anno_feat_attr = ""
         self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
                               "MERGE (fileMngr)-[:file]->(newFile:File{species:{species},"
                               "variant:{variant},"
                               "filetype:{filetype},"
-                              "filename:{file_name}"
+                              "filename:{file_name},"
+                              "feat_attr:{feat_attr},"
                               "}) "
                               "SET newFile.hidden = 'False' ",
                               {"proj_id": int(proj_id), "variant": variant, "filetype": filetype,
-                               "file_name":file_name, "species":species})
+                               "file_name":file_name, "species":species, "feat_attr":anno_feat_attr})
 
     # Return a list of all files associated with a project
     # Function requires only the project ID as parameter
@@ -196,7 +224,7 @@ class FileManagement:
             if len(new_file_desc) != 4: continue
             new_file_path = new_file_desc[3]
             # Check if next file has valid file_type
-            if new_file_desc[2] not in ["annotation", "genome", "transcript"]:
+            if new_file_desc[2] not in ["annotation", "genome"]:
                continue
             if new_file_desc[2] == "annotation":
                 file_ending = ".gff3"

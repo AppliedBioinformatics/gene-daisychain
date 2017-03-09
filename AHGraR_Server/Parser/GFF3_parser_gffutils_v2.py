@@ -11,6 +11,7 @@
 import gffutils
 import os
 from pyfaidx import Fasta
+#from Bio.Seq import Seq
 
 class GFF3Parser_v2:
     # Path to GFF3
@@ -41,18 +42,25 @@ class GFF3Parser_v2:
         # Convert attribute location into a tuple
         self.name_attribute = [item.strip() for item in name_attribute.split(":")]
         self.descr_attribute = [item.strip() for item in descr_attribute.split(":")]
+        # Load GFF3 file
+        gffutils.create_db(self.gff3_file_path, "gff3utils.db", merge_strategy="create_unique", force=True)
+        self.gff3_db = gffutils.FeatureDB('gff3utils.db', keep_order=False)
 
+    # Reverse complement a nucleotide sequence
     def reverse_complement(self, sequence):
-        # First ensure that all letters are uppercase
-        sequence = sequence.upper()
         rev_complement = {"A": "T", "T": "A", "C": "G", "G": "C"}
-        sequence = "".join([rev_complement[nt] for nt in sequence])[::-1]
+        try:
+            sequence = "".join([rev_complement[nt] for nt in sequence])[::-1]
+        # If non-nucleotide letters are found: return empty string
+        except KeyError:
+            sequence = ""
         return sequence
+
+
 
     def parse_gff3_file(self):
         output = open("transcripts.fa", "w")
-        gffutils.create_db(self.gff3_file_path, "gff3utils.db", merge_strategy="create_unique", force=True)
-        gff3_db = gffutils.FeatureDB('gff3utils.db', keep_order=False)
+        gff3_db = self.gff3_db
         # Collect all gene annotations in a list
         gene_annotation_list = []
         # Iterate through all transcripts (identified by parent_feature_type)
@@ -87,22 +95,31 @@ class GFF3Parser_v2:
                     # Collect sequence of this subfeature if nucleotide sequence is the genome
                     # Important: Current version of GFFutils has a bug preventing the automatic reverse-complement
                     # of minus-strand features
-                    # Strandedness is evaluated manually here
+                    # Strandedness is therefore evaluated manually here
                     if self.seq_is_genome:
+                        # Is sequence from a minus-strand feature?
                         antisense = subfeature.strand == "-"
                         # If antisense, reverse complement the sequence
-                        seq_fragment = subfeature.sequence(self.sequence, False).seq if not antisense else self.reverse_complement(subfeature.sequence(self.sequence, False).seq)
-                        # Include the phase:
+                        seq_fragment = subfeature.sequence(self.sequence, False).seq.upper() if not antisense \
+                            else self.reverse_complement(subfeature.sequence(self.sequence, False).seq.upper())
+                        # Include the coding phase, phase is zero if phase field is empty:
                         phase = int(subfeature.frame) if subfeature.frame.isdigit() else 0
+                        # If a gene consists of multiple segments they need to be sorted by their start index
+                        # For antisense strand features the negative of the start index is used
                         start_index = int(subfeature.start) if not antisense else int(subfeature.start)*(-1)
+                        # Store each gene sequence fragment in a tuple together with its start index
                         gene_sequence.append((start_index, seq_fragment[phase:]))
             # Join all sequence fragments together
             # First, sort by start_index
             gene_sequence = sorted(gene_sequence, key=lambda x: x[0])
+            # Now join fragments into a single string
             gene_sequence = "".join([item[1] for item in gene_sequence])
+            # Write sequence to file, except when no sequence could be retrieved
             if not gene_sequence:
                 continue
-            output.write(">"+str(gene_annotation[0])+"_"+gene_annotation[6]+"\n")
+            # The fasta annotation line is  '>lcl|' plus the gene node ID
+            # 'lcl|' is required by blast+ to ensure correct parsing of the identifier
+            output.write(">lcl|"+str(gene_annotation[0])+"_"+gene_annotation[6]+"\n")
             output.write(gene_sequence+"\n")
         output.close()
 
