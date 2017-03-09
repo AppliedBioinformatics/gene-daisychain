@@ -126,8 +126,34 @@ class AHGraRAdmin:
         proj_id = input("[Project-ID]>: ").strip()
         if proj_id == "0":
             return
+        self.clear_console()
+        print(5*"\nFile list:")
         file_list = self.send_data("PAFILE_LIST_"+proj_id)
         print(file_list)
+        while True:
+            # Wait for cmdline input
+            self.clear_console()
+            print(5*"\n")
+            print("(1) to batch import files")
+            print("(2) to delete a file")
+            print("(0) to return")
+            user_input = input("[File]>: ").strip()
+            if user_input == "1":
+                print("File import requires a CSV file describing each file")
+                print("The columns are:")
+                print("Species_name, Variant, filetype, file_path")
+                print("Filetypes are either 'genome' for genomic sequences in FASTA format")
+                print("or 'annotation' for GFF3 annotation files")
+                print("Example:")
+                print("E.coli,K12,genome,/path/to/genome.fa")
+                print("E.coli,K12,annotation,/path/to/annotation.gff3")
+                user_input = input("[File]>: ").strip()
+                if os.path.isfile(user_input):
+                    print("valid file")
+                else:
+                    print("try again")
+
+
 
 
     def build_project_db(self):
