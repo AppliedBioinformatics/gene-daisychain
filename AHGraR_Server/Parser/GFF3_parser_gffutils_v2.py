@@ -11,7 +11,8 @@
 import gffutils
 import os
 from pyfaidx import Fasta
-#from Bio.Seq import Seq
+from Bio.Seq import Seq
+from Bio.Alphabet import IUPAC
 
 class GFF3Parser_v2:
     # Path to GFF3
@@ -25,6 +26,8 @@ class GFF3Parser_v2:
     def __init__(self, gff3_file_path, sequence_file_path, seq_is_genome, gene_node_id, parent_feature_type,subfeatures, name_attribute, descr_attribute):
         # Path to GFF3 file
         self.gff3_file_path = gff3_file_path
+        # Extract species name from file name
+        self.species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
         # Parse sequence file
         self.sequence = Fasta(sequence_file_path)
         # Is sequence the genome (true) or already spliced transcripts (false)
@@ -56,10 +59,27 @@ class GFF3Parser_v2:
             sequence = ""
         return sequence
 
+    # Translate a nucleotide sequence into protein sequence
+    def translate_nt(self, nt_sequence):
+        # Coding sequence should be in frame
+        # If nucleotide sequence does not start with ATG, continuously remove 3 letters until sequence starts with ATG
+        while nt_sequence:
+            if nt_sequence[:3] == "ATG": break
+            else:
+                if len(nt_sequence) < 3: return ""
+                else:
+                    nt_sequence = nt_sequence[3:]
+        # Biopython demands coding sequence lengths to be a multiple of three
+        # Add trailing N to those sequences that fail this requirement
+        while len(nt_sequence)%3 != 0:
+            nt_sequence += "N"
+        coding_seq = Seq(nt_sequence, IUPAC.ambiguous_dna)
+        return str(coding_seq.translate(to_stop=True))
 
 
     def parse_gff3_file(self):
-        output = open("transcripts.fa", "w")
+        output_nt = open(self.species_name+"_transcripts.fa", "w")
+        output_prot = open(self.species_name+"_translations.fa", "w")
         gff3_db = self.gff3_db
         # Collect all gene annotations in a list
         gene_annotation_list = []
@@ -69,7 +89,8 @@ class GFF3Parser_v2:
             self.gene_node_id += 1
             # Extract all "standard" attributes for this transcript:
             # name and description may be changed by name_attribute and descr_attribute
-            gene_annotation = [self.gene_node_id, self.species_name, transcript[0].seqid, transcript[0].start, transcript[0].stop, transcript[0].strand, transcript[0].id, ""]
+            gene_annotation = [self.gene_node_id, self.species_name, transcript[0].seqid, transcript[0].start,
+                               transcript[0].stop, transcript[0].strand, transcript[0].id, ""]
             if self.name_attribute[0] == self.parent_feature_type:
                 gene_annotation[6]=transcript[0][self.name_attribute[1]][0]
             if self.descr_attribute[0] == self.parent_feature_type:
@@ -119,9 +140,15 @@ class GFF3Parser_v2:
                 continue
             # The fasta annotation line is  '>lcl|' plus the gene node ID
             # 'lcl|' is required by blast+ to ensure correct parsing of the identifier
-            output.write(">lcl|"+str(gene_annotation[0])+"_"+gene_annotation[6]+"\n")
-            output.write(gene_sequence+"\n")
-        output.close()
+            output_nt.write(">lcl|"+str(gene_annotation[0])+"_"+gene_annotation[6]+"\n")
+            output_nt.write(gene_sequence+"\n")
+            protein_sequence = self.translate_nt(gene_sequence)
+            if not protein_sequence:
+                continue
+            output_prot.write(">lcl|"+str(gene_annotation[0])+"_"+gene_annotation[6]+"\n")
+            output_prot.write(protein_sequence + "\n")
+        output_nt.close()
+        output_prot.close()
 
 
 
