@@ -175,8 +175,9 @@ class AHGraRAdmin:
         files = [item.split("\t") for item in file_list.split("\n")]
         genome_files = [item for item in files if item[1]=="genome"]
         anno_files  = [item for item in files if item[1]=="annotation"]
-        print(genome_files)
-        print(anno_files)
+        print("Found "+ str(len(genome_files))+" genome files")
+        print("Found " + str(len(anno_files)) + " annotation files")
+
 
 
 

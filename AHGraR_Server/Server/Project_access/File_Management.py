@@ -105,14 +105,15 @@ class FileManagement:
                               {"proj_id": int(proj_id), "variant": variant, "filetype": filetype,
                                "file_name":file_name, "species":species, "feat_attr":anno_feat_attr})
 
+
     # Return a list of all files associated with a project
     # Function requires only the project ID as parameter
     def file_list(self, proj_id):
         files_list = list(self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
                           "WHERE ID(proj)={proj_id} RETURN file.filename, "
-                          "file.filetype ORDER BY file.filename",
+                          "file.filetype, file.feat_attr ORDER BY file.filename",
                           {"proj_id":int(proj_id)}))
-        self.send_data("\n".join(["\t".join([item[0],item[1]]) for item in files_list]))
+        self.send_data("\n".join(["\t".join([item[0],item[1], item[2]]) for item in files_list]))
 
     # Hide a file in a project so that file is not used in future database builds
     # File can be unhided anytime again
