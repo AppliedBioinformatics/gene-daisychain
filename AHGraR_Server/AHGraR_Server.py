@@ -306,8 +306,7 @@ if __name__ == '__main__':
         print("Config file error: Can not retrieve server listening address and/or port")
         exit(3)
     server = AHGraRServerThread((server_address,server_port), AHGraRServer)
-    server_thread = threading.Thread(target=server.serve_forever)
-    server_thread.daemon = True
+    server_thread = threading.Thread(target=server.serve_forever, daemon=True)
     server_thread.start()
     print("Listening for incomming connections at "+server_address+":"+str(server_port))
     print("Type 'exit' to shutdown server")
@@ -315,7 +314,7 @@ if __name__ == '__main__':
     while True:
         user_input = input(">: ").strip()
         if user_input == "exit": break
-    server_thread.join()
     server.socket.shutdown(0)
     server.socket.close()
+    server_thread.join(5)
     exit(0)
