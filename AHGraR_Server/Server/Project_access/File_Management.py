@@ -110,7 +110,7 @@ class FileManagement:
     def file_list(self, proj_id):
         files_list = list(self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
                           "WHERE ID(proj)={proj_id} RETURN file.filename, "
-                          "file.hidden ORDER BY file.filename",
+                          "file.filetype ORDER BY file.filename",
                           {"proj_id":int(proj_id)}))
         self.send_data("\n".join(["\t".join([item[0],item[1]]) for item in files_list]))
 

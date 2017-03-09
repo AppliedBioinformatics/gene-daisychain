@@ -167,13 +167,17 @@ class AHGraRAdmin:
 
     def build_project_db(self):
         self.list_projects()
-        print("Enter ID of project to access files")
+        print("Enter ID of project")
         print("Enter '0' to cancel")
         proj_id = input("[Project-ID]>: ").strip()
         # Get file list for current project
-        maindb_conn = socket.create_connection(
-            ("localhost", ahgrar_config['AHGraR_Server']['server_app_port']))
-        self.send_data()
+        file_list = self.send_data("PAFILE_LIST_"+str(proj_id))
+        files = [item.split("\t") for item in file_list.split("\n")]
+        genome_files = [item for item in files if item[1]=="genome"]
+        anno_files  = [item for item in files if item[1]=="annotation"]
+        print(genome_files)
+        print(anno_files)
+
 
 
 
