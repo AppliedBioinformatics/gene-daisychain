@@ -176,13 +176,13 @@ class AHGraRAdmin:
         print(files)
         genome_files = [item for item in files if item[1]=="genome"]
         anno_files  = [item for item in files if item[1]=="annotation"]
-        print(genome_files)
-        print(anno_files)
         print("Found "+ str(len(genome_files))+" genome files")
         print("Found " + str(len(anno_files)) + " annotation files")
         print("We need to collect some information to parse the annotation files, is that ok?")
         for anno_file in anno_files:
+            print(5*"-")
             print(anno_file[0])
+            print(5 * "-")
             feat_attr= [item.split("§") for item in anno_file[2].split("$")]
             features = [item[0] for item in feat_attr]
             print("First, we need to know which feature represents whole genes (e.g. 'gene' or 'mRNA')")
@@ -236,6 +236,9 @@ class AHGraRAdmin:
                 print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
             while True:
                 descr_feat_attr = input(">:").strip()
+                if descr_feat_attr == "skip":
+                    descr_feat_attr = "skip:skip"
+                    break
                 if ":" in descr_feat_attr:
                     descr_feat_attr = descr_feat_attr.split(":")
                 else:
@@ -249,6 +252,11 @@ class AHGraRAdmin:
                     else:
                         break
             print(descr_feat_attr)
+            # Send this data
+            #PABULD_GFF3_ProjectID_annotationmapping_featurehierarchy_file1_file2
+            print(self.send_data("PABULD_GFF3_"+proj_id+"_"+parent_feature+",".join(subfeature_list)+
+                           "_"+name_feat_attr+"_"+descr_feat_attr+"_"+anno_file[0]))
+
 
 
 

@@ -17,6 +17,7 @@ access project "project_id"
          sleep                          PAFILE_SLEE_ProjectID
     build
         set GFF3 annoMap hier filename  PABULD_GFF3_ProjectID_annotationmapping_featurehierarchy_file1_file2
+        set GFF3 parent_feat sub_features name descr filename
         db                              PABULD_DB_ProjectID
     database
         start                           PADABA_ProjectID_START

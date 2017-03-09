@@ -29,7 +29,10 @@ class GFF3Parser_v2:
         # Extract species name from file name
         self.species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
         # Parse sequence file
-        self.sequence = Fasta(sequence_file_path)
+        if seq_is_genome:
+            self.sequence = Fasta(sequence_file_path)
+        else:
+            self.sequence = None
         # Is sequence the genome (true) or already spliced transcripts (false)
         self.seq_is_genome = seq_is_genome
         # Organism/species name
@@ -95,6 +98,8 @@ class GFF3Parser_v2:
                 gene_annotation[6]=transcript[0][self.name_attribute[1]][0]
             if self.descr_attribute[0] == self.parent_feature_type:
                 gene_annotation[7]=transcript[0][self.descr_attribute[1]][0]
+            # Collect gene annotation in list
+            gene_annotation_list.append(gene_annotation)
             gene_sequence = []
             # Iterate through all subfeatures of this transcript
             # Two tasks are performed here: Look for name or descr attributes
@@ -149,6 +154,7 @@ class GFF3Parser_v2:
             output_prot.write(protein_sequence + "\n")
         output_nt.close()
         output_prot.close()
+        return gene_annotation_list
 
 
 
