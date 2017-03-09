@@ -81,6 +81,9 @@ class GFF3Parser_v2:
 
 
     def parse_gff3_file(self):
+        print("Features as they arive")
+        print(self.name_attribute)
+        print(self.descr_attribute)
         output_nt = open(self.species_name+"_transcripts.fa", "w")
         output_prot = open(self.species_name+"_translations.fa", "w")
         gff3_db = self.gff3_db
