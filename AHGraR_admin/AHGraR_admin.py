@@ -236,7 +236,7 @@ class AHGraRAdmin:
             while True:
                 descr_feat_attr = input(">:").strip()
                 if descr_feat_attr == "skip":
-                    descr_feat_attr = "skip:skip"
+                    descr_feat_attr = ("skip","skip")
                     break
                 if ":" in descr_feat_attr:
                     descr_feat_attr = descr_feat_attr.split(":")
