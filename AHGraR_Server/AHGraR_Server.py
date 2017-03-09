@@ -314,6 +314,7 @@ if __name__ == '__main__':
     while True:
         user_input = input(">: ").strip()
         if user_input == "exit": break
+    server_thread.join()
     server.socket.shutdown(0)
     server.socket.close()
     exit(0)
