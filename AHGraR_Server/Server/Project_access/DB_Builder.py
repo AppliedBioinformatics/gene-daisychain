@@ -337,8 +337,12 @@ class DBBuilder:
         # Delete head of file
         os.remove(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"))
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
-        self.task_mngr.add_task_results(proj_id, task_id, gene_list[0])
-        self.send_data(gene_list[0])
+        if len(gene_list) >= 1:
+            self.task_mngr.add_task_results(proj_id, task_id, gene_list[0])
+            self.send_data(gene_list[0])
+        else:
+            self.task_mngr.add_task_results(proj_id, task_id, "Failed")
+            self.send_data([])
 
 
 
