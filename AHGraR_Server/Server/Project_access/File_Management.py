@@ -84,7 +84,7 @@ class FileManagement:
         # Convert information into a string:
         # feature1\tattr1\tattr2\tattr\n
         # feature2\tattr1\tattr2\tattr\n
-        return_str = "$".join([item[0] + "\t" + "\t".join(item[1]) for item in features_attributes])
+        return_str = "$".join([item[0] + "§" + "§".join(item[1]) for item in features_attributes])
         return return_str
 
     def file_manager_add_file(self, proj_id, species, variant, file_name, filetype):
