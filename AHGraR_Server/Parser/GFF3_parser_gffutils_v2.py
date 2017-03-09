@@ -45,9 +45,9 @@ class GFF3Parser_v2:
         self.parent_feature_type = parent_feature_type
         # Set the list of all subfeatures of parent_feature that can be included in the final transcript
         self.subfeatures = subfeatures
-        # Convert attribute location into a tuple
-        self.name_attribute = name_attribute.split
-        self.descr_attribute = descr_attribute.split
+        # Attribute location is a tuple
+        self.name_attribute = name_attribute
+        self.descr_attribute = descr_attribute
         # Load GFF3 file
         gffutils.create_db(self.gff3_file_path, "gff3utils.db", merge_strategy="create_unique", force=True)
         self.gff3_db = gffutils.FeatureDB('gff3utils.db', keep_order=False)
