@@ -313,7 +313,7 @@ class DBBuilder:
         #     self.task_mngr.add_task_results(proj_id, task_id, "Correct Annotation: " + str(valid_annotation_mapper)+ " Correct Hierarchy: "+ str(valid_feature_hierarchy))
         #     return
         # Else add them to the main-db
-        res = self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
+        self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
                     "MATCH (fileMngr)-[:file]->(file:File) WHERE file.filename = {file_name} "
                     "AND file.filetype = 'gff3' AND file.hidden = 'False' "
                     "SET file.parent_feat = {parent_feat} SET file.sub_features = {sub_features} "
@@ -321,8 +321,6 @@ class DBBuilder:
                     {"proj_id": int(proj_id), "file_name": file_name,
                      "parent_feat": parent_feat, "sub_features": sub_features,
                      "name_attr":name_attr, "desc_attr":desc_attr})
-        for r in res:
-            print(r)
         self.task_mngr.set_task_status(proj_id, task_id, "Added annotation to main-db")
         # Test the parsing of the GFF3 file
         # Make a copy of the gff3-fie, copying only the first 100 lines
@@ -340,7 +338,7 @@ class DBBuilder:
         os.remove(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"))
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
         self.task_mngr.add_task_results(proj_id, task_id, gene_list[0])
-        return(gene_list[0])
+        self.send_data(gene_list[0])
 
 
 
