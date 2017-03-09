@@ -138,6 +138,8 @@ class AHGraRAdmin:
             print("(2) to delete a file")
             print("(0) to return")
             user_input = input("[File]>: ").strip()
+            if user_input == "0":
+                return
             if user_input == "1":
                 print("File import requires a CSV file describing each file")
                 print("The columns are:")
@@ -150,6 +152,7 @@ class AHGraRAdmin:
                 user_input = input("[File]>: ").strip()
                 if os.path.isfile(user_input):
                     print("valid file")
+                    break
                 else:
                     print("try again")
 
