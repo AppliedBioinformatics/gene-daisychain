@@ -212,6 +212,7 @@ class FileManagement:
         imported_file_counter = 0
         project_file_path = os.path.join("Projects", proj_id, "Files")
         self.task_mngr.set_task_status(proj_id, task_id, "running")
+        print(import_csv_table)
         for line in import_csv_table:
             print("Importing now")
             print(line)
