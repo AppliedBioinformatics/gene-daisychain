@@ -10,7 +10,7 @@ access project "project_id"
     file list                           PAFILE_LIST_ProjectID
          upload
          download                       PAFILE_DWNF_ProjectID_species_variant_filetype_url
-         import                         PAFILE_IMPO_ProjectID_ImportFileName
+         import                         PAFILE_IMPO_ProjectID_CSVtable
          remove                         PAFILE_DELF_ProjectID_filename
          hide                           PAFILE_HIDF_ProjectID_filename
          unhide                         PAFILE_UHIF_ProjectID_filename

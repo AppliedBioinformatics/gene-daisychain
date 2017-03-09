@@ -152,7 +152,11 @@ class AHGraRAdmin:
                 user_input = input("[File]>: ").strip()
                 if os.path.isfile(user_input):
                     print("valid file")
-                    break
+                    with open(user_input, "r") as file:
+                        file_content = file.read()
+                    # Replace any underscores by "\t"
+                    file_content = file_content.replace("_","\t")
+                    self.send_data("PAFILE_IMPO_ProjectID_"+file_content)
                 else:
                     print("try again")
 

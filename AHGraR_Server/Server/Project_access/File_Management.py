@@ -201,23 +201,18 @@ class FileManagement:
     # Batch import files from Import directory
     # Import file describes the files:
     # species,variant,filetype,filepath
-    def file_import(self, proj_id, import_file_path):
-        # Restore file_name by replacing "\t" with "_"
-        import_file_path = import_file_path.replace("\t", "_")
-        # Call task_manager to define a new task
-        task_id = self.task_mngr.define_task(proj_id, "Import files from " + import_file_path)
+    def file_import(self, proj_id, import_csv_table):
+        # Restore table by replacing "\t" with "_"
+        import_csv_table = import_csv_table.replace("\t", "_")
+        # Call task_manager to import_csv_table a new task
+        task_id = self.task_mngr.define_task(proj_id, "Import files for proj_ID "+str(proj_id))
         # Send task-id to user
         self.send_data("Importing files. Task-ID: "+str(task_id))
-        # Try to open import file
-        try:
-            import_file = open(import_file_path, "r")
-        except FileNotFoundError:
-            self.task_mngr.set_task_status(proj_id, task_id, "failed")
-            return
+        import_csv_table = import_csv_table.split("\n")
         imported_file_counter = 0
         project_file_path = os.path.join("Projects", proj_id, "Files")
         self.task_mngr.set_task_status(proj_id, task_id, "running")
-        for line in import_file:
+        for line in import_csv_table:
             # Remove whitespaces
             line = "".join(line.split(" "))
             new_file_desc = line.strip().split(",")
