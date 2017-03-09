@@ -130,10 +130,10 @@ class AHGraRAdmin:
         self.clear_console()
         print(5*"\nFile list:")
         file_list = self.send_data("PAFILE_LIST_"+proj_id)
+        self.clear_console()
         print(file_list)
         while True:
             # Wait for cmdline input
-            self.clear_console()
             print(5*"\n")
             print("(1) to batch import files")
             print("(2) to delete a file")
