@@ -235,7 +235,7 @@ class FileManagement:
                 imported_file_counter+=1
                 self.task_mngr.set_task_status(proj_id, task_id, "imported "+str(imported_file_counter))
             except Exception as e:
-                print(e)
+                print(e.with_traceback())
                 continue
         self.task_mngr.add_task_results(proj_id, task_id, "imported "+str(imported_file_counter))
         self.task_mngr.set_task_status(proj_id, task_id, "finished ")
