@@ -87,8 +87,8 @@ class GFF3Parser_v2:
         print(self.subfeatures)
         print(self.name_attribute)
         print(self.descr_attribute)
-        output_nt = open(self.species_name+"_transcripts.fa", "w")
-        output_prot = open(self.species_name+"_translations.fa", "w")
+        output_nt = open(self.gff3_file_path+"_transcripts.fa", "w")
+        output_prot = open(self.gff3_file_path+"_translations.fa", "w")
         gff3_db = self.gff3_db
         # Collect all gene annotations in a list
         gene_annotation_list = []
@@ -169,6 +169,20 @@ class GFF3Parser_v2:
         output_nt.close()
         output_prot.close()
         return gene_annotation_list
+
+    # Retrieve a single nt transcript by FASTA header ID
+    def get_nt_sequence(self, id):
+        nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa")
+        return nt_transcripts[id].seq
+
+    # Retrieve a single prot translation by FASTA header ID
+    def get_prot_sequence(self, id):
+        prot_transcripts = Fasta(self.gff3_file_path+"_translations.fa")
+        return prot_transcripts[id].seq
+
+
+
+
 
 
 

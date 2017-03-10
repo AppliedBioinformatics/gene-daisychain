@@ -336,7 +336,10 @@ class DBBuilder:
         with open(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"), "w") as head_gff3_file:
             for line in head:
                 head_gff3_file.write(line)
-        gff3_parser_v2 = GFF3Parser_v2(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"), "", False, 0,
+        # Retrieve the name of the corresponding genome sequence
+        genome_file = file_path[:file_path.rfind(".")]+".faa"
+        print(genome_file)
+        gff3_parser_v2 = GFF3Parser_v2(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"), genome_file, True, 0,
                                        parent_feat, sub_features, name_attr, desc_attr)
         gene_list = gff3_parser_v2.parse_gff3_file()
         # Delete head of file
