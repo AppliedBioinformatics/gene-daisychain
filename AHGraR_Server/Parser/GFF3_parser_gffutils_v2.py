@@ -28,6 +28,7 @@ class GFF3Parser_v2:
         self.gff3_file_path = gff3_file_path
         # Extract species name from file name
         self.species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
+        self.sequence_file_path = sequence_file_path
         # Parse sequence file
         if seq_is_genome:
             self.sequence = Fasta(sequence_file_path)
@@ -168,6 +169,8 @@ class GFF3Parser_v2:
             output_prot.write(protein_sequence + "\n")
         output_nt.close()
         output_prot.close()
+        # Delete genome index file
+        os.remove(self.sequence_file_path + ".fai")
         return gene_annotation_list
 
     # Retrieve a single nt transcript by FASTA header ID
@@ -177,6 +180,8 @@ class GFF3Parser_v2:
             nt_transcript = str(nt_transcripts["lcl|" + str(id)])
         except KeyError:
             nt_transcript = ""
+        os.remove(self.gff3_file_path+"_transcripts.fa" + ".fai")
+        print("NT_trans:"+nt_transcript)
         return nt_transcript
 
     # Retrieve a single prot translation by FASTA header ID
@@ -186,6 +191,7 @@ class GFF3Parser_v2:
             prot_transcript = str(prot_transcripts["lcl|" + str(id)])
         except KeyError:
             prot_transcript = ""
+        os.remove(self.gff3_file_path + "_translations.fa" + ".fai")
         return prot_transcript
 
     # Delete transcripts and translations
