@@ -159,7 +159,7 @@ class GFF3Parser_v2:
                 continue
             # The fasta annotation line is  '>lcl|' plus the gene node ID
             # 'lcl|' is required by blast+ to ensure correct parsing of the identifier
-            output_nt.write(">lcl|"+str(gene_annotation[0])+"_"+gene_annotation[6]+"\n")
+            output_nt.write(">lcl|"+str(gene_annotation[0])+"_"+"\n")
             output_nt.write(gene_sequence+"\n")
             protein_sequence = self.translate_nt(gene_sequence)
             if not protein_sequence:
