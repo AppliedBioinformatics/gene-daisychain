@@ -165,8 +165,11 @@ class AHGraRAdmin:
 
 
 
-
+    # Build a projects database
+    # There is some user input required to correctly parse the GFF3 annotation file
+    # This can be done in a semi-automatic mode or more manually
     def build_project_db(self):
+        # First, let user select a project
         self.list_projects()
         print(3*"\n")
         print("Enter ID of project")
@@ -176,19 +179,25 @@ class AHGraRAdmin:
         # Get file list for current project
         file_list = self.send_data("PAFILE_LIST_"+str(proj_id))
         files = [item.split("\t") for item in file_list.split("\n")]
+        # Count number of genome and annotation files
         genome_files = [item for item in files if item[1]=="genome"]
         anno_files  = [item for item in files if item[1]=="annotation"]
         print("Found "+ str(len(genome_files))+" genome files")
         print("Found " + str(len(anno_files)) + " annotation files")
+        # Iterate over all annotation files
+        # Sometimes a loop might need to be repeated. Work therefore with index numbers for the loop iterations
         anno_file_index = 0
         while anno_file_index < len(anno_files):
+            # Get current annotation file
             anno_file = anno_files[anno_file_index]
             self.clear_console()
             print(3*"\n")
             print(5*"-")
+            # Recover species name from file name
             species = anno_file[0][:anno_file[0].rfind(".")].split("_")
             print("Parsing annotation file for "+" ".join(species[:2]))
             print(5 * "-")
+            # Use automatic parsing or manual parsing?
             print("Parsing the annotation file is rocket science. Use automatic (a) or manual (m) mode?")
             while True:
                 mode = input(">:").strip()
@@ -196,22 +205,31 @@ class AHGraRAdmin:
                     continue
                 manual_mode = mode == "m"
                 break
+            # Manual mode
             if manual_mode:
+                # Retrieve all features and their attributes from the current GFF3 file
                 feat_attr= [item.split("§") for item in anno_file[2].split("$")]
                 features = [item[0] for item in feat_attr]
+                # If there are no features, continue with next file
+                if len(features) == 0:
+                    anno_file_index += 1
+                    continue
                 print("First, we need to know which features in the annotation file represent whole genes.")
                 print("This is most likely some feature called 'gene' or 'mRNA'")
                 print("Available features: ")
                 print(",".join(features))
                 parent_feature = ""
+                # Loop until a valid feature name for highest-level gene featurewas entered
                 while parent_feature not in features:
                     parent_feature = input("[Feature name]>:").strip()
+                # Collect subfeatures of gene feature
                 self.clear_console()
                 print(3 * "\n")
                 print("A gene can consist of multiple subfeatures.")
                 print("Next, we need to know which features build up the gene and which of them you want to include.")
-                print("Examples: 'CDS' and 'UTR'. Sometimes there are no subfeatures. Select subfeatures from list of "
-                      "available features.")
+                print("Examples: 'CDS' and 'UTR'. Sometimes there are no subfeatures.")
+                print("Select subfeatures from list of available features.")
+                # Don't show gene feature again
                 reduced_features = [item for item in features if item != parent_feature]
                 print("Available features: ")
                 print(",".join(reduced_features))
@@ -235,10 +253,14 @@ class AHGraRAdmin:
                 selected_features = [parent_feature]
                 selected_features.extend(subfeature_list)
                 available_attributes = [item for item in feat_attr if item[0] in selected_features]
+                # Print all selected features together with their attributes
                 for available_attribute in available_attributes:
                     print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
                 while True:
                     name_feat_attr = input(">:").strip()
+                    # If skipped, take a dummy feature/attribute combination as parser config
+                    # This feature/attribute combination is unlikely to be in the GFF3 file
+                    # The parser skips the name attribute and takes the standard ID field as name
                     if name_feat_attr == "skip":
                         name_feat_attr = ("skip","skip")
                         break
@@ -246,16 +268,19 @@ class AHGraRAdmin:
                         name_feat_attr = name_feat_attr.split(":")
                     else:
                         continue
+                    # Check if entered feature is in the list of selected features
                     if name_feat_attr[0] not in selected_features:
                         continue
                     else:
                         selected_feat_attr = [item for item in available_attributes if item[0] == name_feat_attr[0]][0][1:]
+                        # Ensure that selected attribute is an attribute of the selected feature
                         if name_feat_attr[1] not in selected_feat_attr:
                             continue
                         else:
                             break
                 self.clear_console()
                 print(3 * "\n")
+                # As for the name attribute, set the feature/attribute tuple of where to find the gene annotation
                 print("Finally, we need to know where a gene's description is stored. Select one attribute from one feature.")
                 print("Enter in this format: feature:attribute, e.g. gene:Name")
                 print("If unsure, enter 'skip'")
@@ -270,10 +295,12 @@ class AHGraRAdmin:
                         descr_feat_attr = descr_feat_attr.split(":")
                     else:
                         continue
+                    # Check if entered feature is in the list of selected features
                     if descr_feat_attr[0] not in selected_features:
                         continue
                     else:
                         selected_feat_attr = [item for item in available_attributes if item[0] == descr_feat_attr[0]][0][1:]
+                        # Ensure that selected attribute is an attribute of the selected feature
                         if descr_feat_attr[1] not in selected_feat_attr:
                             continue
                         else:
@@ -313,7 +340,7 @@ class AHGraRAdmin:
                     print(20*"-")
                     gene_count +=1
                 print(3*"\n")
-            # Try to guess feature names for gene feature and coding feature
+            # Automatic mode: Try to guess feature names for gene feature and coding feature
             if not manual_mode:
                 print("Automatic parsing")
                 # First compare all features contained in this GFF against a list of known gene or coding features
@@ -348,25 +375,33 @@ class AHGraRAdmin:
                                                     current_gene_feat_descr_attr] + \
                                                    [(potential_coding_feature, item) for item in
                                                     current_coding_feat_descr_attr]
+                        # Find a placeholder if a feature/attribute tuple for the name and/or description field
+                        # could not be found
                         if not potential_name_feat_attr:
                             potential_name_feat_attr = [("skip","skip")]
                         if not potential_descr_feat_attr:
                             potential_descr_feat_attr = [("skip","skip")]
+                        # Iterate over all name/description combinations (part of the overall iteration over all
+                        # potential gene features and coding features
                         for pnfa in potential_name_feat_attr:
                             for pdfa in potential_descr_feat_attr:
+                                # For each parser config combination, retrieve a test parsing result
                                 msg_string = [proj_id, potential_gene_feature, potential_coding_feature,
                                               ":".join(pnfa), ":".join(pdfa), anno_file[0]]
                                 msg_string = [item.replace("_", "\t") for item in msg_string]
                                 # Receive feedback from server: (At max.) three genes that were extracted from the annotation file
                                 test_parsing = (self.send_data("PABULD_GFF3_" + "_".join(msg_string)))
                                 test_parsing = test_parsing.split("\n")
+                                # Show the first gene of the parsing result retrieved for this parser config
                                 for gene in test_parsing[:1]:
                                     gene = gene.split("\t")
+                                    # Skip parser configurations that failed
                                     if len(gene) != 8:
                                         continue
                                     if (not gene[0] or not gene[1] or not gene[2] or not gene[3] or not gene[4]
                                         or not gene[6] or not gene[7]):
                                         continue
+                                    # Show each successfull parser configuration together with a number
                                     print(5 * "-" + "Parser config nr. " + str(parser_config) + 5 * "-")
                                     print("Gene name: " + gene[4])
                                     print("Description: " + gene[5])
@@ -385,9 +420,13 @@ class AHGraRAdmin:
                                         print("Translation: " + prot_seq[:15] + "...[" + str(
                                             len(prot_seq) - 30) + "]..." + prot_seq[-15:])
                                     print(20 * "-")
+                                    # Store this parser configuration together with its number
+                                    # user selects one parser configuration at the end of this step
                                     parser_dict[parser_config] = [potential_gene_feature, potential_coding_feature,
                                                                 pnfa, pdfa]
                                     parser_config += 1
+                # If all parser configurations failed, go back to first step (decision between automatic and manual mode)
+                # and offer the choice to return to the main menu
                 if len(parser_dict) == 0:
                     print("Unable to retrieve a parser configuration.")
                     print("Try manual mode.")
@@ -397,6 +436,7 @@ class AHGraRAdmin:
                         continue
                     else:
                         return
+                # Else, let user select a parser configuration
                 print("Select a parser configuration:")
                 while True:
                     parser_selection = input(">:").strip()
@@ -445,8 +485,8 @@ class AHGraRAdmin:
                 print(3 * "\n")
 
             print("Do you like what you see?")
-            print("Enter 'a' to continue with next annotation file")
-            print("Enter 'r' to redo this step")
+            print("Enter 'a' to keep this parser configuration and continue with next annotation file")
+            print("Enter 'r' to redo the parser configuration")
             print("Enter 'x' to exit")
             while True:
                 selection = input(">:").strip()
