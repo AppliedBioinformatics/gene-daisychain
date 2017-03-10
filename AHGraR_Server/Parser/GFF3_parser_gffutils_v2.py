@@ -178,8 +178,9 @@ class GFF3Parser_v2:
         nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa", as_raw=True)
         try:
             nt_transcript = str(nt_transcripts["lcl|" + str(id)])
-        except KeyError:
+        except KeyError as e:
             nt_transcript = ""
+            print(e)
         os.remove(self.gff3_file_path+"_transcripts.fa" + ".fai")
         print("NT_trans:"+nt_transcript)
         return nt_transcript
