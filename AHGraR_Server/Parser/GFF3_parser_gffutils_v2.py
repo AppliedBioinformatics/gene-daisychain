@@ -175,20 +175,20 @@ class GFF3Parser_v2:
 
     # Retrieve a single nt transcript by FASTA header ID
     def get_nt_sequence(self, id):
-        nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa", as_raw=True)
         try:
+            nt_transcripts = Fasta(self.gff3_file_path + "_transcripts.fa", as_raw=True)
             nt_transcript = str(nt_transcripts["lcl|" + str(id)])
-        except:
+        except (KeyError,UnboundLocalError):
             nt_transcript = ""
         os.remove(self.gff3_file_path+"_transcripts.fa" + ".fai")
         return nt_transcript
 
     # Retrieve a single prot translation by FASTA header ID
     def get_prot_sequence(self, id):
-        prot_transcripts = Fasta(self.gff3_file_path+"_translations.fa", as_raw=True)
         try:
+            prot_transcripts = Fasta(self.gff3_file_path + "_translations.fa", as_raw=True)
             prot_transcript = str(prot_transcripts["lcl|" + str(id)])
-        except:
+        except (KeyError, UnboundLocalError):
             prot_transcript = ""
         os.remove(self.gff3_file_path + "_translations.fa" + ".fai")
         return prot_transcript
