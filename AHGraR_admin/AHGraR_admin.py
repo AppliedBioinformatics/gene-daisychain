@@ -362,13 +362,16 @@ class AHGraRAdmin:
                                 # Receive feedback from server: (At max.) three genes that were extracted from the annotation file
                                 test_parsing = (self.send_data("PABULD_GFF3_" + "_".join(msg_string)))
                                 test_parsing = test_parsing.split("\n")
-                                gene_count = 1
+                                parser_config = 1
+                                parser_dict = {}
                                 for gene in test_parsing[:1]:
                                     print(3 * "\n")
-                                    print(5 * "-" + "Gene nr. " + str(gene_count) + 5 * "-")
+                                    print(5 * "-" + "Parser config nr. " + str(parser_config) + 5 * "-")
                                     gene = gene.split("\t")
                                     if len(gene) != 8:
-                                        print("Parsing failed")
+                                        continue
+                                    if (not gene[0] or not gene[1] or not gene[2] or not gene[3] or not gene[4]
+                                        or not gene[6] or not gene[7]):
                                         continue
                                     print("Gene name: " + gene[4])
                                     print("Description: " + gene[5])
@@ -387,9 +390,65 @@ class AHGraRAdmin:
                                         print("Translation: " + prot_seq[:15] + "...[" + str(
                                             len(prot_seq) - 30) + "]..." + prot_seq[-15:])
                                     print(20 * "-")
-                                    gene_count += 1
+                                    parser_dict[parser_config]=[potential_gene_feature, potential_coding_feature,
+                                                                pnfa, pdfa]
+                                    parser_config += 1
                                 print(3 * "\n")
-
+                if len(parser_dict) == 0:
+                    print("Unable to retrieve a parser configuration.")
+                    print("Try manual mode.")
+                    print("Type ok to continue, exit to return to main menu")
+                    user_selection = input(">:").strip()
+                    if user_selection == "ok":
+                        continue
+                    else:
+                        return
+                print("Select a parser configuration:")
+                while True:
+                    parser_selection = input(">:").strip()
+                    if not parser_selection.isdigit():
+                        continue
+                    if not 0 < int(parser_selection) <= parser_config:
+                        continue
+                    else:
+                        selected_parser_config = parser_dict[parser_config]
+                        break
+                # Send this parsing information to server
+                msg_string = [proj_id, selected_parser_config[0], selected_parser_config[1],
+                              ":".join(selected_parser_config[2]), ":".join(selected_parser_config[3]), anno_file[0]]
+                msg_string = [item.replace("_", "\t") for item in msg_string]
+                # Receive feedback from server: (At max.) three genes that were extracted from the annotation file
+                test_parsing = (self.send_data("PABULD_GFF3_" + "_".join(msg_string)))
+                test_parsing = test_parsing.split("\n")
+                print(
+                    "Preview of annotation file parsing showing three genes extracted from the annotation file:")
+                gene_count = 1
+                for gene in test_parsing:
+                    print(3 * "\n")
+                    print(5 * "-" + "Gene nr. " + str(gene_count) + 5 * "-")
+                    gene = gene.split("\t")
+                    if len(gene) != 8:
+                        print("Parsing failed")
+                        continue
+                    print("Gene name: " + gene[4])
+                    print("Description: " + gene[5])
+                    print("Contig name: " + gene[0])
+                    print("Start: " + gene[1] + " Stop: " + gene[2] + " Strand: " + gene[3])
+                    nt_seq = gene[6]
+                    if len(nt_seq) <= 30:
+                        print("Transcript:  " + nt_seq)
+                    else:
+                        print("Transcript:  " + nt_seq[:15] + "...[" + str(len(nt_seq) - 30) + "]..." + nt_seq[
+                                                                                                        -15:])
+                    prot_seq = gene[7]
+                    if len(prot_seq) <= 30:
+                        print("Translation: " + prot_seq)
+                    else:
+                        print("Translation: " + prot_seq[:15] + "...[" + str(
+                            len(prot_seq) - 30) + "]..." + prot_seq[-15:])
+                    print(20 * "-")
+                    gene_count += 1
+                print(3 * "\n")
 
             print("Do you like what you see?")
             print("Enter 'a' to continue with next annotation file")
