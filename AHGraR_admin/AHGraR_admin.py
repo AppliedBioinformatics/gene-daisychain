@@ -405,7 +405,7 @@ class AHGraRAdmin:
                     if not 0 < int(parser_selection) < parser_config:
                         continue
                     else:
-                        selected_parser_config = parser_dict[parser_config]
+                        selected_parser_config = parser_dict[int(parser_selection) ]
                         break
                 # Send this parsing information to server
                 msg_string = [proj_id, selected_parser_config[0], selected_parser_config[1],
