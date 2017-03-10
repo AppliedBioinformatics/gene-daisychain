@@ -105,12 +105,12 @@ class GFF3Parser_v2:
                 try:
                     gene_annotation[6]=transcript[0][self.name_attribute[1]][0]
                 except KeyError:
-                    gene_annotation[6] = "?"
+                    gene_annotation[6] = ""
             if self.descr_attribute[0] == self.parent_feature_type:
                 try:
                     gene_annotation[7]=transcript[0][self.descr_attribute[1]][0]
                 except KeyError:
-                    gene_annotation[7]= "?"
+                    gene_annotation[7]= ""
             # Collect gene annotation in list
             gene_annotation_list.append(gene_annotation)
             gene_sequence = []

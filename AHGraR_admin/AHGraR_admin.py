@@ -7,6 +7,7 @@ import configparser
 import os
 import socket
 import time
+import re
 
 
 class AHGraRAdmin:
@@ -179,7 +180,6 @@ class AHGraRAdmin:
         anno_files  = [item for item in files if item[1]=="annotation"]
         print("Found "+ str(len(genome_files))+" genome files")
         print("Found " + str(len(anno_files)) + " annotation files")
-        print("We need to collect some information to parse the annotation files, is that ok?")
         anno_file_index = 0
         while anno_file_index < len(anno_files):
             anno_file = anno_files[anno_file_index]
@@ -189,122 +189,175 @@ class AHGraRAdmin:
             species = anno_file[0][:anno_file[0].rfind(".")].split("_")
             print("Parsing annotation file for "+" ".join(species[:2]))
             print(5 * "-")
-            feat_attr= [item.split("§") for item in anno_file[2].split("$")]
-            features = [item[0] for item in feat_attr]
-            print("First, we need to know which features in the annotation file represent whole genes.")
-            print("This is most likely some feature called 'gene' or 'mRNA'")
-            print("Available features: ")
-            print(",".join(features))
-            parent_feature = ""
-            while parent_feature not in features:
-                parent_feature = input("[Feature name]>:").strip()
-            self.clear_console()
-            print(3 * "\n")
-            print("A gene can consist of multiple subfeatures.")
-            print("Next, we need to know which features build up the gene and which of them you want to include.")
-            print("Examples: 'CDS' and 'UTR'. Sometimes there are no subfeatures. Select subfeatures from list of "
-                  "available features.")
-            reduced_features = [item for item in features if item != parent_feature]
-            print("Available features: ")
-            print(",".join(reduced_features))
-            print("Select features to include, one at a time, type 'done' to go to the next step")
-            subfeature_list = []
+            print("Parsing the annotation file is rocket science. Use automatic (a) or manual (m) mode?")
             while True:
-                sub_feature = input(">:").strip()
-                if sub_feature == "done":
-                    break
-                else:
-                    subfeature_list.append(sub_feature)
-            # Filter out typos and non-existing subfeatures subfeatures
-            subfeature_list = [item for item in subfeature_list if item in reduced_features]
-            self.clear_console()
-            print(3 * "\n")
-            print("The annotation parser automatically derives a name for each gene. Sometimes a more common gene name "
-                  "is stored in the attributes section of the annotation file. Each feature can hold different "
-                  "attributes. Next, select a feature and an attribute of that feature that carries the genes name.")
-            print("Enter in this format: feature:attribute, e.g. gene:Name")
-            print("If unsure which attribute to take, type 'skip'.")
-            selected_features = [parent_feature]
-            selected_features.extend(subfeature_list)
-            available_attributes = [item for item in feat_attr if item[0] in selected_features]
-            for available_attribute in available_attributes:
-                print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
-            while True:
-                name_feat_attr = input(">:").strip()
-                if name_feat_attr == "skip":
-                    name_feat_attr = ("skip","skip")
-                    break
-                if ":" in name_feat_attr:
-                    name_feat_attr = name_feat_attr.split(":")
-                else:
+                mode = input(">:").strip()
+                if mode not in ["a", "m"]:
                     continue
-                if name_feat_attr[0] not in selected_features:
-                    continue
-                else:
-                    selected_feat_attr = [item for item in available_attributes if item[0] == name_feat_attr[0]][0][1:]
-                    if name_feat_attr[1] not in selected_feat_attr:
+                manual_mode = mode == "m"
+                break
+            if manual_mode:
+                feat_attr= [item.split("§") for item in anno_file[2].split("$")]
+                features = [item[0] for item in feat_attr]
+                print("First, we need to know which features in the annotation file represent whole genes.")
+                print("This is most likely some feature called 'gene' or 'mRNA'")
+                print("Available features: ")
+                print(",".join(features))
+                parent_feature = ""
+                while parent_feature not in features:
+                    parent_feature = input("[Feature name]>:").strip()
+                self.clear_console()
+                print(3 * "\n")
+                print("A gene can consist of multiple subfeatures.")
+                print("Next, we need to know which features build up the gene and which of them you want to include.")
+                print("Examples: 'CDS' and 'UTR'. Sometimes there are no subfeatures. Select subfeatures from list of "
+                      "available features.")
+                reduced_features = [item for item in features if item != parent_feature]
+                print("Available features: ")
+                print(",".join(reduced_features))
+                print("Select features to include, one at a time, type 'done' to go to the next step")
+                subfeature_list = []
+                while True:
+                    sub_feature = input(">:").strip()
+                    if sub_feature == "done":
+                        break
+                    else:
+                        subfeature_list.append(sub_feature)
+                # Filter out typos and non-existing subfeatures subfeatures
+                subfeature_list = [item for item in subfeature_list if item in reduced_features]
+                self.clear_console()
+                print(3 * "\n")
+                print("The annotation parser automatically derives a name for each gene. Sometimes a more common gene name "
+                      "is stored in the attributes section of the annotation file. Each feature can hold different "
+                      "attributes. Next, select a feature and an attribute of that feature that carries the genes name.")
+                print("Enter in this format: feature:attribute, e.g. gene:Name")
+                print("If unsure which attribute to take, type 'skip'.")
+                selected_features = [parent_feature]
+                selected_features.extend(subfeature_list)
+                available_attributes = [item for item in feat_attr if item[0] in selected_features]
+                for available_attribute in available_attributes:
+                    print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
+                while True:
+                    name_feat_attr = input(">:").strip()
+                    if name_feat_attr == "skip":
+                        name_feat_attr = ("skip","skip")
+                        break
+                    if ":" in name_feat_attr:
+                        name_feat_attr = name_feat_attr.split(":")
+                    else:
+                        continue
+                    if name_feat_attr[0] not in selected_features:
                         continue
                     else:
+                        selected_feat_attr = [item for item in available_attributes if item[0] == name_feat_attr[0]][0][1:]
+                        if name_feat_attr[1] not in selected_feat_attr:
+                            continue
+                        else:
+                            break
+                self.clear_console()
+                print(3 * "\n")
+                print("Finally, we need to know where a gene's description is stored. Select one attribute from one feature.")
+                print("Enter in this format: feature:attribute, e.g. gene:Name")
+                print("If unsure, enter 'skip'")
+                for available_attribute in available_attributes:
+                    print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
+                while True:
+                    descr_feat_attr = input(">:").strip()
+                    if descr_feat_attr == "skip":
+                        descr_feat_attr = ("skip","skip")
                         break
-            self.clear_console()
-            print(3 * "\n")
-            print("Finally, we need to know where a gene's description is stored. Select one attribute from one feature.")
-            print("Enter in this format: feature:attribute, e.g. gene:Name")
-            print("If unsure, enter 'skip'")
-            for available_attribute in available_attributes:
-                print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
-            while True:
-                descr_feat_attr = input(">:").strip()
-                if descr_feat_attr == "skip":
-                    descr_feat_attr = ("skip","skip")
-                    break
-                if ":" in descr_feat_attr:
-                    descr_feat_attr = descr_feat_attr.split(":")
-                else:
-                    continue
-                if descr_feat_attr[0] not in selected_features:
-                    continue
-                else:
-                    selected_feat_attr = [item for item in available_attributes if item[0] == descr_feat_attr[0]][0][1:]
-                    if descr_feat_attr[1] not in selected_feat_attr:
+                    if ":" in descr_feat_attr:
+                        descr_feat_attr = descr_feat_attr.split(":")
+                    else:
+                        continue
+                    if descr_feat_attr[0] not in selected_features:
                         continue
                     else:
-                        break
-            self.clear_console()
-            print(3 * "\n")
-            # Send this parsing information to server
-            msg_string = [proj_id, parent_feature, ",".join(subfeature_list),
-                          ":".join(name_feat_attr),":".join(descr_feat_attr),anno_file[0]]
-            msg_string = [item.replace("_","\t") for item in msg_string]
-            # Receive feedback from server: (At max.) three genes that were extracted from the annotation file
-            test_parsing = (self.send_data("PABULD_GFF3_"+"_".join(msg_string)))
-            test_parsing = test_parsing.split("\n")
-            print("Preview of annotation file parsing showing three genes extracted from the annotation file:")
-            gene_count = 1
-            for gene in test_parsing:
+                        selected_feat_attr = [item for item in available_attributes if item[0] == descr_feat_attr[0]][0][1:]
+                        if descr_feat_attr[1] not in selected_feat_attr:
+                            continue
+                        else:
+                            break
+                self.clear_console()
+                print(3 * "\n")
+                # Send this parsing information to server
+                msg_string = [proj_id, parent_feature, ",".join(subfeature_list),
+                              ":".join(name_feat_attr),":".join(descr_feat_attr),anno_file[0]]
+                msg_string = [item.replace("_","\t") for item in msg_string]
+                # Receive feedback from server: (At max.) three genes that were extracted from the annotation file
+                test_parsing = (self.send_data("PABULD_GFF3_"+"_".join(msg_string)))
+                test_parsing = test_parsing.split("\n")
+                print("Preview of annotation file parsing showing three genes extracted from the annotation file:")
+                gene_count = 1
+                for gene in test_parsing:
+                    print(3*"\n")
+                    print(5*"-"+"Gene nr. "+str(gene_count)+5*"-")
+                    gene = gene.split("\t")
+                    if len(gene) != 8:
+                        print("Parsing failed")
+                        continue
+                    print("Gene name: "+gene[4])
+                    print("Description: " + gene[5])
+                    print("Contig name: " + gene[0])
+                    print("Start: "+gene[1]+ " Stop: "+gene[2]+" Strand: "+gene[3])
+                    nt_seq = gene[6]
+                    if len(nt_seq) <= 30:
+                        print("Transcript:  "+nt_seq)
+                    else:
+                        print("Transcript:  "+nt_seq[:15]+"...["+str(len(nt_seq)-30)+"]..."+nt_seq[-15:])
+                    prot_seq = gene[7]
+                    if len(prot_seq) <= 30:
+                        print("Translation: "+prot_seq)
+                    else:
+                        print("Translation: "+prot_seq[:15]+"...["+str(len(prot_seq)-30)+"]..."+prot_seq[-15:])
+                    print(20*"-")
+                    gene_count +=1
                 print(3*"\n")
-                print(5*"-"+"Gene nr. "+str(gene_count)+5*"-")
-                gene = gene.split("\t")
-                if len(gene) != 8:
-                    print("Parsing failed")
-                    continue
-                print("Gene name: "+gene[4])
-                print("Description: " + gene[5])
-                print("Contig name: " + gene[0])
-                print("Start: "+gene[1]+ " Stop: "+gene[2]+" Strand: "+gene[3])
-                nt_seq = gene[6]
-                if len(nt_seq) <= 30:
-                    print("Transcript:  "+nt_seq)
-                else:
-                    print("Transcript:  "+nt_seq[:15]+"...["+str(len(nt_seq)-30)+"]..."+nt_seq[-15:])
-                prot_seq = gene[7]
-                if len(prot_seq) <= 30:
-                    print("Translation: "+prot_seq)
-                else:
-                    print("Translation: "+prot_seq[:15]+"...["+str(len(prot_seq)-30)+"]..."+prot_seq[-15:])
-                print(20*"-")
-                gene_count +=1
-            print(3*"\n")
+            # Try to guess feature names for gene feature and coding feature
+            if not manual_mode:
+                print("Automatic parsing")
+                # First compare all features contained in this GFF against a list of known gene or coding features
+                known_gene_features = re.compile("mrna|gene", re.IGNORECASE)
+                known_coding_features = re.compile("cds|exon", re.IGNORECASE)
+                known_name_attributes = re.compile("name", re.IGNORECASE)
+                known_descr_attributes = re.compile("product|description|annotation|note", re.IGNORECASE)
+                gff_feat_attr= [item.split("§") for item in anno_file[2].split("$")]
+                gff_features = [item[0] for item in feat_attr]
+                potential_gene_features = [item for item in gff_features if known_gene_features.match(item)]
+                potential_coding_features = [item for item in gff_features if known_coding_features.match(item)]
+                # Iterate through every combination, until test parsing returns a good result
+                for potential_gene_feature in potential_gene_features:
+                    for potential_coding_feature in potential_coding_features:
+                        # Try to find a matching attribute for gene name in one of the features attributes
+                        current_gene_feat_attr = [item for item in gff_feat_attr if item[0]==potential_gene_feature][0][1:]
+                        current_coding_feat_attr = [item for item in gff_feat_attr if item[0] == potential_coding_feature][
+                                                     0][1:]
+                        # Filter for known gene name attributes
+                        current_gene_feat_name_attr = [item for item in current_gene_feat_attr if known_name_attributes.match(item)]
+                        current_coding_feat_name_attr = [item for item in current_coding_feat_attr if known_name_attributes.match(item)]
+                        potential_name_feat_attr = [(potential_gene_feature, item) for item in current_gene_feat_name_attr]+\
+                                                   [(potential_coding_feature, item) for item in current_coding_feat_name_attr]
+                        # Try to find a matching attribute for gene description in one of the features attributes
+                        current_gene_feat_descr_attr = [item for item in current_gene_feat_attr if
+                                                       known_descr_attributes.match(item)]
+                        current_coding_feat_descr_attr = [item for item in current_coding_feat_attr if
+                                                         known_descr_attributes.match(item)]
+                        potential_descr_feat_attr = [(potential_gene_feature, item) for item in
+                                                    current_gene_feat_descr_attr] + \
+                                                   [(potential_coding_feature, item) for item in
+                                                    current_coding_feat_descr_attr]
+                        if not potential_name_feat_attr:
+                            potential_name_feat_attr = [("skip","skip")]
+                        if not potential_descr_feat_attr:
+                            potential_descr_feat_attr = [("skip","skip")]
+                        for pnfa in potential_name_feat_attr:
+                            for pdfa in potential_descr_feat_attr:
+                                print(potential_gene_feature)
+                                print(potential_coding_feature)
+                                print(pnfa)
+                                print(pdfa)
+
+
             print("Do you like what you see?")
             print("Enter 'a' to continue with next annotation file")
             print("Enter 'r' to redo this step")
