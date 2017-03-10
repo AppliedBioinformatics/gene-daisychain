@@ -322,7 +322,7 @@ class AHGraRAdmin:
                 known_name_attributes = re.compile("name", re.IGNORECASE)
                 known_descr_attributes = re.compile("product|description|annotation|note", re.IGNORECASE)
                 gff_feat_attr= [item.split("§") for item in anno_file[2].split("$")]
-                gff_features = [item[0] for item in feat_attr]
+                gff_features = [item[0] for item in gff_feat_attr]
                 potential_gene_features = [item for item in gff_features if known_gene_features.match(item)]
                 potential_coding_features = [item for item in gff_features if known_coding_features.match(item)]
                 # Iterate through every combination, until test parsing returns a good result
