@@ -167,7 +167,9 @@ class AHGraRAdmin:
 
     def build_project_db(self):
         self.list_projects()
+        print(3*"\n")
         print("Enter ID of project")
+        print("\n")
         print("Enter '0' to cancel")
         proj_id = input("[Project-ID]>: ").strip()
         # Get file list for current project
@@ -179,19 +181,27 @@ class AHGraRAdmin:
         print("Found " + str(len(anno_files)) + " annotation files")
         print("We need to collect some information to parse the annotation files, is that ok?")
         for anno_file in anno_files:
+            self.clear_console()
+            print(3*"\n")
             print(5*"-")
-            print(anno_file[0])
+            species = anno_file[0][:anno_file[0].rfind(".")].split("_")
+            print("Parsing annotation file for "+" ".join(species[:2]))
             print(5 * "-")
             feat_attr= [item.split("§") for item in anno_file[2].split("$")]
             features = [item[0] for item in feat_attr]
-            print("First, we need to know which feature represents whole genes (e.g. 'gene' or 'mRNA')")
+            print("First, we need to know which features in the annotation file represent whole genes.")
+            print("This is most likely some feature called 'gene' or 'mRNA'")
             print("Available features: ")
             print(",".join(features))
             parent_feature = ""
             while parent_feature not in features:
-                parent_feature = input(">:").strip()
-            print("Next, we need to know which features build up a gene and which of them you want to include")
-            print("Examples: 'CDS' and 'UTR'")
+                parent_feature = input("[Feature name]>:").strip()
+            self.clear_console()
+            print(3 * "\n")
+            print("A gene can consist of multiple subfeatures.")
+            print("Next, we need to know which features build up the gene and which of them you want to include.")
+            print("Examples: 'CDS' and 'UTR'. Sometimes there are no subfeatures. Select subfeatures from list of"
+                  "available features.")
             reduced_features = [item for item in features if item != parent_feature]
             print("Available features: ")
             print(",".join(reduced_features))
@@ -203,11 +213,15 @@ class AHGraRAdmin:
                     break
                 else:
                     subfeature_list.append(sub_feature)
-            # Filter out wrong subfeatures
+            # Filter out typos and non-existing subfeatures subfeatures
             subfeature_list = [item for item in subfeature_list if item in reduced_features]
-            print("Next, we need to know where a gene's name is stored. Select one attribute from one feature.")
+            self.clear_console()
+            print(3 * "\n")
+            print("The annotation parser automatically derives a name for each gene. Sometimes a more common gene name"
+                  "is stored in the attributes section of the annotation file. Each feature can hold different "
+                  "attributes. Next, select a feature and an attribute of that feature that carries the genes name.")
             print("Enter in this format: feature:attribute, e.g. gene:Name")
-            print("If unsure which attribute to take, select ID")
+            print("If unsure which attribute to take, type 'skip'.")
             selected_features = [parent_feature]
             selected_features.extend(subfeature_list)
             available_attributes = [item for item in feat_attr if item[0] in selected_features]
@@ -230,10 +244,11 @@ class AHGraRAdmin:
                         continue
                     else:
                         break
-            print(name_feat_attr)
+            self.clear_console()
+            print(3 * "\n")
             print("Finally, we need to know where a gene's description is stored. Select one attribute from one feature.")
             print("Enter in this format: feature:attribute, e.g. gene:Name")
-            print("If you don't want this, enter 'skip'")
+            print("If unsure, enter 'skip'")
             for available_attribute in available_attributes:
                 print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
             while True:
@@ -253,25 +268,31 @@ class AHGraRAdmin:
                         continue
                     else:
                         break
-            print(descr_feat_attr)
-            # Send this data
-            #PABULD_GFF3_ProjectID_annotationmapping_featurehierarchy_file1_file2
+            self.clear_console()
+            print(3 * "\n")
+            # Send this parsing information to server
             msg_string = [proj_id, parent_feature, ",".join(subfeature_list),
                           ":".join(name_feat_attr),":".join(descr_feat_attr),anno_file[0]]
             msg_string = [item.replace("_","\t") for item in msg_string]
+            # Receive feedback from server: (At max.) three genes that were extracted from the annotation file
             test_parsing = (self.send_data("PABULD_GFF3_"+"_".join(msg_string)))
             test_parsing = test_parsing.split("\n")
+            print("Preview of annotation file parsing showing three genes extracted from the annotation file:")
+            gene_count = 1
             for gene in test_parsing:
+                print(3*"\n")
+                print(5*"-"+"Gene nr. "+str(gene_count)+5*"-")
                 gene = gene.split("\t")
                 if len(gene) != 8:
                     print("Parsing failed")
+                    continue
                 print("Gene name: "+gene[4])
                 print("Description: " + gene[5])
                 print("Contig name: " + gene[0])
                 print("Start: "+gene[1]+ " Stop: "+gene[2]+" Strand: "+gene[3])
                 nt_seq = gene[6]
                 if len(nt_seq) <= 30:
-                    print("Transcript: "+nt_seq)
+                    print("Transcript:  "+nt_seq)
                 else:
                     print("Transcript: "+nt_seq[:15]+"...["+str(len(nt_seq)-30)+"]..."+nt_seq[-15:])
                 prot_seq = gene[7]
@@ -279,6 +300,8 @@ class AHGraRAdmin:
                     print("Translation: "+prot_seq)
                 else:
                     print("Translation: "+prot_seq[:15]+"...["+str(len(prot_seq)-30)+"]..."+prot_seq[-15:])
+                print(3 * "\n")
+                print(20*"-")
 
 
 
