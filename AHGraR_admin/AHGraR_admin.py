@@ -367,7 +367,6 @@ class AHGraRAdmin:
                                     if (not gene[0] or not gene[1] or not gene[2] or not gene[3] or not gene[4]
                                         or not gene[6] or not gene[7]):
                                         continue
-                                    print(3 * "\n")
                                     print(5 * "-" + "Parser config nr. " + str(parser_config) + 5 * "-")
                                     print("Gene name: " + gene[4])
                                     print("Description: " + gene[5])
@@ -389,7 +388,6 @@ class AHGraRAdmin:
                                     parser_dict[parser_config] = [potential_gene_feature, potential_coding_feature,
                                                                 pnfa, pdfa]
                                     parser_config += 1
-                                print(3 * "\n")
                 if len(parser_dict) == 0:
                     print("Unable to retrieve a parser configuration.")
                     print("Try manual mode.")
