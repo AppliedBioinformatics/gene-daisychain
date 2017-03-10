@@ -361,14 +361,14 @@ class AHGraRAdmin:
                                 test_parsing = (self.send_data("PABULD_GFF3_" + "_".join(msg_string)))
                                 test_parsing = test_parsing.split("\n")
                                 for gene in test_parsing[:1]:
-                                    print(3 * "\n")
-                                    print(5 * "-" + "Parser config nr. " + str(parser_config) + 5 * "-")
                                     gene = gene.split("\t")
                                     if len(gene) != 8:
                                         continue
                                     if (not gene[0] or not gene[1] or not gene[2] or not gene[3] or not gene[4]
                                         or not gene[6] or not gene[7]):
                                         continue
+                                    print(3 * "\n")
+                                    print(5 * "-" + "Parser config nr. " + str(parser_config) + 5 * "-")
                                     print("Gene name: " + gene[4])
                                     print("Description: " + gene[5])
                                     print("Contig name: " + gene[0])
@@ -404,7 +404,7 @@ class AHGraRAdmin:
                     parser_selection = input(">:").strip()
                     if not parser_selection.isdigit():
                         continue
-                    if not 0 < int(parser_selection) <= parser_config:
+                    if not 0 < int(parser_selection) < parser_config:
                         continue
                     else:
                         selected_parser_config = parser_dict[parser_config]
