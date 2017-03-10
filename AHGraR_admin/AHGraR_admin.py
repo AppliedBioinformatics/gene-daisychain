@@ -260,6 +260,7 @@ class AHGraRAdmin:
                           ":".join(name_feat_attr),":".join(descr_feat_attr),anno_file[0]]
             msg_string = [item.replace("_","\t") for item in msg_string]
             test_parsing = (self.send_data("PABULD_GFF3_"+"_".join(msg_string)))
+            print(test_parsing)
 
 
 
