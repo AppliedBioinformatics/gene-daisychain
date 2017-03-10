@@ -271,12 +271,12 @@ class AHGraRAdmin:
                 if len(nt_seq) <= 30:
                     print("Transcript: "+nt_seq)
                 else:
-                    print("Transcript: "+nt_seq[:15]+"...["+str(len(nt_seq)-30)+"]..."+nt_seq[-15])
+                    print("Transcript: "+nt_seq[:15]+"...["+str(len(nt_seq)-30)+"]..."+nt_seq[-15:])
                 prot_seq = gene[7]
                 if len(prot_seq) <= 30:
                     print("Translation: "+prot_seq)
                 else:
-                    print("Translation: "+prot_seq[:15]+"...["+str(len(prot_seq)-30)+"]..."+prot_seq[-15])
+                    print("Translation: "+prot_seq[:15]+"...["+str(len(prot_seq)-30)+"]..."+prot_seq[-15:])
 
 
 
