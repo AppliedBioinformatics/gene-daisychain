@@ -348,6 +348,8 @@ class DBBuilder:
             # Stop when there are already three genes in the return list
             if len(return_gene_list) >= 3:
                 break
+            # Convert every item of a gene into string format
+            gene = [str(item) for item in gene]
             # Get transcript
             gene_transcript = gff3_parser_v2.get_nt_sequence(gene[0])
             # Get translation
