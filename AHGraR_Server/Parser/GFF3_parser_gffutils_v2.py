@@ -175,6 +175,7 @@ class GFF3Parser_v2:
         nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa", as_raw=True)
         try:
             nt_transcript = nt_transcripts["lcl|" + str(id)]
+            print(nt_transcript)
         except KeyError:
             nt_transcript = ""
         return nt_transcript
@@ -184,6 +185,7 @@ class GFF3Parser_v2:
         prot_transcripts = Fasta(self.gff3_file_path+"_translations.fa", as_raw=True)
         try:
             prot_transcript = prot_transcripts["lcl|" + str(id)]
+            print(prot_transcript)
         except KeyError:
             prot_transcript = ""
         return prot_transcript
