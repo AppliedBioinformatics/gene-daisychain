@@ -215,6 +215,9 @@ class AHGraRAdmin:
                 print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
             while True:
                 name_feat_attr = input(">:").strip()
+                if descr_feat_attr == "skip":
+                    descr_feat_attr = ("skip","skip")
+                    break
                 if ":" in name_feat_attr:
                     name_feat_attr = name_feat_attr.split(":")
                 else:
@@ -256,7 +259,9 @@ class AHGraRAdmin:
             msg_string = [proj_id, parent_feature, ",".join(subfeature_list),
                           ":".join(name_feat_attr),":".join(descr_feat_attr),anno_file[0]]
             msg_string = [item.replace("_","\t") for item in msg_string]
-            print(self.send_data("PABULD_GFF3_"+"_".join(msg_string)))
+            test_parsing = (self.send_data("PABULD_GFF3_"+"_".join(msg_string)))
+
+
 
 
 
