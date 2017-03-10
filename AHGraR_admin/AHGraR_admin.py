@@ -363,7 +363,7 @@ class AHGraRAdmin:
                                 test_parsing = (self.send_data("PABULD_GFF3_" + "_".join(msg_string)))
                                 test_parsing = test_parsing.split("\n")
                                 gene_count = 1
-                                for gene in test_parsing:
+                                for gene in test_parsing[:1]:
                                     print(3 * "\n")
                                     print(5 * "-" + "Gene nr. " + str(gene_count) + 5 * "-")
                                     gene = gene.split("\t")
