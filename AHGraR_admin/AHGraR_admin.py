@@ -215,8 +215,8 @@ class AHGraRAdmin:
                 print("["+available_attribute[0]+"]"+": "+",".join(available_attribute[1:]))
             while True:
                 name_feat_attr = input(">:").strip()
-                if descr_feat_attr == "skip":
-                    descr_feat_attr = ("skip","skip")
+                if name_feat_attr == "skip":
+                    name_feat_attr = ("skip","skip")
                     break
                 if ":" in name_feat_attr:
                     name_feat_attr = name_feat_attr.split(":")
