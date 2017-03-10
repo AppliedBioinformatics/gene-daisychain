@@ -173,12 +173,20 @@ class GFF3Parser_v2:
     # Retrieve a single nt transcript by FASTA header ID
     def get_nt_sequence(self, id):
         nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa")
-        return nt_transcripts["lcl|"+str(id)].seq
+        try:
+            nt_transcript = nt_transcripts["lcl|" + str(id)].seq
+        except KeyError:
+            nt_transcript = ""
+        return nt_transcript
 
     # Retrieve a single prot translation by FASTA header ID
     def get_prot_sequence(self, id):
         prot_transcripts = Fasta(self.gff3_file_path+"_translations.fa")
-        return prot_transcripts["lcl|"+str(id)].seq
+        try:
+            prot_transcript = prot_transcripts["lcl|" + str(id)].seq
+        except KeyError:
+            prot_transcript = ""
+        return prot_transcript
 
     # Delete transcripts and translations
     def delete_transcripts_translations(self):
