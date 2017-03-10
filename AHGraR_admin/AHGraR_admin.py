@@ -326,6 +326,8 @@ class AHGraRAdmin:
                 potential_gene_features = [item for item in gff_features if known_gene_features.match(item)]
                 potential_coding_features = [item for item in gff_features if known_coding_features.match(item)]
                 # Iterate through every combination, until test parsing returns a good result
+                parser_config = 1
+                parser_dict = {}
                 for potential_gene_feature in potential_gene_features:
                     for potential_coding_feature in potential_coding_features:
                         # Try to find a matching attribute for gene name in one of the features attributes
@@ -352,18 +354,12 @@ class AHGraRAdmin:
                             potential_descr_feat_attr = [("skip","skip")]
                         for pnfa in potential_name_feat_attr:
                             for pdfa in potential_descr_feat_attr:
-                                print(potential_gene_feature)
-                                print(potential_coding_feature)
-                                print(pnfa)
-                                print(pdfa)
                                 msg_string = [proj_id, potential_gene_feature, potential_coding_feature,
                                               ":".join(pnfa), ":".join(pdfa), anno_file[0]]
                                 msg_string = [item.replace("_", "\t") for item in msg_string]
                                 # Receive feedback from server: (At max.) three genes that were extracted from the annotation file
                                 test_parsing = (self.send_data("PABULD_GFF3_" + "_".join(msg_string)))
                                 test_parsing = test_parsing.split("\n")
-                                parser_config = 1
-                                parser_dict = {}
                                 for gene in test_parsing[:1]:
                                     print(3 * "\n")
                                     print(5 * "-" + "Parser config nr. " + str(parser_config) + 5 * "-")
@@ -390,7 +386,7 @@ class AHGraRAdmin:
                                         print("Translation: " + prot_seq[:15] + "...[" + str(
                                             len(prot_seq) - 30) + "]..." + prot_seq[-15:])
                                     print(20 * "-")
-                                    parser_dict[parser_config]=[potential_gene_feature, potential_coding_feature,
+                                    parser_dict[parser_config] = [potential_gene_feature, potential_coding_feature,
                                                                 pnfa, pdfa]
                                     parser_config += 1
                                 print(3 * "\n")
