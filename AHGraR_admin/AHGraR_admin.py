@@ -180,7 +180,9 @@ class AHGraRAdmin:
         print("Found "+ str(len(genome_files))+" genome files")
         print("Found " + str(len(anno_files)) + " annotation files")
         print("We need to collect some information to parse the annotation files, is that ok?")
-        for anno_file in anno_files:
+        anno_file_index = 0
+        while anno_file_index < len(anno_files):
+            anno_file = anno_files[anno_file_index]
             self.clear_console()
             print(3*"\n")
             print(5*"-")
@@ -200,7 +202,7 @@ class AHGraRAdmin:
             print(3 * "\n")
             print("A gene can consist of multiple subfeatures.")
             print("Next, we need to know which features build up the gene and which of them you want to include.")
-            print("Examples: 'CDS' and 'UTR'. Sometimes there are no subfeatures. Select subfeatures from list of"
+            print("Examples: 'CDS' and 'UTR'. Sometimes there are no subfeatures. Select subfeatures from list of "
                   "available features.")
             reduced_features = [item for item in features if item != parent_feature]
             print("Available features: ")
@@ -217,7 +219,7 @@ class AHGraRAdmin:
             subfeature_list = [item for item in subfeature_list if item in reduced_features]
             self.clear_console()
             print(3 * "\n")
-            print("The annotation parser automatically derives a name for each gene. Sometimes a more common gene name"
+            print("The annotation parser automatically derives a name for each gene. Sometimes a more common gene name "
                   "is stored in the attributes section of the annotation file. Each feature can hold different "
                   "attributes. Next, select a feature and an attribute of that feature that carries the genes name.")
             print("Enter in this format: feature:attribute, e.g. gene:Name")
@@ -302,6 +304,23 @@ class AHGraRAdmin:
                     print("Translation: "+prot_seq[:15]+"...["+str(len(prot_seq)-30)+"]..."+prot_seq[-15:])
                 print(3 * "\n")
                 print(20*"-")
+            print("Do you like what you see?")
+            print("Enter 'a' to continue with next annotation file")
+            print("Enter 'r' to redo this step")
+            print("Enter 'x' to exit")
+            while True:
+                selection = input(">:").strip()
+                if selection == "x":
+                    return
+                elif selection == "r":
+                    break
+                elif selection == "a":
+                    anno_file_index += 1
+                    break
+                else:
+                    continue
+
+
 
 
 
