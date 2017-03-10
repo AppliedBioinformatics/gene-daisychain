@@ -362,7 +362,7 @@ class DBBuilder:
         # Delete temporary GFF3 file
         os.remove(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"))
         # Delete temporary transcript and translation files
-        #gff3_parser_v2.delete_transcripts_translations()
+        gff3_parser_v2.delete_transcripts_translations()
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
         self.send_data("\n".join(["\t".join(item) for item in return_gene_list]))
         if len(gene_list) >= 1:

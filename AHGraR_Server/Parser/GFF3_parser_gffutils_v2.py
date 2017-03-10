@@ -160,7 +160,7 @@ class GFF3Parser_v2:
                 continue
             # The fasta annotation line is  '>lcl|' plus the gene node ID
             # 'lcl|' is required by blast+ to ensure correct parsing of the identifier
-            output_nt.write(">lcl|"+str(gene_annotation[0])+"_"+"\n")
+            output_nt.write(">lcl|"+str(gene_annotation[0])+"\n")
             output_nt.write(gene_sequence+"\n")
             protein_sequence = self.translate_nt(gene_sequence)
             if not protein_sequence:
@@ -178,9 +178,8 @@ class GFF3Parser_v2:
         nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa", as_raw=True)
         try:
             nt_transcript = str(nt_transcripts["lcl|" + str(id)])
-        except KeyError as e:
+        except KeyError:
             nt_transcript = ""
-            print(e)
         os.remove(self.gff3_file_path+"_transcripts.fa" + ".fai")
         print("NT_trans:"+nt_transcript)
         return nt_transcript
