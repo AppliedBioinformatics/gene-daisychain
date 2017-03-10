@@ -363,6 +363,32 @@ class AHGraRAdmin:
                                 test_parsing = (self.send_data("PABULD_GFF3_" + "_".join(msg_string)))
                                 test_parsing = test_parsing.split("\n")
                                 print(test_parsing)
+                                for gene in test_parsing:
+                                    print(3 * "\n")
+                                    print(5 * "-" + "Gene nr. " + str(gene_count) + 5 * "-")
+                                    gene = gene.split("\t")
+                                    if len(gene) != 8:
+                                        print("Parsing failed")
+                                        continue
+                                    print("Gene name: " + gene[4])
+                                    print("Description: " + gene[5])
+                                    print("Contig name: " + gene[0])
+                                    print("Start: " + gene[1] + " Stop: " + gene[2] + " Strand: " + gene[3])
+                                    nt_seq = gene[6]
+                                    if len(nt_seq) <= 30:
+                                        print("Transcript:  " + nt_seq)
+                                    else:
+                                        print("Transcript:  " + nt_seq[:15] + "...[" + str(
+                                            len(nt_seq) - 30) + "]..." + nt_seq[-15:])
+                                    prot_seq = gene[7]
+                                    if len(prot_seq) <= 30:
+                                        print("Translation: " + prot_seq)
+                                    else:
+                                        print("Translation: " + prot_seq[:15] + "...[" + str(
+                                            len(prot_seq) - 30) + "]..." + prot_seq[-15:])
+                                    print(20 * "-")
+                                    gene_count += 1
+                                print(3 * "\n")
 
 
             print("Do you like what you see?")
