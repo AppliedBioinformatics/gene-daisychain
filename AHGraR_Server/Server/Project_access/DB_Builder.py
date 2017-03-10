@@ -342,15 +342,31 @@ class DBBuilder:
         gff3_parser_v2 = GFF3Parser_v2(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"), genome_file, True, 0,
                                        parent_feat, sub_features, name_attr, desc_attr)
         gene_list = gff3_parser_v2.parse_gff3_file()
-        # Delete head of file
+        # Return (at max) the first three genes in the gene list
+        return_gene_list = []
+        for gene in gene_list:
+            # Stop when there are already three genes in the return list
+            if len(return_gene_list) >= 3:
+                break
+            # Get transcript
+            gene_transcript = gff3_parser_v2.get_nt_sequence(gene[0])
+            # Get translation
+            gene_translation = gff3_parser_v2.get_prot_sequence(gene[0])
+            # Add both to gene list
+            gene.append(gene_transcript)
+            gene.append(gene_translation)
+            # Add gene to return list, removing the node ID and species name
+            return_gene_list.append(gene[2:])
+        # Delete temporary GFF3 file
         os.remove(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"))
+        # Delete temporary transcript and translation files
+        gff3_parser_v2.delete_transcripts_translations()
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
+        self.send_data("\n".join(["\t".join(item) for item in return_gene_list]))
         if len(gene_list) >= 1:
-            self.task_mngr.add_task_results(proj_id, task_id, gene_list[0])
-            self.send_data(gene_list[0])
+            self.task_mngr.add_task_results(proj_id, task_id, "Success")
         else:
             self.task_mngr.add_task_results(proj_id, task_id, "Failed")
-            self.send_data([])
 
 
 

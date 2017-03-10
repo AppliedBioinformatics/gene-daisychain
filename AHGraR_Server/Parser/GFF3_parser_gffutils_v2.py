@@ -164,7 +164,7 @@ class GFF3Parser_v2:
             protein_sequence = self.translate_nt(gene_sequence)
             if not protein_sequence:
                 continue
-            output_prot.write(">lcl|"+str(gene_annotation[0])+"_"+gene_annotation[6]+"\n")
+            output_prot.write(">lcl|"+str(gene_annotation[0])+"\n")
             output_prot.write(protein_sequence + "\n")
         output_nt.close()
         output_prot.close()
@@ -173,12 +173,18 @@ class GFF3Parser_v2:
     # Retrieve a single nt transcript by FASTA header ID
     def get_nt_sequence(self, id):
         nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa")
-        return nt_transcripts[id].seq
+        return nt_transcripts["lcl|"+id].seq
 
     # Retrieve a single prot translation by FASTA header ID
     def get_prot_sequence(self, id):
         prot_transcripts = Fasta(self.gff3_file_path+"_translations.fa")
-        return prot_transcripts[id].seq
+        return prot_transcripts["lcl|"+id].seq
+
+    # Delete transcripts and translations
+    def delete_transcripts_translations(self):
+        os.remove(self.gff3_file_path + "_transcripts.fa")
+        os.remove(self.gff3_file_path + "_translations.fa")
+
 
 
 
