@@ -174,8 +174,7 @@ class GFF3Parser_v2:
     def get_nt_sequence(self, id):
         nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa", as_raw=True)
         try:
-            nt_transcript = nt_transcripts["lcl|" + str(id)]
-            print(nt_transcript)
+            nt_transcript = str(nt_transcripts["lcl|" + str(id)])
         except KeyError:
             nt_transcript = ""
         return nt_transcript
@@ -184,8 +183,7 @@ class GFF3Parser_v2:
     def get_prot_sequence(self, id):
         prot_transcripts = Fasta(self.gff3_file_path+"_translations.fa", as_raw=True)
         try:
-            prot_transcript = prot_transcripts["lcl|" + str(id)]
-            print(prot_transcript)
+            prot_transcript = str(prot_transcripts["lcl|" + str(id)])
         except KeyError:
             prot_transcript = ""
         return prot_transcript
