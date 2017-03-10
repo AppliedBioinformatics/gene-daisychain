@@ -362,7 +362,7 @@ class AHGraRAdmin:
                                 # Receive feedback from server: (At max.) three genes that were extracted from the annotation file
                                 test_parsing = (self.send_data("PABULD_GFF3_" + "_".join(msg_string)))
                                 test_parsing = test_parsing.split("\n")
-                                print(test_parsing)
+                                gene_count = 1
                                 for gene in test_parsing:
                                     print(3 * "\n")
                                     print(5 * "-" + "Gene nr. " + str(gene_count) + 5 * "-")
