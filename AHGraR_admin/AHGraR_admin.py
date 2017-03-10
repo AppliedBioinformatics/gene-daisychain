@@ -263,6 +263,8 @@ class AHGraRAdmin:
             test_parsing = test_parsing.split("\n")
             for gene in test_parsing:
                 gene = gene.split("\t")
+                if len(gene) != 8:
+                    print("Parsing failed")
                 print("Gene name: "+gene[4])
                 print("Description: " + gene[5])
                 print("Contig name: " + gene[0])
