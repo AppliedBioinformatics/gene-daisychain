@@ -302,8 +302,8 @@ class AHGraRAdmin:
                     print("Translation: "+prot_seq)
                 else:
                     print("Translation: "+prot_seq[:15]+"...["+str(len(prot_seq)-30)+"]..."+prot_seq[-15:])
-                print(3 * "\n")
                 print(20*"-")
+                gene_count +=1
             print("Do you like what you see?")
             print("Enter 'a' to continue with next annotation file")
             print("Enter 'r' to redo this step")

@@ -178,10 +178,9 @@ class GFF3Parser_v2:
         nt_transcripts = Fasta(self.gff3_file_path+"_transcripts.fa", as_raw=True)
         try:
             nt_transcript = str(nt_transcripts["lcl|" + str(id)])
-        except KeyError:
+        except:
             nt_transcript = ""
         os.remove(self.gff3_file_path+"_transcripts.fa" + ".fai")
-        print("NT_trans:"+nt_transcript)
         return nt_transcript
 
     # Retrieve a single prot translation by FASTA header ID
@@ -189,7 +188,7 @@ class GFF3Parser_v2:
         prot_transcripts = Fasta(self.gff3_file_path+"_translations.fa", as_raw=True)
         try:
             prot_transcript = str(prot_transcripts["lcl|" + str(id)])
-        except KeyError:
+        except:
             prot_transcript = ""
         os.remove(self.gff3_file_path + "_translations.fa" + ".fai")
         return prot_transcript
