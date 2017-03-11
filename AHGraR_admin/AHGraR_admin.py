@@ -190,6 +190,8 @@ class AHGraRAdmin:
         # Iterate over all annotation files
         # Sometimes a loop might need to be repeated. Work therefore with index numbers for the loop iterations
         anno_file_index = 0
+        ##TESTING ONLY !!!###
+        anno_file_index = 50
         while anno_file_index < len(anno_files):
             # Get current annotation file
             anno_file = anno_files[anno_file_index]
@@ -504,6 +506,10 @@ class AHGraRAdmin:
                     break
                 else:
                     continue
+        # All information required to build the project DB is now collected
+        print("Starting DB build now")
+        self.send_data("PABULD_DB_"+str(proj_id))
+
 
 
 
