@@ -61,7 +61,7 @@ class AHGraRAdmin:
             maindb_conn.sendall(message.encode())
             return self.receive_data(maindb_conn)
         except:
-            return "-1"
+            return "Error while communicating with the server"
         finally:
             maindb_conn.close()
 
