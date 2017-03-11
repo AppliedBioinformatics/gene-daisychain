@@ -31,7 +31,7 @@ class GFF3Parser_v2:
         self.sequence_file_path = sequence_file_path
         # Parse sequence file
         if seq_is_genome:
-            self.sequence = Fasta(sequence_file_path)
+            self.sequence = Fasta(sequence_file_path, sequence_always_upper=True)
         else:
             self.sequence = None
         # Is sequence the genome (true) or already spliced transcripts (false)
@@ -139,8 +139,8 @@ class GFF3Parser_v2:
                         # Is sequence from a minus-strand feature?
                         antisense = subfeature.strand == "-"
                         # If antisense, reverse complement the sequence
-                        seq_fragment = subfeature.sequence(self.sequence, False).seq.upper() if not antisense \
-                            else self.reverse_complement(subfeature.sequence(self.sequence, False).seq.upper())
+                        seq_fragment = subfeature.sequence(self.sequence, False).seq if not antisense \
+                            else self.reverse_complement(subfeature.sequence(self.sequence, False).seq)
                         # Include the coding phase, phase is zero if phase field is empty:
                         phase = int(subfeature.frame) if subfeature.frame.isdigit() else 0
                         # If a gene consists of multiple segments they need to be sorted by their start index
