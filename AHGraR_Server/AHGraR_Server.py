@@ -123,7 +123,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         reply = str(reply)
         # Add length of message to header
         message = str(len(reply)) + "|" + reply
-        self.request.sendall(message.encode())
+        self.request.sendall(message.encode("utf-8", errors="ignore"))
         # Split reply into chunks of length 512
         #reply_chunks = [reply[i:i+512] for i in range(0, len(reply), 512)]
         #for reply_chunk in reply_chunks:
