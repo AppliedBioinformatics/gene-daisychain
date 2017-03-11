@@ -193,7 +193,7 @@ class AHGraRAdmin:
         while anno_file_index < len(anno_files):
             # Get current annotation file
             anno_file = anno_files[anno_file_index]
-            self.clear_console()
+            #self.clear_console()
             print(3*"\n")
             print(5*"-")
             # Recover species name from file name
