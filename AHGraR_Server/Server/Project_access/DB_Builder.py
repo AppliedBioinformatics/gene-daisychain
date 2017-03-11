@@ -63,9 +63,12 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "Collecting files")
         file_list = list(self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
                               "WHERE ID(proj)={proj_id} AND file.hidden = 'False' "
-                              "RETURN file.filename, file.filetype, file.species, file.variant, file.anno_mapping, "
-                                               "file.feat_hierarchie ORDER BY file.filename",
+                              "RETURN file.filename, file.filetype, file.species, file.variant, file.parent_feat, "
+                                               "file.sub_features file.name_attr file.desc_attr ORDER BY file.filename",
                           {"proj_id":int(proj_id)}))
+        for file in file_list:
+            print(file)
+        return
         # Convert file_list into a dictionary:
         file_dict = {}
         # Keys are (Species, Variant) and entries are a list of files
