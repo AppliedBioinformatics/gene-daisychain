@@ -42,7 +42,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
         elif request[:2] == "PA":
             self.project_access(request[2:])
         else:
-            self.send_data("-1")
+            self.send_data("Invalid Request")
         return
 
     # Project management: Create or delete project, return status or list all projects
