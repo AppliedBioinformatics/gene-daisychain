@@ -320,7 +320,7 @@ class DBBuilder:
         # Else add them to the main-db
         self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
                     "MATCH (fileMngr)-[:file]->(file:File) WHERE file.filename = {file_name} "
-                    "AND file.filetype = 'gff3' AND file.hidden = 'False' "
+                    "AND file.filetype = 'annotation' AND file.hidden = 'False' "
                     "SET file.parent_feat = {parent_feat} SET file.sub_features = {sub_features} "
                               "SET file.name_attr = {name_attr} SET file.desc_attr = {desc_attr} ",
                     {"proj_id": int(proj_id), "file_name": file_name,
