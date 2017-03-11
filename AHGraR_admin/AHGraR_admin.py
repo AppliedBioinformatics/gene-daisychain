@@ -60,7 +60,7 @@ class AHGraRAdmin:
         try:
             maindb_conn.sendall(message.encode())
             return self.receive_data(maindb_conn)
-        except Exception as e:
+        except UnicodeDecodeError as e:
             return "Error while communicating with the server: \n"+e.str(e)
         finally:
             maindb_conn.close()
@@ -88,7 +88,7 @@ class AHGraRAdmin:
         while msg_length > 0:
             # Receive a max. of 1024 bytes
             rcv_length = 1024 if msg_length >= 1024 else msg_length
-            msg_chunk = connection.recv(rcv_length).decode()
+            msg_chunk = connection.recv(rcv_length).decode(errors='replace')
             # Subtract the actual length of the received message from the overall message length
             msg_length -= len(msg_chunk)
             msg += msg_chunk
@@ -129,7 +129,6 @@ class AHGraRAdmin:
         if proj_id == "0":
             return
         self.clear_console()
-        print(5*"\nFile list:")
         file_list = self.send_data("PAFILE_LIST_"+proj_id)
         self.clear_console()
         print(file_list)
