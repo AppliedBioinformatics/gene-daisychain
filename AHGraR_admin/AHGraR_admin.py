@@ -183,6 +183,10 @@ class AHGraRAdmin:
         anno_files  = [item for item in files if item[1]=="annotation"]
         print("Found "+ str(len(genome_files))+" genome files")
         print("Found " + str(len(anno_files)) + " annotation files")
+        # Check if each annotation file has a matching genome file
+        # If not, ignore that annotation file for the database build
+        print(genome_files)
+        print(anno_files)
         # Iterate over all annotation files
         # Sometimes a loop might need to be repeated. Work therefore with index numbers for the loop iterations
         anno_file_index = 0

@@ -72,7 +72,7 @@ class DeleteProject:
                                   "REMOVE projPort.project "
                                   "SET projPort.status='inactive'", {"proj_port": proj_http_port_nr})
 
-            # Delete project graph db port entry and set project status to deleted
+            # Delete project main db entry
             self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
                         "DETACH DELETE del_proj "
                         , {"proj_id": self.proj_id})
