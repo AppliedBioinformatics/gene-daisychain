@@ -66,16 +66,17 @@ class DBBuilder:
                               "RETURN file.filename, file.filetype, file.species, file.variant, file.parent_feat, "
                                             "file.sub_features, file.name_attr, file.desc_attr ORDER BY file.filename",
                           {"proj_id":int(proj_id)}))
-        for file in file_list:
-            print(file)
-        return
         # Convert file_list into a dictionary:
         file_dict = {}
         # Keys are (Species, Variant) and entries are a list of files
         for file in file_list:
-            file_dict[(file[2],file[3])] = []
+            file_dict[(file["file.species"],file["file.variant"])] = []
         for file in file_list:
-            file_dict[(file[2],file[3])].append((file[0],file[1],file[4],file[5]))
+            file_dict[(file["file.species"],file["file.variant"])].append(
+                (file["file.filename"],file["file.filetype"],file["file.parent_feat"],file["file.sub_features"],
+                 file["file.name_attr"],file["file.desc_attr"]))
+        print(file_dict)
+        return
         # Check if each entry in the database consists of exactly two files, one fasta and one annotation file
         # If not, remove that entry from the database
         # Also, search for gff3+nt combinations
