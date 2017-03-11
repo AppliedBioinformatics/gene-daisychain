@@ -230,14 +230,16 @@ class FileManagement:
             else:
                 file_ending = ".faa"
             file_name = "_".join([new_file_desc[0], new_file_desc[1]]) + file_ending
+            # Try to copy the file into the project folder
+            # If file not found, continue with next file
+            # In that case, no entry in the main DB will be made
             try:
                 shutil.copy2(new_file_path, os.path.join(project_file_path, file_name))
-                self.file_manager_add_file(proj_id, new_file_desc[0], new_file_desc[1], file_name, new_file_desc[2])
-                imported_file_counter+=1
-                self.task_mngr.set_task_status(proj_id, task_id, "imported "+str(imported_file_counter))
-            except Exception as e:
-                print(Exception.with_traceback(e))
+            except FileNotFoundError:
                 continue
+            self.file_manager_add_file(proj_id, new_file_desc[0], new_file_desc[1], file_name, new_file_desc[2])
+            imported_file_counter += 1
+        self.task_mngr.set_task_status(proj_id, task_id, "imported " + str(imported_file_counter))
         self.task_mngr.add_task_results(proj_id, task_id, "imported "+str(imported_file_counter))
         self.task_mngr.set_task_status(proj_id, task_id, "finished ")
 
