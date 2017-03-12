@@ -123,6 +123,7 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastN")
         blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
         cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
+        print("Blastn now")
         subprocess.run(
             [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
              os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue pident",
@@ -131,6 +132,7 @@ class DBBuilder:
         # Perform an all vs all blastp search
         self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastP")
         blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
+        print("Blastp now")
         subprocess.run(
             [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
              os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue pident",
@@ -140,20 +142,20 @@ class DBBuilder:
         # Create new blastn/blastp result files lacking the percent match ID column (ABC files)
         # Dump dict with geneID/geneID/PercentMatch and protID/protID/PercentMatch as json
         gene_gene_percentID = {}
+        print("blastn to abc")
         with open(os.path.join(BlastDB_path, "transcripts.blastn"), "r") as nt_blast_file:
             with open(os.path.join(BlastDB_path, "transcripts.abc"), "w") as  nt_blast_abc_file:
              for line in nt_blast_file:
-                    print(line)
                     line = line.split("\t")
                     gene_gene_percentID[(line[0],line[1])]=line[3]
                     nt_blast_abc_file.write("\t".join(line[:3]))
         with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as dict_dump:
             json.dump(gene_gene_percentID, dict_dump)
         prot_prot_percentID = {}
+        print("blastp to abc")
         with open(os.path.join(BlastDB_path, "translations.blastp"), "r") as prot_blast_file:
             with open(os.path.join(BlastDB_path, "translations.abc"), "w") as  prot_blast_abc_file:
              for line in prot_blast_file:
-                    print(line)
                     line = line.split("\t")
                     prot_prot_percentID[(line[0],line[1])]=line[3]
                     prot_blast_abc_file.write("\t".join(line[:3]))
