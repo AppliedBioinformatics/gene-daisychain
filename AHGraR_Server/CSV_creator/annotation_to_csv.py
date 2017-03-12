@@ -50,7 +50,7 @@ class AnnoToCSV:
         anno_parser = GFF3Parser_v2(anno_file, genome_file, True, self.gene_node_id, parent_feature_type,
                                     subfeatures, name_attribute, descr_attribute)
         # Parse the file and retrieve gene annotation as list
-        gene_list = anno_parser. anno_parser.parse_gff3_file()
+        gene_list = anno_parser.parse_gff3_file()
 
         # Set gene_node_id to id last assigned while parsing
         self.gene_node_id = anno_parser.get_last_gene_node_id()
