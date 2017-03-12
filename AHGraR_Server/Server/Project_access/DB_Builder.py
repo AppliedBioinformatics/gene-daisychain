@@ -148,7 +148,7 @@ class DBBuilder:
              for line in nt_blast_file:
                     line = line.split("\t")
                     gene_gene_percentID["g"+line[0]+"_g"+line[1]]=line[3]
-                    nt_blast_abc_file.write("\t".join(line[:3]))
+                    nt_blast_abc_file.write("\t".join(line[:3])+"\n")
         with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as dict_dump:
             json.dump(gene_gene_percentID, dict_dump)
         prot_prot_percentID = {}
@@ -158,7 +158,7 @@ class DBBuilder:
              for line in prot_blast_file:
                     line = line.split("\t")
                     prot_prot_percentID["p"+line[0]+"_p"+line[1]]=line[3]
-                    prot_blast_abc_file.write("\t".join(line[:3]))
+                    prot_blast_abc_file.write("\t".join(line[:3])+"\n")
         with open(os.path.join(BlastDB_path, "translations_pid.json"), 'w') as dict_dump:
             json.dump(prot_prot_percentID, dict_dump)
         return
