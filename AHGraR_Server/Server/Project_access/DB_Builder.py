@@ -183,7 +183,7 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "Write CSV files for nucleotide clusters")
         with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as transcripts_pid_dict:
             nucl_clstr_to_csv_parser = ClusterToCSV(os.path.join("Projects", str(proj_id), "CSV", "gene_hmlg.csv"),
-                                                    json.loads(transcripts_pid_dict), "nucl")
+                                                    json.loads(transcripts_pid_dict.read()), "nucl")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_1.4.clstr"), "1.4")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_5.0.clstr"), "5.0")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_10.0.clstr"), "10.0")
@@ -211,7 +211,7 @@ class DBBuilder:
         with open(os.path.join(BlastDB_path, "translations_pid.json"), 'w') as translations_pid_dict:
             nucl_clstr_to_csv_parser = ClusterToCSV(os.path.join(os.path.join("Projects", str(proj_id), "CSV",
                                                                               "protein_hmlg.csv")),
-                                                    json.loads(translations_pid_dict), "prot")
+                                                    json.loads(translations_pid_dict.read()), "prot")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_1.4.clstr"), "1.4")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_5.0.clstr"), "5.0")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_10.0.clstr"), "10.0")
