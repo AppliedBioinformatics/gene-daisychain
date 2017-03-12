@@ -12,7 +12,7 @@ from Parser.GFF3_parser_gffutils_v2 import GFF3Parser_v2
 from random import choice
 from neo4j.v1 import GraphDatabase, basic_auth
 import time
-
+import json
 
 class DBBuilder:
     def __init__(self, main_db_connection, task_manager, send_data, ahgrar_config):
@@ -136,7 +136,29 @@ class DBBuilder:
              os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue pident",
              "-out", os.path.join(BlastDB_path, "translations.blastp"), "-evalue", "0.05",
              "-num_threads", cpu_cores, "-parse_deflines"])
+        # Extract sequence match identity from blast result files
+        # Create new blastn/blastp result files lacking the percent match ID column (ABC files)
+        # Dump dict with geneID/geneID/PercentMatch and protID/protID/PercentMatch as json
+        gene_gene_percentID = {}
+        with open(os.path.join(BlastDB_path, "transcripts.blastn"), "r") as nt_blast_file:
+            with open(os.path.join(BlastDB_path, "transcripts.abc"), "w") as  nt_blast_abc_file:
+             for line in nt_blast_file:
+                    line = line.split("\t")
+                    gene_gene_percentID[(line[0],line[1])]=line[3]
+                    nt_blast_abc_file.write("\t".join(line[:3]))
+        with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as dict_dump:
+            json.dump(gene_gene_percentID, dict_dump)
+        prot_prot_percentID = {}
+        with open(os.path.join(BlastDB_path, "translations.blastp"), "r") as prot_blast_file:
+            with open(os.path.join(BlastDB_path, "translations.abc"), "w") as  prot_blast_abc_file:
+             for line in prot_blast_file:
+                    line = line.split("\t")
+                    prot_prot_percentID[(line[0],line[1])]=line[3]
+                    prot_blast_abc_file.write("\t".join(line[:3]))
+        with open(os.path.join(BlastDB_path, "translations_pid.json"), 'w') as dict_dump:
+            json.dump(prot_prot_percentID, dict_dump)
         return
+
         # Cluster all-vs.-all BlastP results into protein homology groups
         self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastP results")
         # 1. Concatenate all BlastP Results into one "ABC" file
