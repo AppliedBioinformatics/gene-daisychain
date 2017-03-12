@@ -45,7 +45,7 @@ class ClusterToCSV:
                         cluster_pw_comb = [("p"+item[0],"p"+item[1]) for item  in cluster_pw_comb]
                     for homolog_pair in cluster_pw_comb:
                         csv_file.write(",".join([homolog_pair[0], str(mcl_clstr_sens),
-                                                 str(self.perc_match_dict[homolog_pair[0]+"_"+homolog_pair[1]]),
+                                                 str(self.perc_match_dict.get(homolog_pair[0]+"_"+homolog_pair[1],"NA")),
                                                  str(homolog_pair[1])+"\n"]))
 
 
