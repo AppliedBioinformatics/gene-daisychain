@@ -181,9 +181,9 @@ class DBBuilder:
                         os.path.join(BlastDB_path, "transcripts_10.0.clstr")], check=True)
         # 3a. Parse MCL cluster files and create CSV files describing the homology relationships between gene nodes
         self.task_mngr.set_task_status(proj_id, task_id, "Write CSV files for nucleotide clusters")
-        with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as transripts_pid_dict:
+        with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as transcripts_pid_dict:
             nucl_clstr_to_csv_parser = ClusterToCSV(os.path.join("Projects", str(proj_id), "CSV", "gene_hmlg.csv"),
-                                                    json.loads("transripts_pid_dict"), "nucl")
+                                                    json.loads(transcripts_pid_dict), "nucl")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_1.4.clstr"), "1.4")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_5.0.clstr"), "5.0")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_10.0.clstr"), "10.0")
