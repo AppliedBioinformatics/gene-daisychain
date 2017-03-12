@@ -143,6 +143,7 @@ class DBBuilder:
         with open(os.path.join(BlastDB_path, "transcripts.blastn"), "r") as nt_blast_file:
             with open(os.path.join(BlastDB_path, "transcripts.abc"), "w") as  nt_blast_abc_file:
              for line in nt_blast_file:
+                    print(line)
                     line = line.split("\t")
                     gene_gene_percentID[(line[0],line[1])]=line[3]
                     nt_blast_abc_file.write("\t".join(line[:3]))
@@ -152,6 +153,7 @@ class DBBuilder:
         with open(os.path.join(BlastDB_path, "translations.blastp"), "r") as prot_blast_file:
             with open(os.path.join(BlastDB_path, "translations.abc"), "w") as  prot_blast_abc_file:
              for line in prot_blast_file:
+                    print(line)
                     line = line.split("\t")
                     prot_prot_percentID[(line[0],line[1])]=line[3]
                     prot_blast_abc_file.write("\t".join(line[:3]))
@@ -160,16 +162,7 @@ class DBBuilder:
         return
 
         # Cluster all-vs.-all BlastP results into protein homology groups
-        self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastP results")
-        # 1. Concatenate all BlastP Results into one "ABC" file
-        print("1. Concatenate all BlastP Results into one ABC file")
-        with open(os.path.join(BlastDB_path, "blastp.abc"), 'w') as combined_file:
-            for species in file_dict:
-                prot_fasta_file_name = sorted(file_dict[species], key=lambda x: x[1])[1][0]
-                prot_blastp_file_name = prot_fasta_file_name[:prot_fasta_file_name.rfind(".")]+".blastp"
-                with open(os.path.join(BlastDB_path, prot_blastp_file_name),"r") as blastp_file:
-                    for line in blastp_file:
-                        combined_file.write(line)
+        self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastN results")
         # 2. Convert ABC file into a network and dictionary file.
         print("2. Convert ABC file into a network and dictionary file.")
         subprocess.run(["mcxload", "-abc", os.path.join(BlastDB_path, "blastp.abc"), "--stream-mirror", "--stream-neg-log10", "-stream-tf",
