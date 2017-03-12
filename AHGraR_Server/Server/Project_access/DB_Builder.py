@@ -5,9 +5,7 @@ import os
 import subprocess
 from itertools import islice
 from CSV_creator.annotation_to_csv import AnnoToCSV
-from CSV_creator.protein_cluster_to_csv import ClusterToCSV
-from Parser.FASTA_parser import FastaParser
-#import Parser.GFF3_parser_gffutils
+from CSV_creator.cluster_to_csv import ClusterToCSV
 from Parser.GFF3_parser_gffutils_v2 import GFF3Parser_v2
 from random import choice
 from neo4j.v1 import GraphDatabase, basic_auth
@@ -161,10 +159,67 @@ class DBBuilder:
                     prot_blast_abc_file.write("\t".join(line[:3])+"\n")
         with open(os.path.join(BlastDB_path, "translations_pid.json"), 'w') as dict_dump:
             json.dump(prot_prot_percentID, dict_dump)
+        # 0a. Cluster all-vs.-all BlastN results into gene homology groups
+        self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastN results")
+        # 1a. Convert blastN ABC file into a network and dictionary file.
+        mcxload_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["mcxload_path"])
+        subprocess.run(
+            [mcxload_path, "-abc", os.path.join(BlastDB_path, "transcripts.abc"), "--stream-mirror", "--stream-neg-log10",
+             "-stream-tf",
+             "ceil(200)", "-o", os.path.join(BlastDB_path, "transcripts.mci"), "-write-tab",
+             os.path.join(BlastDB_path, "transcripts.tab")], check=True)
+        # 2a. Cluster MCL blastN results
+        mcl_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["mcl_path"])
+        subprocess.run([mcl_path, os.path.join(BlastDB_path, "transcripts.mci"), "-te", "8", "-I", "1.4", "-use-tab",
+                        os.path.join(BlastDB_path, "transcripts.tab"), "-o",
+                        os.path.join(BlastDB_path, "transcripts_1.4.clstr")], check=True)
+        subprocess.run([mcl_path, os.path.join(BlastDB_path, "transcripts.mci"), "-te", "8", "-I", "5.0", "-use-tab",
+                        os.path.join(BlastDB_path, "transcripts.tab"), "-o",
+                        os.path.join(BlastDB_path, "transcripts_5.0.clstr")], check=True)
+        subprocess.run([mcl_path, os.path.join(BlastDB_path, "transcripts.mci"), "-te", "8", "-I", "10.0", "-use-tab",
+                        os.path.join(BlastDB_path, "transcripts.tab"), "-o",
+                        os.path.join(BlastDB_path, "transcripts_10.0.clstr")], check=True)
+        # 3a. Parse MCL cluster files and create CSV files describing the homology relationships between gene nodes
+        self.task_mngr.set_task_status(proj_id, task_id, "Write CSV files for nucleotide clusters")
+        with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as transripts_pid_dict:
+            nucl_clstr_to_csv_parser = ClusterToCSV(os.path.join("Projects", str(proj_id), "CSV", "gene_hmlg.csv"),
+                                                    json.loads("transripts_pid_dict"), "nucl")
+            nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_1.4.clstr"), "1.4")
+            nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_5.0.clstr"), "5.0")
+            nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_10.0.clstr"), "10.0")
+        # 0b. Cluster all-vs.-all BlastP results into protein homology groups
+        self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastP results")
+        # 1b. Convert blastP ABC file into a network and dictionary file.
+        subprocess.run(
+            [mcxload_path, "-abc", os.path.join(BlastDB_path, "translations.abc"), "--stream-mirror",
+             "--stream-neg-log10",
+             "-stream-tf",
+             "ceil(200)", "-o", os.path.join(BlastDB_path, "translations.mci"), "-write-tab",
+             os.path.join(BlastDB_path, "translations.tab")], check=True)
+        # 2b. Cluster MCL blastP results
+        subprocess.run([mcl_path, os.path.join(BlastDB_path, "translations.mci"), "-te", "8", "-I", "1.4", "-use-tab",
+                        os.path.join(BlastDB_path, "translations.tab"), "-o",
+                        os.path.join(BlastDB_path, "translations_1.4.clstr")], check=True)
+        subprocess.run([mcl_path, os.path.join(BlastDB_path, "translations.mci"), "-te", "8", "-I", "5.0", "-use-tab",
+                        os.path.join(BlastDB_path, "translations.tab"), "-o",
+                        os.path.join(BlastDB_path, "translations_5.0.clstr")], check=True)
+        subprocess.run([mcl_path, os.path.join(BlastDB_path, "translations.mci"), "-te", "8", "-I", "10.0", "-use-tab",
+                        os.path.join(BlastDB_path, "translations.tab"), "-o",
+                        os.path.join(BlastDB_path, "translations_10.0.clstr")], check=True)
+        # 3b. Parse MCL cluster files and create CSV files describing the homology relationships between protein nodes
+        self.task_mngr.set_task_status(proj_id, task_id, "Write CSV files for protein clusters")
+        with open(os.path.join(BlastDB_path, "translations_pid.json"), 'w') as translations_pid_dict:
+            nucl_clstr_to_csv_parser = ClusterToCSV(os.path.join(os.path.join("Projects", str(proj_id), "CSV",
+                                                                              "protein_hmlg.csv")),
+                                                    json.loads(translations_pid_dict), "prot")
+            nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_1.4.clstr"), "1.4")
+            nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_5.0.clstr"), "5.0")
+            nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_10.0.clstr"), "10.0")
+
         return
 
         # Cluster all-vs.-all BlastP results into protein homology groups
-        self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastN results")
+        self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlasP results")
         # 2. Convert ABC file into a network and dictionary file.
         print("2. Convert ABC file into a network and dictionary file.")
         subprocess.run(["mcxload", "-abc", os.path.join(BlastDB_path, "blastp.abc"), "--stream-mirror", "--stream-neg-log10", "-stream-tf",

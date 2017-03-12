@@ -1,4 +1,4 @@
-# Parser for clusters, e.g. produced with MCL
+# Parser for clusters produced with MCL
 # Returns a list of clusters:
 # [[A,B], [C,D,E],[F],...]
 # with A,B,C...corresponding to the gene or protein name used in the Graph-DB
@@ -33,13 +33,3 @@ class ClusterParser:
                 line = [ele + ".*" for ele in line]
                 self.cluster_list.append(line)
 
-# For cluster stats only, remove before flight
-if __name__ == "__main__":
-    print("Testing cluster parse")
-    format = sys.argv[1]
-    type = sys.argv[2]
-    file = sys.argv[3]
-    cluster_parse = ClusterParser()
-    result = cluster_parse.parse_protein(format, type, file)
-    median = statistics.median([len(res) for res in result])
-    print(median)
