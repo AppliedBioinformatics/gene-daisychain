@@ -91,7 +91,7 @@ class AHGraRServer(socketserver.BaseRequestHandler):
             file_manager.close_connection()
         elif user_request[0] == "BULD":
             # Initialize build manager
-            build_manager = DBBuilder(self.get_db_conn(), task_manager, self.send_data)
+            build_manager = DBBuilder(self.get_db_conn(), task_manager, self.send_data, self.ahgrar_config)
             # Evaluate user request
             build_manager.evaluate_user_request(user_request[1:])
             # Close file manager connection to main-db

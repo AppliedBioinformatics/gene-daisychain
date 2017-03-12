@@ -15,10 +15,11 @@ import time
 
 
 class DBBuilder:
-    def __init__(self, main_db_connection, task_manager, send_data):
+    def __init__(self, main_db_connection, task_manager, send_data, ahgrar_config):
         self.main_db_conn = main_db_connection
         self.task_mngr = task_manager
         self.send_data = send_data
+        self.ahgrar_config = ahgrar_config
 
     # Close connection to main-DB
     def close_connection(self):
@@ -106,38 +107,36 @@ class DBBuilder:
                 self.task_mngr.set_task_status(proj_id, task_id, "Failed")
                 self.task_mngr.add_task_results(proj_id, task_id, "Failed: Annotation parsing")
                 return
-        return
-        # Load the FASTA files: Modify header so that protein-ID gets recognized by BLAST+ and
-        # combine all FASTA files into one large file from which the Blast-DB is build
-        self.task_mngr.set_task_status(proj_id, task_id, "Parsing protein fasta files")
-        fasta_parser = FastaParser(proj_id)
-        for species in file_dict:
-            # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
-            # gff < prot and csv < prot
-            prot_fasta_file = sorted(file_dict[species], key=lambda x: x[1])[1][0]
-            print("Parsing: "+prot_fasta_file)
-            fasta_parser.parse_fasta(prot_fasta_file)
-        fasta_parser.close_combined_fasta()
-        # Build the BLAST database using BLAST+ makeblastdb
+        # Build the BLAST databases using BLAST+ makeblastdb
         # Define File folder path:
         self.task_mngr.set_task_status(proj_id, task_id, "Building Blast+ DB")
         BlastDB_path = os.path.join("Projects", str(proj_id), "BlastDB")
+        makeblastdb_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "makeblastdb")
+        # Create transcript blast DB
         subprocess.run(
-            ["makeblastdb", "-dbtype", "prot", "-in", os.path.join(BlastDB_path, "all_prot_fasta.faa"),
-             "-parse_seqids", "-hash_index", "-out", os.path.join(BlastDB_path, "BlastPDB")], check=True)
-        # Run each species protein fasta file against the Blast protein database
+            [makeblastdb_path, "-dbtype", "nucl", "-in", os.path.join(BlastDB_path, "transcripts.faa"),
+             "-parse_seqids", "-hash_index", "-out", os.path.join(BlastDB_path, "transcript_db")], check=True)
+        subprocess.run(
+            [makeblastdb_path, "-dbtype", "prot", "-in", os.path.join(BlastDB_path, "translations.faa"),
+             "-parse_seqids", "-hash_index", "-out", os.path.join(BlastDB_path, "translation_db")], check=True)
+        # Perform an all vs all blastn search
+        self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastN")
+        blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
+        cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
+        subprocess.run(
+            [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
+             os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue pident",
+                                         "-out", os.path.join(BlastDB_path, "transcripts.blastn"), "-evalue", "0.05",
+                            "-num_threads", cpu_cores, "-parse_deflines"])
+        # Perform an all vs all blastp search
         self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastP")
-        file_path = os.path.join("Projects", str(proj_id), "Files")
-        for species in file_dict:
-            # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
-            # gff < prot and csv < prot
-            prot_fasta_file = sorted(file_dict[species], key=lambda x: x[1])[1][0]
-            print("Blasting "+prot_fasta_file)
-            subprocess.run(["blastp", "-query", os.path.join(file_path, prot_fasta_file), "-db",
-                            os.path.join(BlastDB_path, "BlastPDB"), "-outfmt", "6 qseqid sseqid evalue",
-                                         "-out", os.path.join(BlastDB_path,
-                                        prot_fasta_file[:prot_fasta_file.rfind(".")]+".blastp"), "-evalue", "0.05",
-                            "-num_threads", "8", "-parse_deflines"])
+        blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
+        subprocess.run(
+            [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
+             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue pident",
+             "-out", os.path.join(BlastDB_path, "translations.blastp"), "-evalue", "0.05",
+             "-num_threads", cpu_cores, "-parse_deflines"])
+        return
         # Cluster all-vs.-all BlastP results into protein homology groups
         self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastP results")
         # 1. Concatenate all BlastP Results into one "ABC" file
