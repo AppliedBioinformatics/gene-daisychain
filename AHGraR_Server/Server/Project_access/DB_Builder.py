@@ -211,7 +211,7 @@ class DBBuilder:
         with open(os.path.join(BlastDB_path, "translations_pid.json"), 'rb') as translations_pid_dict:
             nucl_clstr_to_csv_parser = ClusterToCSV(os.path.join(os.path.join("Projects", str(proj_id), "CSV",
                                                                               "protein_hmlg.csv")),
-                                                    pickle.load(translations_pid_dict.read()), "prot")
+                                                    pickle.load(translations_pid_dict), "prot")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_1.4.clstr"), "1.4")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_5.0.clstr"), "5.0")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_10.0.clstr"), "10.0")
