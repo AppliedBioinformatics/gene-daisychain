@@ -82,7 +82,7 @@ class DBBuilder:
             file_types = [item[1] for item in file_dict[species]]
             if len(file_types) != 2 or "annotation" not in file_types or "genome" not in file_types:
                 del file_dict[species]
-        return
+
         # Initialize the annotation to csv format parser
         self.task_mngr.set_task_status(proj_id, task_id, "Parsing annotation data")
         anno_to_csv_parser = AnnoToCSV(proj_id)
@@ -101,6 +101,7 @@ class DBBuilder:
                 self.task_mngr.set_task_status(proj_id, task_id, "Failed")
                 self.task_mngr.add_task_results(proj_id, task_id, "Failed: Annotation parsing")
                 return
+        return
         # Load the FASTA files: Modify header so that protein-ID gets recognized by BLAST+ and
         # combine all FASTA files into one large file from which the Blast-DB is build
         self.task_mngr.set_task_status(proj_id, task_id, "Parsing protein fasta files")
