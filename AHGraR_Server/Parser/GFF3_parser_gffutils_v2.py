@@ -58,7 +58,7 @@ class GFF3Parser_v2:
         coding_seq = Seq(nt_sequence, IUPAC.ambiguous_dna)
         return str(coding_seq.translate(to_stop=True))
 
-    def parse_gff3_file(self,gff3_file_path, sequence_file_path, seq_is_genome,  parent_feature_type,
+    def parse_gff3_file(self, gff3_file_path, sequence_file_path, seq_is_genome,  parent_feature_type,
                  subfeatures, name_attribute, descr_attribute):
         species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
         # Load GFF3 file

@@ -48,13 +48,10 @@ class AnnoToCSV:
 
     def create_csv(self, anno_file, genome_file, parent_feature_type, subfeatures, name_attribute, descr_attribute):
 
-        anno_parser = GFF3Parser_v2(anno_file, genome_file, True, self.gene_node_id, parent_feature_type,
-                                    subfeatures, name_attribute, descr_attribute)
-        # Parse the file and retrieve gene annotation as list
-        gene_list = anno_parser.parse_gff3_file()
 
-        # Set gene_node_id to id last assigned while parsing
-        self.gene_node_id = anno_parser.get_last_gene_node_id()
+        # Parse the file and retrieve gene annotation as list
+        gene_list = self.anno_parser.parse_gff3_file(anno_file, genome_file, True,
+                                                     parent_feature_type, subfeatures, name_attribute, descr_attribute)
 
           # Gene list has to be sorted at this stage (!!!)
         # Walk through gene list and write content to CSV files
