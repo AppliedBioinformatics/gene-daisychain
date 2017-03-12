@@ -122,20 +122,20 @@ class DBBuilder:
         blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
         cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
         print("Blastn now")
-        #subprocess.run(
-        #    [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
-        #     os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue pident",
-        #                                 "-out", os.path.join(BlastDB_path, "transcripts.blastn"),
-        #                    "-num_threads", cpu_cores, "-parse_deflines"])
+        subprocess.run(
+            [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
+             os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue pident",
+                                         "-out", os.path.join(BlastDB_path, "transcripts.blastn"),
+                            "-num_threads", cpu_cores, "-parse_deflines"])
         # Perform an all vs all blastp search
         self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastP")
         blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
         print("Blastp now")
-        #subprocess.run(
-        #    [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
-        #     os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue pident",
-        #     "-out", os.path.join(BlastDB_path, "translations.blastp"),
-       #     "-num_threads", cpu_cores, "-parse_deflines"])
+        subprocess.run(
+            [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
+             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue pident",
+             "-out", os.path.join(BlastDB_path, "translations.blastp"),
+            "-num_threads", cpu_cores, "-parse_deflines"])
         # Extract sequence match identity from blast result files
         # Create new blastn/blastp result files lacking the percent match ID column (ABC files)
         # Dump dict with geneID/geneID/PercentMatch and protID/protID/PercentMatch as json
@@ -216,45 +216,7 @@ class DBBuilder:
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_5.0.clstr"), "5.0")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_10.0.clstr"), "10.0")
 
-        return
 
-        # Cluster all-vs.-all BlastP results into protein homology groups
-        self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlasP results")
-        # 2. Convert ABC file into a network and dictionary file.
-        print("2. Convert ABC file into a network and dictionary file.")
-        subprocess.run(["mcxload", "-abc", os.path.join(BlastDB_path, "blastp.abc"), "--stream-mirror", "--stream-neg-log10", "-stream-tf",
-                        "ceil(200)", "-o", os.path.join(BlastDB_path, "blastp.mci"), "-write-tab", os.path.join(BlastDB_path, "blastp.tab")], check=True)
-        # 3.Cluster results
-        print("3.Cluster results")
-        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "1.4", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
-                        os.path.join(BlastDB_path, "protein_cluster_1.4.clstr")], check=True)
-        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "2.0", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
-                        os.path.join(BlastDB_path, "protein_cluster_2.0.clstr")], check=True)
-        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "4.0", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
-                        os.path.join(BlastDB_path, "protein_cluster_4.0.clstr")],check=True)
-        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "6.0", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
-                        os.path.join(BlastDB_path, "protein_cluster_6.0.clstr")],check=True)
-        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "8.0", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
-                        os.path.join(BlastDB_path, "protein_cluster_8.0.clstr")], check=True)
-        subprocess.run(["mcl", os.path.join(BlastDB_path, "blastp.mci"), "-te", "8", "-I", "10.0", "-use-tab",
-                        os.path.join(BlastDB_path, "blastp.tab"), "-o",
-                        os.path.join(BlastDB_path, "protein_cluster_10.0.clstr")], check=True)
-        # Parse MCL cluster files and create CSV files describing the homology relationships between gene nodes
-        self.task_mngr.set_task_status(proj_id, task_id, "Write CSV files for clusters")
-        cluster_to_csv_parser = ClusterToCSV(proj_id)
-        # Load all species-specific protein to gene dicts into cluster2csv parser
-        for species in file_dict:
-            cluster_to_csv_parser.add_protein_dict("_".join([species[0],species[1]]))
-        # Create CSV file for all MCL-generated clusters
-        cluster_to_csv_parser.create_csv()
-        # Create a new Neo4j graph database from node and relationship CSV files
-        print("4. Create DB")
-        self.task_mngr.set_task_status(proj_id, task_id, "Building database from CSV files")
         # Use neo4j-admin to create a database from the CSV files
         # The database is created within the projects neo4j folder
         try:
@@ -266,7 +228,8 @@ class DBBuilder:
                 "--relationships:3_NB", os.path.join("Projects", str(proj_id), "CSV", "gene_3nb.csv"),
                 "--nodes:Protein", os.path.join("Projects", str(proj_id), "CSV", "protein_nodes.csv"),
                 "--relationships:CODING", os.path.join("Projects", str(proj_id), "CSV", "gene_protein_coding.csv"),
-                "--relationships:HOMOLOG", os.path.join("Projects", str(proj_id),"CSV", "protein_hmlg.csv")],
+                "--relationships:HOMOLOG", os.path.join("Projects", str(proj_id),"CSV", "protein_hmlg.csv"),
+                "--relationships:HOMOLOG", os.path.join("Projects", str(proj_id), "CSV", "gene_hmlg.csv")],
                 check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             # Change project status to DB_BUILD
             self.main_db_conn.run(
@@ -325,14 +288,12 @@ class DBBuilder:
                                                  auth=basic_auth("neo4j", neo4j_pw), encrypted=False)
         project_db_conn = project_db_driver.session()
         # Build indices
-        project_db_conn.run("CREATE INDEX ON :Gene(gene_name)")
         project_db_conn.run("CREATE INDEX ON :Gene(geneId)")
         project_db_conn.run("CREATE INDEX ON :Gene(species)")
-        project_db_conn.run("CREATE INDEX ON :Gene(chromosome)")
-        project_db_conn.run("CREATE INDEX ON :Gene(gene_descr)")
-        project_db_conn.run("CREATE INDEX ON :Protein(protein_descr)")
+        project_db_conn.run("CREATE INDEX ON :Gene(contig)")
+        project_db_conn.run("CREATE INDEX ON :Gene(name)")
+        project_db_conn.run("CREATE INDEX ON :Gene(descr)")
         project_db_conn.run("CREATE INDEX ON :Protein(proteinId)")
-        project_db_conn.run("CREATE INDEX ON :Protein(protein_name)")
         project_db_conn.close()
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
         print("Finished")
