@@ -95,8 +95,9 @@ class DBBuilder:
                 genome_file = sorted(file_dict[species], key=lambda x: x[1])[1]
                 print(anno_file)
                 print(genome_file)
-                anno_to_csv_parser.create_csv("_".join([species[0],species[1]]),anno_file[0], anno_file[1],
-                                              anno_file[2],anno_file[3])
+                anno_to_csv_parser.create_csv(os.path.join("Projects", proj_id, "Files", anno_file[0]),
+                                              os.path.join("Projects", proj_id, "Files", genome_file[0]),
+                                              anno_file[2], anno_file[3],anno_file[4],anno_file[5])
             except (IndexError, KeyError):
                 self.task_mngr.set_task_status(proj_id, task_id, "Failed")
                 self.task_mngr.add_task_results(proj_id, task_id, "Failed: Annotation parsing")
