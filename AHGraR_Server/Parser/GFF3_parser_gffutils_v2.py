@@ -27,6 +27,10 @@ class GFF3Parser_v2:
     def __init__(self, transcript_output, translate_output):
         self.output_path_nt_transcript = transcript_output
         self.output_path_prot_translation = translate_output
+        # Ensure that output files are empty
+        with open(self.output_path_nt_transcript, "w") as nt_out:
+            with open(self.output_path_prot_translation, "w") as prot_out:
+                pass
         # Each gene node gets an unique id, starting with zero
         self.gene_node_id = 0
 
@@ -152,12 +156,12 @@ class GFF3Parser_v2:
                 continue
             # The fasta annotation line is  '>lcl|' plus the gene node ID
             # 'lcl|' is required by blast+ to ensure correct parsing of the identifier
-            with open(self.output_path_nt_transcript, "w") as output_nt:
+            with open(self.output_path_nt_transcript, "a") as output_nt:
                 output_nt.write(">lcl|"+str(gene_annotation[0])+"\n")
                 output_nt.write(gene_sequence+"\n")
             if not protein_sequence:
                 continue
-            with open(self.output_path_prot_translation, "w") as output_prot:
+            with open(self.output_path_prot_translation, "a") as output_prot:
                 output_prot.write(">lcl|"+str(gene_annotation[0])+"\n")
                 output_prot.write(protein_sequence + "\n")
         # Sort the gene_list by contig, start and stop. Only one species per file, so no need to sort by species
