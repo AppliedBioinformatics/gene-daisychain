@@ -131,11 +131,11 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastP")
         blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
         print("Blastp now")
-        subprocess.run(
-            [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
-             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue pident",
-             "-out", os.path.join(BlastDB_path, "translations.blastp"), "-evalue", "0.05",
-             "-num_threads", cpu_cores, "-parse_deflines"])
+        #subprocess.run(
+        #    [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
+        #     os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue pident",
+        #     "-out", os.path.join(BlastDB_path, "translations.blastp"), "-evalue", "0.05",
+         #    "-num_threads", cpu_cores, "-parse_deflines"])
         # Extract sequence match identity from blast result files
         # Create new blastn/blastp result files lacking the percent match ID column (ABC files)
         # Dump dict with geneID/geneID/PercentMatch and protID/protID/PercentMatch as json

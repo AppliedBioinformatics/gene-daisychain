@@ -21,7 +21,7 @@ class ClusterToCSV:
             with open(self.CSV_path, "w") as csv_file:
                 csv_file.write(":START_ID(Gene),clstr_sens,perc_match,:END_ID(Gene)\n")
         elif type == "prot":
-            with open(os.path.join(self.CSV_path, "protein_hmlg.csv"), "w") as csv_file:
+            with open(self.CSV_path, "w") as csv_file:
                 csv_file.write(":START_ID(Protein),clstr_sens,perc_match,:END_ID(Protein)\n")
 
 
@@ -29,8 +29,7 @@ class ClusterToCSV:
     # File names are predefined by DB-Builder
     # Iterate over all cluster files, one for each inflation_value
     def create_csv(self, mcl_clstr_path, mcl_clstr_sens):
-        with open(os.path.join(self.CSV_path, "gene_hmlg.csv" if self.type == "nucl" else "protein_hmlg.csv"), "a") \
-                as csv_file:
+        with open(self.CSV_path, "a") as csv_file:
             with open(mcl_clstr_path, "r") as mcl_cluster_file:
                 for line in mcl_cluster_file:
                     cluster = line.strip().split("\t")
