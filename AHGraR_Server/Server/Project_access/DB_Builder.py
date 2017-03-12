@@ -75,30 +75,16 @@ class DBBuilder:
             file_dict[(file["file.species"],file["file.variant"])].append(
                 (file["file.filename"],file["file.filetype"],file["file.parent_feat"],file["file.sub_features"],
                  file["file.name_attr"],file["file.desc_attr"]))
+
         print(file_dict)
-        return
         # Check if each entry in the database consists of exactly two files, one fasta and one annotation file
         # If not, remove that entry from the database
-        # Also, search for gff3+nt combinations
-        # The nt-fasta needs to be translated to prot-fasta guided by the GFF3-file
-        # TODO: Implement this
-        # Until then: Just delete nt/gff3 file combinations
-        for file in file_list:
-            try:
-                file_combination = file_dict[(file[2],file[3])]
-            # Since there are two files per db-entry, a file could belong to an entry that is already deleted
-            except KeyError:
-                continue
-            if len(file_combination) != 2:
-                del file_dict[(file[2],file[3])]
-                continue
-            if sorted([file_combination[0][1],file_combination[1][1]]) \
-                    not in [["gff3","prot"],("gff3","nt"), ["cvs","prot"]]:
-                del file_dict[(file[2], file[3])]
-                continue
-            if sorted([file_combination[0][1], file_combination[1][1]]) == ["gff3","nt"]:
-                del file_dict[(file[2], file[3])]
-                continue
+        for species in file_dict.keys():
+            file_types = [item[1] for item in file_dict[species]]
+            if len(file_types) != 2 or "annotation" not in file_types or "genome" not in file_types:
+                del file_dict[species]
+        print(file_dict)
+        return
         # Initialize the annotation to csv format parser
         self.task_mngr.set_task_status(proj_id, task_id, "Parsing annotation data")
         anno_to_csv_parser = AnnoToCSV(proj_id)
