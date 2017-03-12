@@ -341,12 +341,12 @@ class DBBuilder:
             # Convert every item of a gene into string format
             gene = [str(item) for item in gene]
             # Get transcript
-            gene_transcript = gff3_parser_v2.get_nt_sequence(gene[0])
+            #gene_transcript = gff3_parser_v2.get_nt_sequence(gene[0])
             # Get translation
-            gene_translation = gff3_parser_v2.get_prot_sequence(gene[0])
+            #gene_translation = gff3_parser_v2.get_prot_sequence(gene[0])
             # Add both to gene list
-            gene.append(gene_transcript)
-            gene.append(gene_translation)
+            #gene.append(gene_transcript)
+            #gene.append(gene_translation)
             # Add gene to return list, removing the node ID and species name
             return_gene_list.append(gene[2:])
         # Delete temporary GFF3 file

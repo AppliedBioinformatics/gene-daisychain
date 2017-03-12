@@ -23,7 +23,8 @@ class GFF3Parser_v2:
     # Feature containing "Description" attribute plus name of attribute e.g. CDS:product
     # Both attributes are NOT mandatory. If name attribute is not set, the transcript ID will be used as name
     # If description is missing, this attribute will not be included in the database
-    def __init__(self, gff3_file_path, sequence_file_path, seq_is_genome, gene_node_id, parent_feature_type,subfeatures, name_attribute, descr_attribute):
+    def __init__(self, gff3_file_path, sequence_file_path, seq_is_genome, gene_node_id, parent_feature_type,
+                 subfeatures, name_attribute, descr_attribute):
         # Path to GFF3 file
         self.gff3_file_path = gff3_file_path
         # Extract species name from file name
@@ -112,7 +113,7 @@ class GFF3Parser_v2:
                 except KeyError:
                     gene_annotation[7]= ""
             # Collect gene annotation in list
-            gene_annotation_list.append(gene_annotation)
+
             gene_sequence = []
             # Iterate through all subfeatures of this transcript
             # Two tasks are performed here: Look for name or descr attributes
@@ -153,6 +154,15 @@ class GFF3Parser_v2:
             gene_sequence = sorted(gene_sequence, key=lambda x: x[0])
             # Now join fragments into a single string
             gene_sequence = "".join([item[1] for item in gene_sequence])
+            # Translate gene sequence into protein sequence
+            if gene_sequence:
+                protein_sequence = self.translate_nt(gene_sequence)
+            else:
+                protein_sequence = ""
+            # Append gene and protein sequence to gene annotation list
+            gene_annotation.append(gene_sequence)
+            gene_annotation.append(protein_sequence)
+            gene_annotation_list.append(gene_annotation)
             # Write sequence to file, except when no sequence could be retrieved
             if not gene_sequence:
                 continue
@@ -160,7 +170,6 @@ class GFF3Parser_v2:
             # 'lcl|' is required by blast+ to ensure correct parsing of the identifier
             output_nt.write(">lcl|"+str(gene_annotation[0])+"\n")
             output_nt.write(gene_sequence+"\n")
-            protein_sequence = self.translate_nt(gene_sequence)
             if not protein_sequence:
                 continue
             output_prot.write(">lcl|"+str(gene_annotation[0])+"\n")

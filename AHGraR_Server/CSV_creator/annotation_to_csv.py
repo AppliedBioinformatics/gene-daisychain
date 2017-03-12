@@ -12,8 +12,7 @@
 # Plus a dict mapping protein names to [protein_id, protein_description, coding_gene_id]
 # Dict is saved in json format in CSV directory and used at a later stage while parsing the
 # BLAST/MCL clustering results
-from Parser.GFF3_parser_gffutils import GFF3Parser
-from Parser.CSV_parser import CSVParser
+from Parser.GFF3_parser_gffutils_v2 import GFF3Parser_v2
 import os
 import json
 
@@ -23,7 +22,6 @@ class AnnoToCSV:
         self.file_path =  os.path.join("Projects", proj_id, "Files")
         self.CSV_path = os.path.join("Projects", proj_id, "CSV")
         self.gene_node_id = 0
-        self.protein_node_id = 0
         # Initialize output files
         # Data from each parsed species will be appended to the following three files
         # Write header lines
