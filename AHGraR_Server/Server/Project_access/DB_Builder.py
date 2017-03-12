@@ -10,7 +10,7 @@ from Parser.GFF3_parser_gffutils_v2 import GFF3Parser_v2
 from random import choice
 from neo4j.v1 import GraphDatabase, basic_auth
 import time
-import json
+import pickle
 
 class DBBuilder:
     def __init__(self, main_db_connection, task_manager, send_data, ahgrar_config):
@@ -147,8 +147,8 @@ class DBBuilder:
                     line = line.split("\t")
                     gene_gene_percentID["g"+line[0]+"_g"+line[1]]=line[3].strip()
                     nt_blast_abc_file.write("\t".join(line[:3])+"\n")
-        with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as dict_dump:
-            json.dump(gene_gene_percentID, dict_dump)
+        with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'wb') as dict_dump:
+            pickle.dump(gene_gene_percentID, dict_dump)
         prot_prot_percentID = {}
         print("blastp to abc")
         with open(os.path.join(BlastDB_path, "translations.blastp"), "r") as prot_blast_file:
@@ -157,8 +157,8 @@ class DBBuilder:
                     line = line.split("\t")
                     prot_prot_percentID["p"+line[0]+"_p"+line[1]]=line[3].strip()
                     prot_blast_abc_file.write("\t".join(line[:3])+"\n")
-        with open(os.path.join(BlastDB_path, "translations_pid.json"), 'w') as dict_dump:
-            json.dump(prot_prot_percentID, dict_dump)
+        with open(os.path.join(BlastDB_path, "translations_pid.json"), 'wb') as dict_dump:
+            pickle.dump(prot_prot_percentID, dict_dump)
         # 0a. Cluster all-vs.-all BlastN results into gene homology groups
         self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastN results")
         # 1a. Convert blastN ABC file into a network and dictionary file.
@@ -181,9 +181,9 @@ class DBBuilder:
                         os.path.join(BlastDB_path, "transcripts_10.0.clstr")], check=True)
         # 3a. Parse MCL cluster files and create CSV files describing the homology relationships between gene nodes
         self.task_mngr.set_task_status(proj_id, task_id, "Write CSV files for nucleotide clusters")
-        with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'w') as transcripts_pid_dict:
+        with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'rb') as transcripts_pid_dict:
             nucl_clstr_to_csv_parser = ClusterToCSV(os.path.join("Projects", str(proj_id), "CSV", "gene_hmlg.csv"),
-                                                    json.loads(transcripts_pid_dict.read()), "nucl")
+                                                    pickle.load(transcripts_pid_dict), "nucl")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_1.4.clstr"), "1.4")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_5.0.clstr"), "5.0")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "transcripts_10.0.clstr"), "10.0")
@@ -208,10 +208,10 @@ class DBBuilder:
                         os.path.join(BlastDB_path, "translations_10.0.clstr")], check=True)
         # 3b. Parse MCL cluster files and create CSV files describing the homology relationships between protein nodes
         self.task_mngr.set_task_status(proj_id, task_id, "Write CSV files for protein clusters")
-        with open(os.path.join(BlastDB_path, "translations_pid.json"), 'w') as translations_pid_dict:
+        with open(os.path.join(BlastDB_path, "translations_pid.json"), 'rb') as translations_pid_dict:
             nucl_clstr_to_csv_parser = ClusterToCSV(os.path.join(os.path.join("Projects", str(proj_id), "CSV",
                                                                               "protein_hmlg.csv")),
-                                                    json.loads(translations_pid_dict.read()), "prot")
+                                                    pickle.load(translations_pid_dict.read()), "prot")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_1.4.clstr"), "1.4")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_5.0.clstr"), "5.0")
             nucl_clstr_to_csv_parser.create_csv(os.path.join(BlastDB_path, "translations_10.0.clstr"), "10.0")
