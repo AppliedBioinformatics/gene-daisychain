@@ -7,7 +7,8 @@
 # How is the transcript feature called (e.g. Gene or mRNA)
 # Which subfeatures of the transcript should be included (e.g. CDS, UTR, exons)
 # Returns a list of gene annotations in this format:
-#(gene_id, species_name, contig_name, start_index, stop_index, strand_orientation, gene_name, gene_description)
+#(gene_id, species_name, contig_name, start_index, stop_index, strand_orientation, gene_name, gene_description,
+# nt_sequence, prot_sequence)
 import gffutils
 import os
 from pyfaidx import Fasta
@@ -176,6 +177,8 @@ class GFF3Parser_v2:
             output_prot.write(protein_sequence + "\n")
         output_nt.close()
         output_prot.close()
+        # Sort the gene_list by contig, start and stop. Only one species per file, so no need to sort by species
+        self.gene_list = sorted(self.gene_list, key=lambda x: (x[2], int(x[3]), int(x[4])))
         # Delete genome index file
         os.remove(self.sequence_file_path + ".fai")
         return gene_annotation_list
@@ -200,6 +203,9 @@ class GFF3Parser_v2:
     #     os.remove(self.gff3_file_path + "_translations.fa" + ".fai")
         return prot_transcript
 
+    # Retrieve the last gene node id
+    def get_last_gene_node_id(self):
+        return self.gene_node_id
     # Delete transcripts and translations
     def delete_transcripts_translations(self):
         os.remove(self.gff3_file_path + "_transcripts.fa")

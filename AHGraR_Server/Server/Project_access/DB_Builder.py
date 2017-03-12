@@ -76,25 +76,25 @@ class DBBuilder:
                 (file["file.filename"],file["file.filetype"],file["file.parent_feat"],file["file.sub_features"],
                  file["file.name_attr"],file["file.desc_attr"]))
 
-        print(file_dict)
         # Check if each entry in the database consists of exactly two files, one fasta and one annotation file
         # If not, remove that entry from the database
         for species in file_dict.keys():
             file_types = [item[1] for item in file_dict[species]]
             if len(file_types) != 2 or "annotation" not in file_types or "genome" not in file_types:
                 del file_dict[species]
-        print(file_dict)
         return
         # Initialize the annotation to csv format parser
         self.task_mngr.set_task_status(proj_id, task_id, "Parsing annotation data")
         anno_to_csv_parser = AnnoToCSV(proj_id)
         # Then convert every annotation file into a Neo4j-specific CSV file format
-        for species in file_dict:
+        for species in file_dict.keys():
             try:
-                # Identify the GFF/CSV annotation file in the file_dict list by sorting the list alphabetically
-                # gff < prot and csv < prot
+                # Retrieve name of annotation and genome file. Sort file list alphanumerical. Since
+                # annotation < genome the annotation file is nr. 0, the genome file nr. 1
                 anno_file = sorted(file_dict[species], key=lambda x: x[1])[0]
+                genome_file = sorted(file_dict[species], key=lambda x: x[1])[1]
                 print(anno_file)
+                print(genome_file)
                 anno_to_csv_parser.create_csv("_".join([species[0],species[1]]),anno_file[0], anno_file[1],
                                               anno_file[2],anno_file[3])
             except (IndexError, KeyError):
