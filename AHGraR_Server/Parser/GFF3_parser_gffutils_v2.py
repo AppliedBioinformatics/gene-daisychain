@@ -24,37 +24,12 @@ class GFF3Parser_v2:
     # Feature containing "Description" attribute plus name of attribute e.g. CDS:product
     # Both attributes are NOT mandatory. If name attribute is not set, the transcript ID will be used as name
     # If description is missing, this attribute will not be included in the database
-    def __init__(self, gff3_file_path, sequence_file_path, seq_is_genome, gene_node_id, parent_feature_type,
-                 subfeatures, name_attribute, descr_attribute):
-        # Path to GFF3 file
-        self.gff3_file_path = gff3_file_path
-        # Extract species name from file name
-        self.species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
-        self.sequence_file_path = sequence_file_path
-        # Parse sequence file
-        if seq_is_genome:
-            self.sequence = Fasta(sequence_file_path, sequence_always_upper=True)
-        else:
-            self.sequence = None
-        # Is sequence the genome (true) or already spliced transcripts (false)
-        self.seq_is_genome = seq_is_genome
-        # Organism/species name
-        self.species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
-        # Each gene node gets an unique id
-        self.gene_node_id = int(gene_node_id)
-        # Gene annotations are stored in a list
-        self.gene_list = []
-        # Set the name of the uppermost gene/transcript feature type (e.g. gene or mRNA)
-        self.parent_feature_type = parent_feature_type
-        # Set the list of all subfeatures of parent_feature that can be included in the final transcript
-        # Input format: subfeat1,subfeat2,subfeat3
-        self.subfeatures = subfeatures.split(",")
-        # Attribute location is converted from feat:attr to a tuple
-        self.name_attribute = name_attribute.split(":")
-        self.descr_attribute = descr_attribute.split(":")
-        # Load GFF3 file
-        gffutils.create_db(self.gff3_file_path, "gff3utils.db", merge_strategy="create_unique", force=True)
-        self.gff3_db = gffutils.FeatureDB('gff3utils.db', keep_order=False)
+    def __init__(self, transcript_output, translate_output):
+        self.output_path_nt_transcript = transcript_output
+        self.output_path_prot_translation = translate_output
+        # Each gene node gets an unique id, starting with zero
+        self.gene_node_id = 0
+
 
     # Reverse complement a nucleotide sequence
     def reverse_complement(self, sequence):
@@ -83,66 +58,74 @@ class GFF3Parser_v2:
         coding_seq = Seq(nt_sequence, IUPAC.ambiguous_dna)
         return str(coding_seq.translate(to_stop=True))
 
+    def parse_gff3_file(self,gff3_file_path, sequence_file_path, seq_is_genome,  parent_feature_type,
+                 subfeatures, name_attribute, descr_attribute):
+        species_name = os.path.splitext(os.path.basename(gff3_file_path))[0]
+        # Load GFF3 file
+        gffutils.create_db(gff3_file_path, "gff3utils.db", merge_strategy="create_unique", force=True)
+        gff3_db = gffutils.FeatureDB('gff3utils.db', keep_order=False)
+        # Parse sequence file
+        # Is sequence the genome (true) or already spliced transcripts (false)
+        if seq_is_genome:
+            sequence = Fasta(sequence_file_path, sequence_always_upper=True)
+        else:
+            sequence = None
 
-    def parse_gff3_file(self):
-        print("Features as they arive")
-        print(self.parent_feature_type)
-        print(self.subfeatures)
-        print(self.name_attribute)
-        print(self.descr_attribute)
-        output_nt = open(self.gff3_file_path+"_transcripts.fa", "w")
-        output_prot = open(self.gff3_file_path+"_translations.fa", "w")
-        gff3_db = self.gff3_db
+        # Set the list of all subfeatures of parent_feature that can be included in the final transcript
+        # Input format: subfeat1,subfeat2,subfeat3
+        subfeatures = subfeatures.split(",")
+        # Attribute location is converted from feat:attr to a tuple
+        name_attribute = name_attribute.split(":")
+        descr_attribute = descr_attribute.split(":")
         # Collect all gene annotations in a list
         gene_annotation_list = []
         # Iterate through all transcripts (identified by parent_feature_type)
-        for transcript in gff3_db.iter_by_parent_childs(self.parent_feature_type):
+        for transcript in gff3_db.iter_by_parent_childs(parent_feature_type):
             # Increase gene node ID by one
             self.gene_node_id += 1
             # Extract all "standard" attributes for this transcript:
             # name and description may be changed by name_attribute and descr_attribute
-            gene_annotation = [self.gene_node_id, self.species_name, transcript[0].seqid, transcript[0].start,
+            gene_annotation = [self.gene_node_id, species_name, transcript[0].seqid, transcript[0].start,
                                transcript[0].stop, transcript[0].strand, transcript[0].id, ""]
-            if self.name_attribute[0] == self.parent_feature_type:
+            if name_attribute[0] == parent_feature_type:
                 try:
-                    gene_annotation[6]=transcript[0][self.name_attribute[1]][0]
+                    gene_annotation[6]=transcript[0][name_attribute[1]][0]
                 except KeyError:
                     gene_annotation[6] = ""
-            if self.descr_attribute[0] == self.parent_feature_type:
+            if descr_attribute[0] == parent_feature_type:
                 try:
-                    gene_annotation[7]=transcript[0][self.descr_attribute[1]][0]
+                    gene_annotation[7]=transcript[0][descr_attribute[1]][0]
                 except KeyError:
                     gene_annotation[7]= ""
             # Collect gene annotation in list
-
             gene_sequence = []
             # Iterate through all subfeatures of this transcript
             # Two tasks are performed here: Look for name or descr attributes
             # Build the sequence of this transcript
             for subfeature in transcript[1:]:
                 # Check if feature type is in the list of selected subfeatures
-                if subfeature.featuretype in self.subfeatures:
+                if subfeature.featuretype in subfeatures:
                     # Check if name or description attribute can be found in this subfeature
-                    if self.name_attribute[0] == subfeature.featuretype:
+                    if name_attribute[0] == subfeature.featuretype:
                         try:
-                            gene_annotation[6] = subfeature[self.name_attribute[1]][0]
+                            gene_annotation[6] = subfeature[name_attribute[1]][0]
                         except KeyError:
                             pass
-                    if self.descr_attribute[0] == subfeature.featuretype:
+                    if descr_attribute[0] == subfeature.featuretype:
                         try:
-                            gene_annotation[7] = subfeature[self.descr_attribute[1]][0]
+                            gene_annotation[7] = subfeature[descr_attribute[1]][0]
                         except KeyError:
                             pass
                     # Collect sequence of this subfeature if nucleotide sequence is the genome
                     # Important: Current version of GFFutils has a bug preventing the automatic reverse-complement
                     # of minus-strand features
                     # Strandedness is therefore evaluated manually here
-                    if self.seq_is_genome:
+                    if seq_is_genome:
                         # Is sequence from a minus-strand feature?
                         antisense = subfeature.strand == "-"
                         # If antisense, reverse complement the sequence
-                        seq_fragment = subfeature.sequence(self.sequence, False).seq if not antisense \
-                            else self.reverse_complement(subfeature.sequence(self.sequence, False).seq)
+                        seq_fragment = subfeature.sequence(sequence, False).seq if not antisense \
+                            else self.reverse_complement(subfeature.sequence(sequence, False).seq)
                         # Include the coding phase, phase is zero if phase field is empty:
                         phase = int(subfeature.frame) if subfeature.frame.isdigit() else 0
                         # If a gene consists of multiple segments they need to be sorted by their start index
@@ -169,18 +152,18 @@ class GFF3Parser_v2:
                 continue
             # The fasta annotation line is  '>lcl|' plus the gene node ID
             # 'lcl|' is required by blast+ to ensure correct parsing of the identifier
-            output_nt.write(">lcl|"+str(gene_annotation[0])+"\n")
-            output_nt.write(gene_sequence+"\n")
+            with open(self.output_path_nt_transcript, "w") as output_nt:
+                output_nt.write(">lcl|"+str(gene_annotation[0])+"\n")
+                output_nt.write(gene_sequence+"\n")
             if not protein_sequence:
                 continue
-            output_prot.write(">lcl|"+str(gene_annotation[0])+"\n")
-            output_prot.write(protein_sequence + "\n")
-        output_nt.close()
-        output_prot.close()
+            with open(self.output_path_prot_translation, "w") as output_prot:
+                output_prot.write(">lcl|"+str(gene_annotation[0])+"\n")
+                output_prot.write(protein_sequence + "\n")
         # Sort the gene_list by contig, start and stop. Only one species per file, so no need to sort by species
-        self.gene_list = sorted(self.gene_list, key=lambda x: (x[2], int(x[3]), int(x[4])))
+        gene_annotation_list = sorted(gene_annotation_list, key=lambda x: (x[2], int(x[3]), int(x[4])))
         # Delete genome index file
-        os.remove(self.sequence_file_path + ".fai")
+        os.remove(sequence_file_path + ".fai")
         return gene_annotation_list
 
     # # Retrieve a single nt transcript by FASTA header ID
@@ -201,15 +184,12 @@ class GFF3Parser_v2:
     #     except (KeyError, UnboundLocalError):
     #         prot_transcript = ""
     #     os.remove(self.gff3_file_path + "_translations.fa" + ".fai")
-        return prot_transcript
+       # return prot_transcript
 
-    # Retrieve the last gene node id
-    def get_last_gene_node_id(self):
-        return self.gene_node_id
     # Delete transcripts and translations
     def delete_transcripts_translations(self):
-        os.remove(self.gff3_file_path + "_transcripts.fa")
-        os.remove(self.gff3_file_path + "_translations.fa")
+        os.remove(self.output_path_nt_transcript)
+        os.remove(self.output_path_prot_translation)
 
 
 

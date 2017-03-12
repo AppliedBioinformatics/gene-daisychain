@@ -85,7 +85,11 @@ class DBBuilder:
 
         # Initialize the annotation to csv format parser
         self.task_mngr.set_task_status(proj_id, task_id, "Parsing annotation data")
-        anno_to_csv_parser = AnnoToCSV(proj_id)
+        # Initialize CSV parser:  CSV output directory, gene transcript and translation output files
+        # All genes from all files are combined into one set of output files
+        anno_to_csv_parser = AnnoToCSV(os.path.join("Projects", proj_id, "CSV"),
+                                       os.path.join("Projects", proj_id, "BlastDB", "transcripts.faa"),
+                                       os.path.join("Projects", proj_id, "BlastDB", "translations.faa"))
         # Then convert every annotation file into a Neo4j-specific CSV file format
         for species in file_dict.keys():
             try:

@@ -18,10 +18,11 @@ import os
 
 
 class AnnoToCSV:
-    def __init__(self, proj_id):
-        self.file_path =  os.path.join("Projects", proj_id, "Files")
-        self.CSV_path = os.path.join("Projects", proj_id, "CSV")
-        self.gene_node_id = 0
+    def __init__(self, CSV_path, nt_transcript_path, prot_translation_path):
+        self.CSV_path = CSV_path
+        # Initialize GFF3/annotation parser
+        # Parameters: Output path for transcript and translation sequences
+        self.anno_parser = GFF3Parser_v2(nt_transcript_path, prot_translation_path)
         # Initialize output files
         # Data from each parsed species will be appended to the following three files
         # Write header lines
