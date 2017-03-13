@@ -369,9 +369,11 @@ class DBBuilder:
         # Retrieve the name of the corresponding genome sequence
         genome_file = file_path[:file_path.rfind(".")]+".faa"
         print(genome_file)
-        gff3_parser_v2 = GFF3Parser_v2(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"), genome_file, True, 0,
+        gff3_parser_v2 = GFF3Parser_v2(os.path.join("Projects", str(proj_id), "BlastDB", "tmp_transcript.faa"),
+                                       os.path.join("Projects", str(proj_id), "BlastDB", "tmp_translation.faa"))
+        gene_list = gff3_parser_v2.parse_gff3_file(os.path.join("Projects", str(proj_id), "Files", "tmp.gff3"), genome_file, True,
                                        parent_feat, sub_features, name_attr, desc_attr)
-        gene_list = gff3_parser_v2.parse_gff3_file()
+
         # Return (at max) the first three genes in the gene list
         return_gene_list = []
         for gene in gene_list:
