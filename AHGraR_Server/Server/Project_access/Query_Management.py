@@ -403,9 +403,8 @@ class QueryManagement:
                 if record["rel"].type in ["5_NB", "3_NB"]:
                     gene_node_nb_rel.append((record["gene"]["geneId"], record["rel"].type, record["gene_nb"]["geneId"]))
                 elif record["rel"].type == "HOMOLOG":
-                    print(record["rel"])
-                    gene_node_hmlg_rel.append((record["gene"]["geneId"], record["rel"].type, record["rel"].clstr_sens,
-                                               record["rel"].perc_match, record["gene_nb"]["geneId"]))
+                    gene_node_hmlg_rel.append((record["gene"]["geneId"], record["rel"].type, record["rel"]["clstr_sens"],
+                                               record["rel"]["perc_match"], record["gene_nb"]["geneId"]))
         # Search for protein nodes and protein-protein relationships
         # Proteins are always coded for by genes. The keyword query is matched against the protein name and
         # the protein description. Species and chromosome information is retrieved from the gene node.
@@ -467,6 +466,7 @@ class QueryManagement:
         #print("Protein nodes: "+str(len(protein_node_hits)))
         print("Gene-gene NB relations: "+str(len(gene_node_nb_rel)))
         print("Gene-gene hmlg relations: "+str(len(gene_node_hmlg_rel)))
+        self.send_data("finished")
         return
         #print("Prot-prot relations: "+str(len(protein_node_rel)))
         #print("Gene-prot relations: "+str(len(protein_gene_node_rel)))
