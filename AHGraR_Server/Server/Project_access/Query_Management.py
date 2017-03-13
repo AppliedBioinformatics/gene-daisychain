@@ -275,7 +275,7 @@ class QueryManagement:
 
     # Reformat node and edge data to fit the format expected by AHGraR-web
     # Each node and each edge gets an unique and reproducible ID
-    def send_data_web(self, gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
+    def send_data_web(self, gene_node_hits, protein_node_hits, gene_node_nb_rel,gene_node_hmlg_rel, protein_node_rel,
                       protein_gene_node_rel):
         # Transfer gene node and protein node dicts into list structures
         # Sort gene node list by species,chromosome, contig, start
@@ -297,28 +297,41 @@ class QueryManagement:
         #                      '", "species":"' + protein_node[3] +
         #                      '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": [' + ', '.join(gene_node_json) + ']'
-        gene_gene_rel_json = ['{"data": {"id":"g'+gene_gene_rel[0]+'_g'+gene_gene_rel[2]+'", "source":"g' +
+        gene_gene_nb_json = ['{"data": {"id":"g'+gene_gene_rel[0]+'_g'+gene_gene_rel[2]+'", "source":"g' +
                               gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
-                              '", "target":"g' + gene_gene_rel[2] + '"}}' for gene_gene_rel in gene_node_rel]
+                              '", "target":"g' + gene_gene_rel[2] + '"}}' for gene_gene_rel in gene_node_nb_rel]
         # Remove self-Homology loops
-        protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
+        gene_node_hmlg_rel = [gene_gene_rel for gene_gene_rel in gene_node_hmlg_rel if gene_gene_rel[0] != gene_gene_rel[4]]
+        #protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
         # Reduce protein-protein relations to one edge per pairwise relation
         # Always keep the relation from the lexico. smaller node to the lexico. bigger node
         # e.g., always keep p123 to p456 and always remove p456 to p123
-        for rel in protein_node_rel:
+        for rel in gene_node_hmlg_rel:
             try:
-                protein_node_rel.remove((rel[3], rel[1], rel[2], rel[0]))
+                if int(rel[0]) < int(rel[4]):
+                    gene_node_hmlg_rel.remove((rel[4], rel[1], rel[2], rel[3], rel[0]))
+                else:
+                    gene_node_hmlg_rel.remove((rel[1], rel[1], rel[2], rel[3], rel[4]))
             except ValueError:
                 continue
-        protein_protein_rel_json = ['{"data": {"id":"p'+prot_prot_rel[0]+'_'+prot_prot_rel[1]+prot_prot_rel[2]+'_p'+prot_prot_rel[3]+'", "source":"p' +
-                                    prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
-                                    '", "sensitivity":"' + prot_prot_rel[2] + '", "target":"p' + prot_prot_rel[
-                                        3] + '"}}'
-                                    for prot_prot_rel in protein_node_rel]
-        gene_protein_rel_json = ['{"data": {"id":"g'+prot_gene_rel[0]+'_p'+prot_gene_rel[2]+'", "source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"p' +
-                                 prot_gene_rel[2] + '"}}' for prot_gene_rel in protein_gene_node_rel]
+        gene_gene_hmlg_rel_json = ['{"data": {"id":"g'+gene_gene_rel[0]+'_'+gene_gene_rel[1]+gene_gene_rel[2]+'_g'+gene_gene_rel[4]+'", "source":"g' +
+                                   gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
+                                    '", "sensitivity":"' + gene_gene_rel[2] +
+                                   '", "perc_match":"' + gene_gene_rel[3] +
+                                   '", "target":"g' + gene_gene_rel[
+                                        4] + '"}}'
+                                    for gene_gene_rel in gene_node_hmlg_rel]
+        # protein_protein_rel_json = [
+        #     '{"data": {"id":"p' + prot_prot_rel[0] + '_' + prot_prot_rel[1] + prot_prot_rel[2] + '_p' + prot_prot_rel[
+        #         3] + '", "source":"p' +
+        #     prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
+        #     '", "sensitivity":"' + prot_prot_rel[2] + '", "target":"p' + prot_prot_rel[
+        #         3] + '"}}'
+        #     for prot_prot_rel in protein_node_rel]
+        # gene_protein_rel_json = ['{"data": {"id":"g'+prot_gene_rel[0]+'_p'+prot_gene_rel[2]+'", "source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"p' +
+        #                          prot_gene_rel[2] + '"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": [' + ', '.join(
-            gene_gene_rel_json + protein_protein_rel_json + gene_protein_rel_json) + ']'
+            gene_gene_nb_json + gene_gene_hmlg_rel_json) + ']'
         self.send_data('{' + nodes_json + ',' + edges_json + '}')
 
 
@@ -466,16 +479,16 @@ class QueryManagement:
         #print("Protein nodes: "+str(len(protein_node_hits)))
         print("Gene-gene NB relations: "+str(len(gene_node_nb_rel)))
         print("Gene-gene hmlg relations: "+str(len(gene_node_hmlg_rel)))
-        self.send_data("finished")
-        return
+
+
         #print("Prot-prot relations: "+str(len(protein_node_rel)))
         #print("Gene-prot relations: "+str(len(protein_gene_node_rel)))
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
         if return_format == "CMD":
-            self.send_data_cmd(gene_node_hits, {}, gene_node_rel, [],
+            self.send_data_cmd(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
                                [])
         else:
-            self.send_data_web(gene_node_hits, {}, gene_node_rel, [],
+            self.send_data_web(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
                                [])
         # Close connection to the project-db
         project_db_conn.close()
