@@ -280,20 +280,23 @@ class QueryManagement:
         # Transfer gene node and protein node dicts into list structures
         # Sort gene node list by species,chromosome, contig, start
         gene_node_hits = [[item[0]] + item[1] for item in gene_node_hits.items()]
-        gene_node_hits.sort(key=lambda x: (x[1], x[2], x[3], x[5]))
-        protein_node_hits = [[item[0]] + item[1] for item in protein_node_hits.items()]
+        gene_node_hits.sort(key=lambda x: (x[1], x[2], x[3]))
+        #protein_node_hits = [[item[0]] + item[1] for item in protein_node_hits.items()]
         # Reformat data into json format:
-        gene_node_json = ['{"data": {"id":"g' + gene_node[0] + '", "type":"Gene", "species":"' + gene_node[1] +
-                          '", "chromosome":"' + gene_node[2] + '", "contig":"' + gene_node[3] + '", "strand":"' +
-                          gene_node[4] +
-                          '", "start":' + str(gene_node[5]) + ', "stop":' + str(gene_node[6]) + ', "name":"' +
-                          gene_node[7] + '", "description":"' + gene_node[8]+ '"}}'
+        gene_node_json = ['{"data": {"id":"g' + gene_node[0]
+                          + '", "type":"Gene", "species":"' + gene_node[1]
+                          + '", "contig":"' + gene_node[2]
+                          + '", "start":' + str(gene_node[3])
+                          + ', "stop":' + str(gene_node[4])
+                          + ', "name":"' + gene_node[5]
+                          + '", "description":"' + gene_node[6]
+                          + '", "nt_seq":"' + gene_node[7]+'"}}'
                           for gene_node in gene_node_hits]
-        protein_node_json = ['{"data": {"id":"p' + protein_node[0] + '", "type":"Protein", "name":"' + protein_node[1] +
-                             '", "description":"' + protein_node[2] +
-                             '", "species":"' + protein_node[3] +
-                             '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
-        nodes_json = '"nodes": [' + ', '.join(gene_node_json + protein_node_json) + ']'
+        # protein_node_json = ['{"data": {"id":"p' + protein_node[0] + '", "type":"Protein", "name":"' + protein_node[1] +
+        #                      '", "description":"' + protein_node[2] +
+        #                      '", "species":"' + protein_node[3] +
+        #                      '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
+        nodes_json = '"nodes": [' + ', '.join(gene_node_json) + ']'
         gene_gene_rel_json = ['{"data": {"id":"g'+gene_gene_rel[0]+'_g'+gene_gene_rel[2]+'", "source":"g' +
                               gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
                               '", "target":"g' + gene_gene_rel[2] + '"}}' for gene_gene_rel in gene_node_rel]
@@ -360,7 +363,8 @@ class QueryManagement:
         # Relationships between nodes are stored in list format:
         # ("ProteinID", "relation", "ProteinID")
         gene_node_hits = {}
-        gene_node_rel = []
+        gene_node_nb_rel = []
+        gene_node_hmlg_rel = []
         #protein_node_hits = {}
         #protein_node_rel = []
         #protein_gene_node_rel = []
@@ -396,7 +400,11 @@ class QueryManagement:
                 [record["gene"][item] for item in ["species", "contig",
                                                    "start", "stop", "name", "descr", "nt_seq"]]
             if record["rel"] is not None:
-                gene_node_rel.append((record["gene"]["geneId"], record["rel"].type, record["gene_nb"]["geneId"]))
+                if record["rel"].type in ["5_NB", "3_NB"]:
+                    gene_node_nb_rel.append((record["gene"]["geneId"], record["rel"].type, record["gene_nb"]["geneId"]))
+                elif record["rel"].type == "HOMOLOG":
+                    gene_node_hmlg_rel.append((record["gene"]["geneId"], record["rel"].type, record["rel"].clstr_sens,
+                                               record["rel"].perc_match, record["gene_nb"]["geneId"]))
         # Search for protein nodes and protein-protein relationships
         # Proteins are always coded for by genes. The keyword query is matched against the protein name and
         # the protein description. Species and chromosome information is retrieved from the gene node.
@@ -456,7 +464,9 @@ class QueryManagement:
         #         protein_gene_node_rel.append((record["gene.geneId"], "CODING", record["prot.proteinId"]))
         print("Gene nodes: "+str(len(gene_node_hits)))
         #print("Protein nodes: "+str(len(protein_node_hits)))
-        print("Gene-gene relations: "+str(len(gene_node_rel)))
+        print("Gene-gene NB relations: "+str(len(gene_node_nb_rel)))
+        print("Gene-gene hmlg relations: "+str(len(gene_node_hmlg_rel)))
+        return
         #print("Prot-prot relations: "+str(len(protein_node_rel)))
         #print("Gene-prot relations: "+str(len(protein_gene_node_rel)))
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
