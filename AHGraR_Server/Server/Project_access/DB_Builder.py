@@ -124,7 +124,7 @@ class DBBuilder:
         print("Blastn now")
         subprocess.run(
             [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
-             os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue pident",
+             os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
                                          "-out", os.path.join(BlastDB_path, "transcripts.blastn"),
                             "-num_threads", cpu_cores, "-seq", "yes", "-evalue", "1e-5", "-parse_deflines"])
         # Perform an all vs all blastp search
@@ -133,7 +133,7 @@ class DBBuilder:
         print("Blastp now")
         subprocess.run(
             [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
-             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue pident",
+             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
              "-out", os.path.join(BlastDB_path, "translations.blastp"),
             "-num_threads", cpu_cores, "-seq", "yes", "-evalue", "1e-5", "-parse_deflines"])
         # Extract sequence match identity from blast result files
@@ -145,7 +145,8 @@ class DBBuilder:
             with open(os.path.join(BlastDB_path, "transcripts.abc"), "w") as  nt_blast_abc_file:
              for line in nt_blast_file:
                     line = line.split("\t")
-                    gene_gene_percentID["g"+line[0]+"_g"+line[1]]=line[3].strip()
+                    gene_gene_percentID["g"+line[0]+"_g"+line[1]] = \
+                        100*int(line[5].strip())/max(int(line[3]),int(line[4]))
                     nt_blast_abc_file.write("\t".join(line[:3])+"\n")
         with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'wb') as dict_dump:
             pickle.dump(gene_gene_percentID, dict_dump)
@@ -155,7 +156,8 @@ class DBBuilder:
             with open(os.path.join(BlastDB_path, "translations.abc"), "w") as  prot_blast_abc_file:
              for line in prot_blast_file:
                     line = line.split("\t")
-                    prot_prot_percentID["p"+line[0]+"_p"+line[1]]=line[3].strip()
+                    prot_prot_percentID["p"+line[0]+"_p"+line[1]] = \
+                        100*int(line[5].strip())/max(int(line[3]),int(line[4]))
                     prot_blast_abc_file.write("\t".join(line[:3])+"\n")
         with open(os.path.join(BlastDB_path, "translations_pid.json"), 'wb') as dict_dump:
             pickle.dump(prot_prot_percentID, dict_dump)
