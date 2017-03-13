@@ -37,7 +37,8 @@ class AHGraRAdmin:
                        "2": self.create_project,
                        "3": self.change_project_files,
                        "4": self.build_project_db,
-                       "5": self.delete_project}
+                       "5": self.delete_project,
+                       "6": self.query}
             self.clear_console()
             actions[user_input]()
 
@@ -48,8 +49,12 @@ class AHGraRAdmin:
         print("(3) to add/remove data from a project")
         print("(4) to build a projects database")
         print("(5) to delete a project")
+        print("(6) to test queries")
         print("(0) to exit")
 
+    def query(self):
+        query = input("[Query]>: ").strip()
+        print(self.send_data(query))
 
     def send_data(self, reply):
         # Add length of message to header
