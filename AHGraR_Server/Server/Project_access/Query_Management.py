@@ -52,7 +52,7 @@ class QueryManagement:
     # User_request is a list of the "_" split command
     # e.g. [SEAR, ProjectID, Organism:Chromosome:Name:Annotation:Gene/Protein(Both]
     def evaluate_user_request(self, user_request):
-        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7:
+        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 6:
             self.find_node(user_request[1:])
         elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 6:
             self.find_node_relations(user_request[1:])
