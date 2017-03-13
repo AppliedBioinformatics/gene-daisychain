@@ -122,20 +122,20 @@ class DBBuilder:
         blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
         cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
         print("Blastn now")
-        # subprocess.run(
-        #     [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
-        #      os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
-        #                                  "-out", os.path.join(BlastDB_path, "transcripts.blastn"),
-        #                     "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
+        subprocess.run(
+            [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
+             os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
+                                         "-out", os.path.join(BlastDB_path, "transcripts.blastn"),
+                            "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
         # Perform an all vs all blastp search
         self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastP")
         blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
         print("Blastp now")
-        # subprocess.run(
-        #     [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
-        #      os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
-        #      "-out", os.path.join(BlastDB_path, "translations.blastp"),
-        #     "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
+        subprocess.run(
+            [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
+             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
+             "-out", os.path.join(BlastDB_path, "translations.blastp"),
+            "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
         # Extract sequence match identity from blast result files
         # Create new blastn/blastp result files lacking the percent match ID column (ABC files)
         # Dump dict with geneID/geneID/PercentMatch and protID/protID/PercentMatch as json
