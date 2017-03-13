@@ -53,8 +53,11 @@ class AHGraRAdmin:
         print("(0) to exit")
 
     def query(self):
-        query = input("[Query]>: ").strip()
-        print(self.send_data(query))
+        while True:
+            query = input("[Query]>: ").strip()
+            if query == "exit":
+                break
+            print(self.send_data(query))
 
     def send_data(self, reply):
         # Add length of message to header
