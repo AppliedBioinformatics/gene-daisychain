@@ -122,20 +122,20 @@ class DBBuilder:
         blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
         cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
         print("Blastn now")
-        subprocess.run(
-            [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
-             os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
-                                         "-out", os.path.join(BlastDB_path, "transcripts.blastn"),
-                            "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
+        # subprocess.run(
+        #     [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
+        #      os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
+        #                                  "-out", os.path.join(BlastDB_path, "transcripts.blastn"),
+        #                     "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
         # Perform an all vs all blastp search
         self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastP")
         blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
         print("Blastp now")
-        subprocess.run(
-            [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
-             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
-             "-out", os.path.join(BlastDB_path, "translations.blastp"),
-            "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
+        # subprocess.run(
+        #     [blastp_path, "-query", os.path.join(BlastDB_path, "translations.faa"), "-db",
+        #      os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 qseqid sseqid evalue qlen slen nident",
+        #      "-out", os.path.join(BlastDB_path, "translations.blastp"),
+        #     "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
         # Extract sequence match identity from blast result files
         # Create new blastn/blastp result files lacking the percent match ID column (ABC files)
         # Dump dict with geneID/geneID/PercentMatch and protID/protID/PercentMatch as json
@@ -145,7 +145,7 @@ class DBBuilder:
             with open(os.path.join(BlastDB_path, "transcripts.abc"), "w") as  nt_blast_abc_file:
              for line in nt_blast_file:
                     line = line.split("\t")
-                    perc_ID = round(100*int(line[5].strip())/max(int(line[3]),int(line[4])),2)
+                    perc_ID = str(round(100*int(line[5].strip())/max(int(line[3]),int(line[4])),2))
                     gene_gene_percentID["g"+line[0]+"_g"+line[1]] = perc_ID
                     nt_blast_abc_file.write("\t".join([line[0],line[1],perc_ID])+"\n")
         with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'wb') as dict_dump:
@@ -156,7 +156,7 @@ class DBBuilder:
             with open(os.path.join(BlastDB_path, "translations.abc"), "w") as  prot_blast_abc_file:
              for line in prot_blast_file:
                     line = line.split("\t")
-                    perc_ID = round(100 * int(line[5].strip()) / max(int(line[3]), int(line[4])), 2)
+                    perc_ID = str(round(100 * int(line[5].strip()) / max(int(line[3]), int(line[4])), 2))
                     prot_prot_percentID["p"+line[0]+"_p"+line[1]] = perc_ID
                     prot_blast_abc_file.write("\t".join([line[0],line[1],perc_ID])+"\n")
         with open(os.path.join(BlastDB_path, "translations_pid.json"), 'wb') as dict_dump:
