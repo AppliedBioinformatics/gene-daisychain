@@ -145,9 +145,9 @@ class DBBuilder:
             with open(os.path.join(BlastDB_path, "transcripts.abc"), "w") as  nt_blast_abc_file:
              for line in nt_blast_file:
                     line = line.split("\t")
-                    gene_gene_percentID["g"+line[0]+"_g"+line[1]] = \
-                        100*int(line[5].strip())/max(int(line[3]),int(line[4]))
-                    nt_blast_abc_file.write("\t".join(line[:3])+"\n")
+                    perc_ID = round(100*int(line[5].strip())/max(int(line[3]),int(line[4])),2)
+                    gene_gene_percentID["g"+line[0]+"_g"+line[1]] = perc_ID
+                    nt_blast_abc_file.write("\t".join([line[0],line[1],perc_ID])+"\n")
         with open(os.path.join(BlastDB_path, "transcripts_pid.json"), 'wb') as dict_dump:
             pickle.dump(gene_gene_percentID, dict_dump)
         prot_prot_percentID = {}
@@ -156,19 +156,23 @@ class DBBuilder:
             with open(os.path.join(BlastDB_path, "translations.abc"), "w") as  prot_blast_abc_file:
              for line in prot_blast_file:
                     line = line.split("\t")
-                    prot_prot_percentID["p"+line[0]+"_p"+line[1]] = \
-                        100*int(line[5].strip())/max(int(line[3]),int(line[4]))
-                    prot_blast_abc_file.write("\t".join(line[:3])+"\n")
+                    perc_ID = round(100 * int(line[5].strip()) / max(int(line[3]), int(line[4])), 2)
+                    prot_prot_percentID["p"+line[0]+"_p"+line[1]] = perc_ID
+                    prot_blast_abc_file.write("\t".join([line[0],line[1],perc_ID])+"\n")
         with open(os.path.join(BlastDB_path, "translations_pid.json"), 'wb') as dict_dump:
             pickle.dump(prot_prot_percentID, dict_dump)
         # 0a. Cluster all-vs.-all BlastN results into gene homology groups
         self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastN results")
         # 1a. Convert blastN ABC file into a network and dictionary file.
         mcxload_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["mcxload_path"])
+        # subprocess.run(
+        #     [mcxload_path, "-abc", os.path.join(BlastDB_path, "transcripts.abc"), "--stream-mirror", "--stream-neg-log10",
+        #      "-stream-tf",
+        #      "ceil(200)", "-o", os.path.join(BlastDB_path, "transcripts.mci"), "-write-tab",
+        #      os.path.join(BlastDB_path, "transcripts.tab")], check=True)
         subprocess.run(
-            [mcxload_path, "-abc", os.path.join(BlastDB_path, "transcripts.abc"), "--stream-mirror", "--stream-neg-log10",
-             "-stream-tf",
-             "ceil(200)", "-o", os.path.join(BlastDB_path, "transcripts.mci"), "-write-tab",
+            [mcxload_path, "-abc", os.path.join(BlastDB_path, "transcripts.abc"), "--stream-mirror",
+             "-o", os.path.join(BlastDB_path, "transcripts.mci"), "-write-tab",
              os.path.join(BlastDB_path, "transcripts.tab")], check=True)
         # 2a. Cluster MCL blastN results
         mcl_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["mcl_path"])
@@ -192,11 +196,15 @@ class DBBuilder:
         # 0b. Cluster all-vs.-all BlastP results into protein homology groups
         self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastP results")
         # 1b. Convert blastP ABC file into a network and dictionary file.
+        # subprocess.run(
+        #     [mcxload_path, "-abc", os.path.join(BlastDB_path, "translations.abc"), "--stream-mirror",
+        #      "--stream-neg-log10",
+        #      "-stream-tf",
+        #      "ceil(200)", "-o", os.path.join(BlastDB_path, "translations.mci"), "-write-tab",
+        #      os.path.join(BlastDB_path, "translations.tab")], check=True)
         subprocess.run(
             [mcxload_path, "-abc", os.path.join(BlastDB_path, "translations.abc"), "--stream-mirror",
-             "--stream-neg-log10",
-             "-stream-tf",
-             "ceil(200)", "-o", os.path.join(BlastDB_path, "translations.mci"), "-write-tab",
+             "-o", os.path.join(BlastDB_path, "translations.mci"), "-write-tab",
              os.path.join(BlastDB_path, "translations.tab")], check=True)
         # 2b. Cluster MCL blastP results
         subprocess.run([mcl_path, os.path.join(BlastDB_path, "translations.mci"), "-te", "8", "-I", "1.4", "-use-tab",
