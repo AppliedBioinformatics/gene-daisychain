@@ -190,8 +190,6 @@ class AHGraRAdmin:
         # Iterate over all annotation files
         # Sometimes a loop might need to be repeated. Work therefore with index numbers for the loop iterations
         anno_file_index = 0
-        ##TESTING ONLY !!!###
-        anno_file_index = 50
         while anno_file_index < len(anno_files):
             # Get current annotation file
             anno_file = anno_files[anno_file_index]
@@ -250,8 +248,8 @@ class AHGraRAdmin:
                 subfeature_list = [item for item in subfeature_list if item in reduced_features]
                 self.clear_console()
                 print(3 * "\n")
-                print("The annotation parser automatically derives a name for each gene. Sometimes a more common gene name "
-                      "is stored in the attributes section of the annotation file. Each feature can hold different "
+                print("The annotation parser automatically derives a name for each gene. Sometimes a more common gene name\n "
+                      "is stored in the attributes section of the annotation file. Each feature can hold different\n "
                       "attributes. Next, select a feature and an attribute of that feature that carries the genes name.")
                 print("Enter in this format: feature:attribute, e.g. gene:Name")
                 print("If unsure which attribute to take, type 'skip'.")
@@ -347,7 +345,6 @@ class AHGraRAdmin:
                 print(3*"\n")
             # Automatic mode: Try to guess feature names for gene feature and coding feature
             if not manual_mode:
-                print("Automatic parsing")
                 # First compare all features contained in this GFF against a list of known gene or coding features
                 known_gene_features = re.compile("mrna|gene", re.IGNORECASE)
                 known_coding_features = re.compile("cds|exon", re.IGNORECASE)
