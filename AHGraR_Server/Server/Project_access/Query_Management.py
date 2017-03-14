@@ -283,23 +283,23 @@ class QueryManagement:
         gene_node_hits.sort(key=lambda x: (x[1], x[2], x[3]))
         #protein_node_hits = [[item[0]] + item[1] for item in protein_node_hits.items()]
         # Reformat data into json format:
-        gene_node_json = ['{"data": {"id":"g' + gene_node[0]
-                          + '", "type":"Gene", "species":"' + gene_node[1]
-                          + '", "contig":"' + gene_node[2]
+        gene_node_json = ['{"data": {"id":"g' + str(gene_node[0])
+                          + '", "type":"Gene", "species":"' + str(gene_node[1])
+                          + '", "contig":"' + str(gene_node[2])
                           + '", "start":' + str(gene_node[3])
                           + ', "stop":' + str(gene_node[4])
-                          + ', "name":"' + gene_node[5]
-                          + '", "description":"' + gene_node[6]
-                          + '", "nt_seq":"' + gene_node[7]+'"}}'
+                          + ', "name":"' + str(gene_node[5])
+                          + '", "description":"' + str(gene_node[6])
+                          + '", "nt_seq":"' + str(gene_node[7])+'"}}'
                           for gene_node in gene_node_hits]
         # protein_node_json = ['{"data": {"id":"p' + protein_node[0] + '", "type":"Protein", "name":"' + protein_node[1] +
         #                      '", "description":"' + protein_node[2] +
         #                      '", "species":"' + protein_node[3] +
         #                      '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": [' + ', '.join(gene_node_json) + ']'
-        gene_gene_nb_json = ['{"data": {"id":"'+gene_gene_rel[0]+'_'+gene_gene_rel[2]+'", "source":"' +
-                              gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
-                              '", "target":"' + gene_gene_rel[2] + '"}}' for gene_gene_rel in gene_node_nb_rel]
+        gene_gene_nb_json = ['{"data": {"id":"'+str(gene_gene_rel[0])+'_'+str(gene_gene_rel[2])+'", "source":"' +
+                              str(gene_gene_rel[0]) + '", "type":"' + str(gene_gene_rel[1]) +
+                              '", "target":"' + str(gene_gene_rel[2]) + '"}}' for gene_gene_rel in gene_node_nb_rel]
         # Remove self-Homology loops
         gene_node_hmlg_rel = [gene_gene_rel for gene_gene_rel in gene_node_hmlg_rel if gene_gene_rel[0] != gene_gene_rel[4]]
         #protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
@@ -314,12 +314,12 @@ class QueryManagement:
                     gene_node_hmlg_rel.remove((rel[1], rel[1], rel[2], rel[3], rel[4]))
             except ValueError:
                 continue
-        gene_gene_hmlg_rel_json = ['{"data": {"id":"'+gene_gene_rel[0]+'_'+gene_gene_rel[1]+gene_gene_rel[2]+'_'+gene_gene_rel[4]+'", "source":"' +
-                                   gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
-                                    '", "sensitivity":"' + gene_gene_rel[2] +
-                                   '", "perc_match":"' + gene_gene_rel[3] +
-                                   '", "target":"' + gene_gene_rel[
-                                        4] + '"}}'
+        gene_gene_hmlg_rel_json = ['{"data": {"id":"'+str(gene_gene_rel[0])+'_'+str(gene_gene_rel[1])+str(gene_gene_rel[2])+'_'+str(gene_gene_rel[4])+'", "source":"' +
+                                   str(gene_gene_rel[0]) + '", "type":"' + str(gene_gene_rel[1]) +
+                                    '", "sensitivity":"' + str(gene_gene_rel[2]) +
+                                   '", "perc_match":"' + str(gene_gene_rel[3]) +
+                                   '", "target":"' + str(gene_gene_rel[
+                                        4]) + '"}}'
                                     for gene_gene_rel in gene_node_hmlg_rel]
         # protein_protein_rel_json = [
         #     '{"data": {"id":"p' + prot_prot_rel[0] + '_' + prot_prot_rel[1] + prot_prot_rel[2] + '_p' + prot_prot_rel[
