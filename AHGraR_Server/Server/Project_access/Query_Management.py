@@ -363,7 +363,8 @@ class QueryManagement:
         # Species name or gene/protein name to query for can be empty
         query_species = str(query_term[0]).lower()
         query_contig = str(query_term[1]).lower()
-        query_keyword = str(query_term[2]).lower()
+        # Separate keywords by whitespace
+        query_keyword = str(query_term[2]).lower().split(" ")
 
         # Collect gene node hits and protein node hits
         # Also collect relations between gene nodes, protein nodes
@@ -392,11 +393,11 @@ class QueryManagement:
             #                                  "genes UNWIND genes AS g1 UNWIND genes AS g2 "
             #                                  "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
             #                                  {"query_species": query_species, "query_keyword": query_keyword,
-            #                                   "query_chromosome": query_chromosome, "query_anno": query_keyword})
+            #                                   "query_chromosome": query_chromosome, "query_anno": query_keyword}) #ALL(x in ["conserve"] WHERE gene.descr contains x)
         query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                                          "AND LOWER(gene.contig) CONTAINS {query_contig} "
-                                         "AND (LOWER(gene.name) CONTAINS {query_keyword} OR "
-                                         "LOWER(gene.descr) CONTAINS {query_keyword}) "
+                                         "AND (ALL(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
+                                         "(ALL(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
                                          "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
                                          {"query_species": query_species, "query_keyword": query_keyword,
                                           "query_contig": query_contig})
