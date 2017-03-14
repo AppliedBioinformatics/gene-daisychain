@@ -13,6 +13,10 @@ blast+_path = /mnt/oliver/ncbi-blast-2.6.0+/bin
 server_admin_port = 5000
 # The server accepts connections form AHGraR-Query (and any other query-only applications) on this port:
 server_query_port = 7687
+# Accept only local connections to admin port?
+only_local_admin = True
+# Accdept only local connections to query port?
+only_local_query = False
 # ip adress to contact the server (can be localhost)
 server_ip = 146.118.99.191
 # The server needs two internal ports for internal access to project information stored
