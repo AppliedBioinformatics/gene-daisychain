@@ -397,7 +397,7 @@ class QueryManagement:
                                          "AND LOWER(gene.contig) CONTAINS {query_contig} "
                                          "AND (LOWER(gene.name) CONTAINS {query_keyword} OR "
                                          "LOWER(gene.descr) CONTAINS {query_keyword}) "
-                                         "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb LIMIT(20)",
+                                         "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
                                          {"query_species": query_species, "query_keyword": query_keyword,
                                           "query_contig": query_contig})
             # The record format lists every node matching the query together with one relationship to another gene node.
