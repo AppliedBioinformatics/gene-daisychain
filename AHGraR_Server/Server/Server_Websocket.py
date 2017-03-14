@@ -10,7 +10,7 @@ class AHGraRWebSocket():
     def get_websocket(self, ip, port):
         return websockets.serve(self.handle, ip, port)
 
-    def handle(self, websocket, path):
+    async def handle(self, websocket, path):
         # Receive command from gateway
         request = await websocket.recv()
         if request[:2] == "PA":
