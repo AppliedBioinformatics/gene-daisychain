@@ -162,7 +162,7 @@ if __name__ == '__main__':
     admin_socket_thread.start()
     # Fire up websocket for query connection
     query_websocket = AHGraRWebSocket().get_websocket(server_address,server_query_port)
-    asyncio.get_event_loop().run_until_complete(query_websocket)
+    #asyncio.get_event_loop().run_until_complete(query_websocket)
     asyncio.get_event_loop().run_forever()
     print("Listening for admin connections at "+server_address+":"+str(server_admin_port))
     print("Listening for query connections at " + server_address + ":" + str(server_query_port))
