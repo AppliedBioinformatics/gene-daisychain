@@ -52,7 +52,7 @@ class QueryManagement:
     # User_request is a list of the "_" split command
     # e.g. [SEAR, ProjectID, Organism:Chromosome:Name:Annotation:Gene/Protein(Both]
     def evaluate_user_request(self, user_request):
-        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 6:
+        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7:
             self.find_node(user_request[1:])
         elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 6:
             self.find_node_relations(user_request[1:])
@@ -357,7 +357,7 @@ class QueryManagement:
         # Check if query term has expected length: ["Organism", "Chromosome", "Keyword"]
         # Fields can be left empty, i.e. being ""
         # Keyword looks in both gene/protein name and gene/protein annotation
-        if len(query_term) != 3:
+        if len(query_term) != 4:
             self.send_data("-10")
             return
         # Species name or gene/protein name to query for can be empty
@@ -365,7 +365,7 @@ class QueryManagement:
         query_contig = str(query_term[1]).lower()
         # Separate keywords by whitespace
         query_keyword = str(query_term[2]).lower().split(" ")
-        match_all_any = "ALL"
+        match_all_any = str(query_term[3]).upper()
 
         # Collect gene node hits and protein node hits
         # Also collect relations between gene nodes, protein nodes
