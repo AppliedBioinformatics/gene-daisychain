@@ -395,6 +395,7 @@ class QueryManagement:
             #                                  "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
             #                                  {"query_species": query_species, "query_keyword": query_keyword,
             #                                   "query_chromosome": query_chromosome, "query_anno": query_keyword}) #ALL(x in ["conserve"] WHERE gene.descr contains x)
+        # Each term in keyword has to match in either description or name
         if match_all_any == "ALL":
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                                              "AND LOWER(gene.contig) CONTAINS {query_contig} "
@@ -403,6 +404,7 @@ class QueryManagement:
                                              "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
                                              {"query_species": query_species, "query_keyword": query_keyword,
                                               "query_contig": query_contig})
+        # One term in keyword has to match in either description or name
         elif match_all_any == "ANY":
             query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                                              "AND LOWER(gene.contig) CONTAINS {query_contig} "
