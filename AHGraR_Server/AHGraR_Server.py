@@ -3,8 +3,8 @@
 # Only connected to AHGraR gateway module, not directly to user app
 # Can handle multiple requests in parallel (not sequential)
 import configparser
-from Server.Server_Socket import AHGraRServer,AHGraRServerThread
-from Server.Server_Websocket import AHGraRWebSocket
+from Server.Server_Admin_Socket import AHGraRAdminServer,AHGraRAdminServerThread
+from Server.Query_Socket import AHGraRQueryServerThread,AHGraRQueryServer
 import threading
 import shutil
 import os
@@ -156,14 +156,13 @@ if __name__ == '__main__':
     except KeyError:
         print("Config file error: Can not retrieve server listening address and/or port")
         exit(3)
-    # Fire up socket for admin connection
-    admin_socket = AHGraRServerThread((server_address,server_admin_port), AHGraRServer)
+    # Fire up socket for admin connections
+    admin_socket = AHGraRAdminServerThread((server_address,server_admin_port), AHGraRAdminServer)
     admin_socket_thread = threading.Thread(target=admin_socket.serve_forever, daemon=True)
     admin_socket_thread.start()
-    # Fire up websocket for query connection
-    query_websocket = AHGraRWebSocket().get_websocket(server_address,server_query_port)
-    asyncio.get_event_loop().run_until_complete(query_websocket)
-    query_socket_thread = threading.Thread(target=query_websocket.run_forever(), daemon=True)
+    # Fire up socket for query connections
+    query_socket = AHGraRQueryServerThread((server_address, server_query_port), AHGraRQueryServer)
+    query_socket_thread= threading.Thread(target=query_socket.serve_forever, daemon=True)
     query_socket_thread.start()
     print("Listening for admin connections at "+server_address+":"+str(server_admin_port))
     print("Listening for query connections at " + server_address + ":" + str(server_query_port))
@@ -175,6 +174,8 @@ if __name__ == '__main__':
     print("Please wait for server shutdown")
     admin_socket.socket.shutdown(0)
     admin_socket.socket.close()
-    admin_socket_thread.join(5)
-    asyncio.get_event_loop().stop()
+    admin_socket_thread.join(2)
+    query_socket.socket.shutdown(0)
+    query_socket.socket.close()
+    query_socket_thread.join(2)
     exit(0)

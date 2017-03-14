@@ -11,7 +11,7 @@ import configparser
 import socketserver
 from neo4j.v1 import GraphDatabase, basic_auth
 
-class AHGraRServer(socketserver.BaseRequestHandler):
+class AHGraRAdminServer(socketserver.BaseRequestHandler):
 
     def setup(self):
         # Load AHGraR config file
@@ -151,5 +151,5 @@ class AHGraRServer(socketserver.BaseRequestHandler):
 
 
 # Create a new thread for every new connection
-class AHGraRServerThread(socketserver.ThreadingMixIn, socketserver.TCPServer):
+class AHGraRAdminServerThread(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
