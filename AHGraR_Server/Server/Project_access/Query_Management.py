@@ -397,7 +397,7 @@ class QueryManagement:
         query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                                          "AND LOWER(gene.contig) CONTAINS {query_contig} "
                                          "AND (ALL(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
-                                         "(ALL(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
+                                         "ALL(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
                                          "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
                                          {"query_species": query_species, "query_keyword": query_keyword,
                                           "query_contig": query_contig})
