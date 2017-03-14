@@ -4,6 +4,7 @@
 # Can handle multiple requests in parallel (not sequential)
 import configparser
 from Server.Server_Socket import AHGraRServer,AHGraRServerThread
+from Server.Server_Websocket import AHGraRWebSocket
 import threading
 import shutil
 import os
@@ -11,7 +12,7 @@ import subprocess
 import time
 from random import choice
 from neo4j.v1 import GraphDatabase, basic_auth
-
+import asyncio
 
 
 
@@ -147,25 +148,32 @@ if __name__ == '__main__':
     main_db_conn.run("MATCH (p:Port) WHERE NOT (p.nr IN ($ports)) AND NOT (p.status = 'active') DETACH DELETE (p)  ",
                 {"ports": port_numbers})
     main_db_conn.close()
-    # Start to listen for connections
+    # Start to listen for connections for socket connnections
     try:
-        server_address = ahgrar_config['AHGraR_Server']['server_app_ip']
-        server_address = "0.0.0.0"
-        server_port = int(ahgrar_config['AHGraR_Server']['server_app_port'])
+        server_address = ahgrar_config['AHGraR_Server']['server_ip']
+        server_admin_port = int(ahgrar_config['AHGraR_Server']['server_admin_port'])
+        server_query_port = int(ahgrar_config['AHGraR_Server']['server_query_port'])
     except KeyError:
         print("Config file error: Can not retrieve server listening address and/or port")
         exit(3)
-    server = AHGraRServerThread((server_address,server_port), AHGraRServer)
-    server_thread = threading.Thread(target=server.serve_forever, daemon=True)
-    server_thread.start()
-    print("Listening for incomming connections at "+server_address+":"+str(server_port))
+    # Fire up socket for admin connection
+    admin_socket = AHGraRServerThread((server_address,server_admin_port), AHGraRServer)
+    admin_socket_thread = threading.Thread(target=admin_socket.serve_forever, daemon=True)
+    admin_socket_thread.start()
+    # Fire up websocket for query connection
+    query_websocket = AHGraRWebSocket.get_websocket(server_address,server_query_port)
+    asyncio.get_event_loop().run_until_complete(query_websocket)
+    asyncio.get_event_loop().run_forever()
+    print("Listening for admin connections at "+server_address+":"+str(server_admin_port))
+    print("Listening for query connections at " + server_address + ":" + str(server_query_port))
     print("Type 'exit' to shutdown server")
     # Keep server running
     while True:
         user_input = input(">: ").strip()
         if user_input == "exit": break
     print("Please wait for server shutdown")
-    server.socket.shutdown(0)
-    server.socket.close()
-    server_thread.join(5)
+    admin_socket.socket.shutdown(0)
+    admin_socket.socket.close()
+    admin_socket_thread.join(5)
+    asyncio.get_event_loop().stop()
     exit(0)

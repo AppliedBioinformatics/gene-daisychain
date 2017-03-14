@@ -53,15 +53,15 @@ class QueryManagement:
     # e.g. [SEAR, ProjectID, Organism:Chromosome:Name:Annotation:Gene/Protein(Both]
     def evaluate_user_request(self, user_request):
         if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7:
-            self.find_node(user_request[1:])
+            return(self.find_node(user_request[1:]))
         elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 6:
-            self.find_node_relations(user_request[1:])
+            return(self.find_node_relations(user_request[1:]))
         elif user_request[0] == "LIST" and user_request[1].isdigit() and 3 <=len(user_request) <= 4:
-            self.list_items(user_request[1:])
+            return(self.list_items(user_request[1:]))
         elif user_request[0] == "BLAS" and user_request[1].isdigit() and len(user_request) ==6:
-            self.blast(user_request[1:])
+            return(self.blast(user_request[1:]))
         else:
-            self.send_data("-8")
+            return "-8"
 
     # BLAST a protein sequence against the project-specific BLAST protein database
     # to find matching proteins
@@ -111,15 +111,16 @@ class QueryManagement:
             if record["rel"] is not None:
                 protein_node_rel.append((record["prot"]["proteinId"], record["rel"].type,
                                          record["rel"]["sensitivity"], record["prot_nb"]["proteinId"]))
-        # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
-        if return_format == "CMD":
-            self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
-                               protein_gene_node_rel)
-        else:
-            self.send_data_web(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
-                               protein_gene_node_rel)
         # Close connection to the project-db
         project_db_conn.close()
+        # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
+        if return_format == "CMD":
+            return self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
+                               protein_gene_node_rel)
+        else:
+            return self.send_data_web(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
+                               protein_gene_node_rel)
+
 
 
     # List properties of data stored in project db:
@@ -149,7 +150,7 @@ class QueryManagement:
                 query_hits = []
             for record in query_hits:
                 reply_container.append(record["gene.contig"])
-        self.send_data("\n".join(reply_container))
+        return("\n".join(reply_container))
 
 
 
@@ -271,7 +272,7 @@ class QueryManagement:
             reply += "\t".join(str(x) for x in prot_prot_rel) + "\n"
         for gene_prot_rel in protein_gene_node_rel:
             reply += "\t".join(str(x) for x in gene_prot_rel) + "\n"
-        self.send_data(reply)
+        return(reply)
 
     # Reformat node and edge data to fit the format expected by AHGraR-web
     # Each node and each edge gets an unique and reproducible ID
@@ -332,7 +333,7 @@ class QueryManagement:
         #                          prot_gene_rel[2] + '"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": [' + ', '.join(
             gene_gene_nb_json + gene_gene_hmlg_rel_json) + ']'
-        self.send_data('{' + nodes_json + ',' + edges_json + '}')
+        return('{' + nodes_json + ',' + edges_json + '}')
 
 
 
@@ -499,11 +500,12 @@ class QueryManagement:
         #print("Prot-prot relations: "+str(len(protein_node_rel)))
         #print("Gene-prot relations: "+str(len(protein_gene_node_rel)))
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
-        if return_format == "CMD":
-            self.send_data_cmd(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
-                               [])
-        else:
-            self.send_data_web(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
-                               [])
         # Close connection to the project-db
         project_db_conn.close()
+        if return_format == "CMD":
+            return(self.send_data_cmd(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
+                               []))
+        else:
+            return(self.send_data_web(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
+                               []))
+
