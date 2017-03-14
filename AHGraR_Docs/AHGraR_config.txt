@@ -11,7 +11,7 @@ neo4j_path = /mnt/AHGraR_2.0/neo4j-community-3.1.1
 blast+_path = /mnt/oliver/ncbi-blast-2.6.0+/bin
 # The server accepts connection from AHGRaR-admin (and any other admin application) on this port:
 server_admin_port = 5000
-# The server accepts connections form AHGraR-web (and any other query-only applications) on this port:
+# The server accepts connections form AHGraR-Query (and any other query-only applications) on this port:
 server_query_port = 7687
 # ip adress to contact the server (can be localhost)
 server_ip = 146.118.99.191
@@ -29,5 +29,12 @@ main_db_bolt_port = 5002
 # project_ports = 5550-5560,5570,5580-5590
 project_ports = 5550-5560
 
-# Number of CPU cores to be used
+# Number of CPU cores to be used on server
 cpu_cores = 8
+
+[AHGraR_Client]
+# ip adress to contact the client (can be localhost)
+client_ip = 146.118.99.190
+client_query_port = 7687
+
+
