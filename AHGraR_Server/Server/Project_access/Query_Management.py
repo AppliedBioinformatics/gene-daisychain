@@ -395,13 +395,24 @@ class QueryManagement:
             #                                  "OPTIONAL MATCH (g1)-[rel]->(g2) RETURN g1,rel,g2",
             #                                  {"query_species": query_species, "query_keyword": query_keyword,
             #                                   "query_chromosome": query_chromosome, "query_anno": query_keyword}) #ALL(x in ["conserve"] WHERE gene.descr contains x)
-        query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
-                                         "AND LOWER(gene.contig) CONTAINS {query_contig} "
-                                         "AND ({ALL_ANY}(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
-                                         "{ALL_ANY}(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
-                                         "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
-                                         {"query_species": query_species, "query_keyword": query_keyword,
-                                          "query_contig": query_contig, "ALL_ANY": match_all_any})
+        if match_all_any == "ALL":
+            query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
+                                             "AND LOWER(gene.contig) CONTAINS {query_contig} "
+                                             "AND (ALL(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
+                                             "ALL(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
+                                             "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
+                                             {"query_species": query_species, "query_keyword": query_keyword,
+                                              "query_contig": query_contig})
+        elif match_all_any == "ANY":
+            query_hits = project_db_conn.run("MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
+                                             "AND LOWER(gene.contig) CONTAINS {query_contig} "
+                                             "AND (ANY(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
+                                             "ANY(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
+                                             "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
+                                             {"query_species": query_species, "query_keyword": query_keyword,
+                                              "query_contig": query_contig})
+        else:
+            query_hits = []
             # The record format lists every node matching the query together with one relationship to another gene node.
             # Multiple relationships are split into separate rows, e.g. row 1 contains the 5` relation of g1 with g2,
             # row 2 contains the 3` relation of g1 with g3. If there is no gene-gene relationship going out from g1
