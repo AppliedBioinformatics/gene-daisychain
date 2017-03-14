@@ -157,11 +157,11 @@ if __name__ == '__main__':
         print("Config file error: Can not retrieve server listening address and/or port")
         exit(3)
     # Fire up socket for admin connections
-    admin_socket = AHGraRAdminServerThread((server_address,server_admin_port), AHGraRAdminServer)
+    admin_socket = AHGraRAdminServerThread(('localhost',server_admin_port), AHGraRAdminServer)
     admin_socket_thread = threading.Thread(target=admin_socket.serve_forever, daemon=True)
     admin_socket_thread.start()
     # Fire up socket for query connections
-    query_socket = AHGraRQueryServerThread((server_address, server_query_port), AHGraRQueryServer)
+    query_socket = AHGraRQueryServerThread(('0.0.0.0', server_query_port), AHGraRQueryServer)
     query_socket_thread= threading.Thread(target=query_socket.serve_forever, daemon=True)
     query_socket_thread.start()
     print("Listening for admin connections at "+server_address+":"+str(server_admin_port))
