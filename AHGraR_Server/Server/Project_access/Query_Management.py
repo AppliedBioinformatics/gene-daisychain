@@ -297,9 +297,9 @@ class QueryManagement:
         #                      '", "species":"' + protein_node[3] +
         #                      '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": [' + ', '.join(gene_node_json) + ']'
-        gene_gene_nb_json = ['{"data": {"id":"g'+gene_gene_rel[0]+'_g'+gene_gene_rel[2]+'", "source":"g' +
+        gene_gene_nb_json = ['{"data": {"id":"'+gene_gene_rel[0]+'_'+gene_gene_rel[2]+'", "source":"' +
                               gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
-                              '", "target":"g' + gene_gene_rel[2] + '"}}' for gene_gene_rel in gene_node_nb_rel]
+                              '", "target":"' + gene_gene_rel[2] + '"}}' for gene_gene_rel in gene_node_nb_rel]
         # Remove self-Homology loops
         gene_node_hmlg_rel = [gene_gene_rel for gene_gene_rel in gene_node_hmlg_rel if gene_gene_rel[0] != gene_gene_rel[4]]
         #protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
@@ -314,11 +314,11 @@ class QueryManagement:
                     gene_node_hmlg_rel.remove((rel[1], rel[1], rel[2], rel[3], rel[4]))
             except ValueError:
                 continue
-        gene_gene_hmlg_rel_json = ['{"data": {"id":"g'+gene_gene_rel[0]+'_'+gene_gene_rel[1]+gene_gene_rel[2]+'_g'+gene_gene_rel[4]+'", "source":"g' +
+        gene_gene_hmlg_rel_json = ['{"data": {"id":"'+gene_gene_rel[0]+'_'+gene_gene_rel[1]+gene_gene_rel[2]+'_'+gene_gene_rel[4]+'", "source":"' +
                                    gene_gene_rel[0] + '", "type":"' + gene_gene_rel[1] +
                                     '", "sensitivity":"' + gene_gene_rel[2] +
                                    '", "perc_match":"' + gene_gene_rel[3] +
-                                   '", "target":"g' + gene_gene_rel[
+                                   '", "target":"' + gene_gene_rel[
                                         4] + '"}}'
                                     for gene_gene_rel in gene_node_hmlg_rel]
         # protein_protein_rel_json = [
