@@ -3,7 +3,7 @@
 # Only connected to AHGraR gateway module, not directly to user app
 # Can handle multiple requests in parallel (not sequential)
 import configparser
-from Server_Socket import AHGraRServer,AHGraRServerThread
+from Server.Server_Socket import AHGraRServer,AHGraRServerThread
 import threading
 import shutil
 import os
