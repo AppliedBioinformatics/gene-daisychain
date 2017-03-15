@@ -45,8 +45,8 @@
             row= table.insertRow(3);
             cell1= row.insertCell(0);
             cell2= row.insertCell(1);
-            cell1.innerHTML= "Chromosome:";
-            cell2.innerHTML= selectedElement.data('chromosome');
+            cell1.innerHTML= "Contig:";
+            cell2.innerHTML= selectedElement.data('contig');
             
             row= table.insertRow(4);
             cell1= row.insertCell(0);
@@ -56,12 +56,7 @@
             
             if (selectedElement.data('type') == "Gene")
             {
-                row= table.insertRow(5);
-                cell1= row.insertCell(0);
-                cell2= row.insertCell(1);
-                cell1.innerHTML= "Contig:";
-                cell2.innerHTML= selectedElement.data('contig'); 
-                
+
                 row= table.insertRow(5);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
@@ -72,13 +67,24 @@
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
                 cell1.innerHTML= "Stop:";
-                cell2.innerHTML= selectedElement.data('stop'); 
-                
+                cell2.innerHTML= selectedElement.data('stop');
+
+                gene_name = selectedElement.data("name");
+                nt_seq = selectedElement.data("nt_seq");
                 row= table.insertRow(7);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
-                cell1.innerHTML= "Strand:";
-                cell2.innerHTML= selectedElement.data('strand'); 
+                cell1.innerHTML= "Nucleotide sequence:";
+                cell2.innerHTML=  '<button type="button" onclick=loadFASTA(gene_name, nt_seq)>Click Me!</button>' ;
+
+                row= table.insertRow(7);
+                cell1= row.insertCell(0);
+                cell2= row.insertCell(1);
+                cell1.innerHTML= "BLAST nt sequence:";
+                cell2.innerHTML=  '<button type="button" onclick=blastNtFASTA(gene_name, nt_seq)>Click Me!</button>' ;
+
+
+
             }
             if (selectedElement.data('type') == "Protein")
             {
@@ -107,20 +113,25 @@
    }
 
  // Function to load Coding Sequence
- function loadFASTA(protein_name)
+ function loadFASTA(name, seq)
  {
-    console.log("Loading FASTA for ", protein_name, project_id);
-    var fastaShow = window.open("", "Coding sequence for "+protein_name, "width=200,height=100,menubar=no");
-    fastaShow.document.write("<p>Coming soon :-)</p>");
+    console.log("Loading FASTA for ", name, seq);
+    var fastaShow = window.open("", "Sequence for "+name, "width=200,height=100,menubar=no");
+    fastaShow.document.write(">"+name+"\n");
+    fastaShow.document.write(seq);
  };
  
- function blastFASTA(protein_name)
+ function blastNtFASTA(gene_name, nt_seq)
+ {
+   console.log("BLAST", gene_name, nt_seq);
+   window.open("https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&BLAST_SPEC=&QUERY="+nt_seq+"LINK_LOC=blasttab&LAST_PAGE=blastp&QUERY=%22%20fasta_seq%20%22", "", "width=200,height=100");
+ };
+
+ function blastProtFASTA(protein_name)
  {
    console.log("BLAST", protein_name, project_id);  
    fasta_seq = "ATGATGATGATGATG";
    window.open("https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&QUERY="+fasta_seq+"&LINK_LOC=protein&PAGE_TYPE=BlastSearch", "", "width=200,height=100");
-   
-   
  };
  
  // Open the Item Info pane when the "Item Info" option is selected for a concept or relation.
