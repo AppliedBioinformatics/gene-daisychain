@@ -9,18 +9,20 @@
             wsconn.onmessage = function (evt){SetProjectList(evt.data);};
          };
          // Fill select menu with available projects
-         // Data comes from websocket "Project_List" command
+         // Data comes from "PMINFO" command
          function SetProjectList(received_msg)
          {
             // Find select menu
             select_menu = document.getElementById("select_proj");
             // Each line of data contains one project
             // Each line has project name, project ID and project status
+            // Only showing project name, the ID is the value internal associated with the selection
             project_items = received_msg.split("\n");
             // Iterate through project data
             for(var i = 0; i < project_items.length; i++)
             {
                  project_item = project_items[i].split("\t");
+                 // Only list set-up and running projects
                  if (project_item[2] != "DB_RUNNING")
                  {continue;};
                  // Create a new select option
@@ -66,7 +68,7 @@
             // Open websocket to retrieve list of projects
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request chromosome list, replace underscores in species name with tabs
-            wsconn.onopen = function () {wsconn.send("CL_"+project_id+"_"+species.split("_").join("\t"));};
+            wsconn.onopen = function () {wsconn.send("PAQURY_LIST_"+project_id+"_CONTIG_"+species.split("_").join("\t"));};
             // Receive and process project list
             wsconn.onmessage = function (evt){
                 console.log("Recv chromosome msg");
@@ -136,11 +138,11 @@
             // Add default option: All chromosomes
             option = document.createElement("option");
             // Fill select option with data:
-            option.innerHTML = "All chromosomes";
-            option.value = "ALL";
+            option.innerHTML = "All contigs";
+            option.value = "*";
             // Add new option to select menu
             select_chrom_menu.add(option);
-            // Iterate through chromosome data
+            // Iterate through contig data
             for(var i = 0; i < species_items.length; i++)
             {
                  // Create a new select option
