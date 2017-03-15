@@ -169,15 +169,19 @@
             // Open websocket to send query to server
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Replace underscores in queries with tabs
-            wsconn.onopen = function () {wsconn.send("QS_"+project_id+"_"+species.split("_").join("\t")+"_"+
+            //PAQURY_SEAR_ProjectID/ProjectName_CMD/WEB_Organism_Chromosome_Keyword_ALL/ANY
+
+            wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
             chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);};
              // Receive and process query result
             wsconn.onmessage = function (evt){
                 graphJSON = JSON.parse(evt.data)
                 console.log(graphJSON);
+            search_button.innerHTML = "We did it"
             initializeNetworkView();
             updateCyLegend();
             changeSensitivity();
+
             search_button.disabled = false;
                 };
 
