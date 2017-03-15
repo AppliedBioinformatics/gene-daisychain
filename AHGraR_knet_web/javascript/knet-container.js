@@ -154,7 +154,10 @@ cy.elements().qtip({
         }
         }
       else if(this.isEdge()) {
-              qtipMsg= "<b>Relation:</b> "+ this.data('type');
+              if(this.data('type')=="HOMOLOG")
+              {
+              qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";
+              }
              }
       }
       catch(err) { qtipMsg= "Selected element is neither a Concept nor a Relation"; }

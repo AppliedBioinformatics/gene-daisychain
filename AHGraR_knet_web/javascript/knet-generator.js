@@ -56,13 +56,13 @@ function initializeNetworkView() {
           edge_type = edge.data('type');
           if (edge_type=="5_NB"){return "5'";};
           if (edge_type=="3_NB"){return "3'";};
-          if (edge_type=="HOMOLOG"){return "Homolog ("+edge.data('perc_match')+"% identity)";};}, // label for edges (arrows).
+          if (edge_type=="HOMOLOG"){return "Homolog";};}, // label for edges (arrows).
           'font-size': '8px',
           'curve-style': function(edge){if (edge.data('type') == 'HOMOLOG'){return "bezier";} else {return "unbundled-bezier";}}, /* options: bezier (curved) (default), unbundled-bezier (curved with manual control points), haystack (straight edges) */
           'control-point-step-size': '10px', // specifies the distance between successive bezier edges.
           'control-point-distance': '20px', /* overrides control-point-step-size to curves single edges as well, in addition to parallele edges */
           'control-point-weight': '50', // '0': curve towards source node, '1': curve towards target node.
-          'width': '1', // 'mapData(relationSize, 70, 100, 2, 6)',
+          'width': function(edge){if (edge.data('type') == 'HOMOLOG'){return "2";} else{return "1";}}, // 'mapData(relationSize, 70, 100, 2, 6)',
           'line-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           perc_match = parseFloat(edge.data('perc_match'));
           if(isNaN(perc_match)){return 'darkred';};
