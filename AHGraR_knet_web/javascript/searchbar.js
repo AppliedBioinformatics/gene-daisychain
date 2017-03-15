@@ -143,7 +143,7 @@
             // Add new option to select menu
             select_chrom_menu.add(option);
             // Iterate through contig data
-            for(var i = 0; i < species_items.length; i++)
+            for(var i = 0; i < chromosome_items.length; i++)
             {
                  // Create a new select option
                  option = document.createElement("option");
