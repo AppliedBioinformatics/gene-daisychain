@@ -315,7 +315,7 @@ class QueryManagement:
                 if int(rel[0]) < int(rel[4]):
                     gene_node_hmlg_rel.remove((rel[4], rel[1], rel[2], rel[3], rel[0]))
                 else:
-                    gene_node_hmlg_rel.remove((rel[1], rel[1], rel[2], rel[3], rel[4]))
+                    gene_node_hmlg_rel.remove((rel[0], rel[1], rel[2], rel[3], rel[4]))
             except ValueError:
                 continue
         gene_gene_hmlg_rel_json = ['{"data": {"id":"'+str(gene_gene_rel[0])+'_'+str(gene_gene_rel[1])+str(gene_gene_rel[2])+'_'+str(gene_gene_rel[4])+'", "source":"' +
