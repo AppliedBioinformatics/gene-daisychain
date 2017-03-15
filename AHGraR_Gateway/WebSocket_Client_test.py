@@ -4,7 +4,7 @@ import websockets
 async def hello():
     async with websockets.connect('ws://146.118.99.190:7687') as websocket:
 
-        name = input("What's your name? ")
+        name = input("Query")
         await websocket.send(name)
         print("> {}".format(name))
 

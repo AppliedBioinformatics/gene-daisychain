@@ -1,6 +1,7 @@
 # Define server functionality
 from Server.Project_access.Task_Management import TaskManagement
 from Server.Project_access.Query_Management import QueryManagement
+from Server.Project_management.Project_Info import ProjectInfo
 import configparser
 import socketserver
 from neo4j.v1 import GraphDatabase, basic_auth
@@ -20,12 +21,30 @@ class AHGraRQueryServer(socketserver.BaseRequestHandler):
     def handle(self):
         # Receive command from gateway
         request = self.receive_data(self.request)
-        if request[:2] == "PA":
+        if request[:2] == "PM":
+            self.project_management(request[2:])
+        elif request[:2] == "PA":
             self.project_access(request[2:])
         else:
             self.send_data("Invalid Request")
         return
 
+    # Project management: Create or delete project, return status or list all projects
+    def project_management(self, request):
+        # Split up user request
+        # Some commands may contain additional "_", e.g. in file names.
+        # These are exchanged to "\t" before being send via the socket connection
+        # Here, these tabs are exchanged back to underscores
+        user_request = [item.replace("\t", "_") for item in request.split("_")]
+        # Retrieve name, id and status of one or all projects
+        # ProjectInfo returns info about all or one projects, depending on if a specific project_id was transmitted
+        if user_request[0] == "INFO":
+            project_info = ProjectInfo(user_request[1] if len(user_request) == 2 else None, self.get_db_conn(),
+                                       self.send_data)
+            project_info.run()
+        # Else Return "-1" to indicate invalid syntax
+        else:
+            self.send_data("-1")
 
     def project_access(self, request):
         # Split up user request
