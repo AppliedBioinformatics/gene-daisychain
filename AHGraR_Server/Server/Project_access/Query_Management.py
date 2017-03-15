@@ -312,7 +312,7 @@ class QueryManagement:
         # e.g., always keep p123 to p456 and always remove p456 to p123
         for rel in gene_node_hmlg_rel:
             try:
-                if int(rel[0]) < int(rel[4]):
+                if int(rel[0][1:]) < int(rel[4][1:]):
                     gene_node_hmlg_rel.remove((rel[4], rel[1], rel[2], rel[3], rel[0]))
                 else:
                     gene_node_hmlg_rel.remove((rel[0], rel[1], rel[2], rel[3], rel[4]))
