@@ -63,7 +63,16 @@ function initializeNetworkView() {
           'control-point-distance': '20px', /* overrides control-point-step-size to curves single edges as well, in addition to parallele edges */
           'control-point-weight': '50', // '0': curve towards source node, '1': curve towards target node.
           'width': '1', // 'mapData(relationSize, 70, 100, 2, 6)',
-          'line-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{return 'red';}},
+          'line-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
+          perc_match = parseFloat(edge.data('perc_match'));
+          if(isNaN(perc_match)){return 'darkred';};
+          if(perc_match >= 98){return 'darkgreen';};
+          if(perc_match >= 98){return 'darkgreen';};
+          if(perc_match >= 95){return 'green';};
+          if(perc_match >= 90){return 'lightgreen';};
+          if(perc_match >= 80){return 'yellow';};
+          if(perc_match >= 70){return 'orange';};
+          if(perc_match < 70){return 'red';};}},
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
           'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
           'target-arrow-color': 'black',
