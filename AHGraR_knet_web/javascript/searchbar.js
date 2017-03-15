@@ -4,7 +4,7 @@
             // Open websocket to retrieve list of projects
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request project list
-            wsconn.onopen = function () {wsconn.send("Project_List");};
+            wsconn.onopen = function () {wsconn.send("PMINFO");};
             // Receive and process project list
             wsconn.onmessage = function (evt){SetProjectList(evt.data);};
          };
@@ -53,7 +53,7 @@
             // Open websocket to retrieve list of projects
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Request species list
-            wsconn.onopen = function () {wsconn.send("SL_"+project_id);};
+            wsconn.onopen = function () {wsconn.send("PAQURY_LIST_"+project_id+"_SPECIES");};
             // Receive and process project list
             wsconn.onmessage = function (evt){
                 console.log("Recv species msg");
@@ -91,7 +91,7 @@
             option = document.createElement("option");
             // Fill select option with data:
             option.innerHTML = "All species";
-            option.value = "ALL";
+            option.value = "*";
             // Add new option to select menu
             select_species_menu.add(option);
             // Iterate through project data

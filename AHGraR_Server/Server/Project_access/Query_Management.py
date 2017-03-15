@@ -142,6 +142,9 @@ class QueryManagement:
             if len(user_request) == 2:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.contig "
                                                  "ORDER BY gene.contig")
+            if len(user_request) == 3 and user_request[2]=="*":
+                query_hits = project_db_conn.run("MATCH (gene:Gene)  RETURN DISTINCT gene.contig "
+                                                 "ORDER BY gene.contig")
             elif len(user_request) == 3:
                 query_hits = project_db_conn.run("MATCH (gene:Gene)  WHERE gene.species = {species_name} RETURN "
                                                  "DISTINCT gene.contig ORDER BY gene.contig",
