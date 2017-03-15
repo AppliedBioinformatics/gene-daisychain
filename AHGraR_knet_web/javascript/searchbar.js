@@ -172,16 +172,18 @@
             //PAQURY_SEAR_ProjectID/ProjectName_CMD/WEB_Organism_Chromosome_Keyword_ALL/ANY
 
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
-            chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);};
+            chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);
+            search_button.innerHTML = "Searching"};
              // Receive and process query result
             wsconn.onmessage = function (evt){
+                search_button.innerHTML = "Receiving data"
                 graphJSON = JSON.parse(evt.data)
                 console.log(graphJSON);
-            search_button.innerHTML = "We did it"
             initializeNetworkView();
+            search_button.innerHTML = "Building graph"
             updateCyLegend();
             changeSensitivity();
-
+            search_button.innerHTML = "Search!"
             search_button.disabled = false;
                 };
 
