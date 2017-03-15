@@ -77,7 +77,7 @@
                 cell1.innerHTML= "Nucleotide sequence:";
                 cell2.innerHTML=  '<button type="button" onclick=loadFASTA(gene_name, nt_seq)>Click Me!</button>' ;
 
-                row= table.insertRow(7);
+                row= table.insertRow(8);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
                 cell1.innerHTML= "BLAST nt sequence:";
