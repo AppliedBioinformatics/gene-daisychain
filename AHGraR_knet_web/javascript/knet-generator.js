@@ -52,7 +52,7 @@ function initializeNetworkView() {
          })
       .selector('edge')
         .css({
-          'content': 'data(type)', // label for edges (arrows).
+          'content': 'data(id)', // label for edges (arrows).
           'font-size': '8px',
           'curve-style': function(edge){if (edge.data('type') == 'HOMOLOG'){return "bezier";} else {return "unbundled-bezier";}}, /* options: bezier (curved) (default), unbundled-bezier (curved with manual control points), haystack (straight edges) */
           'control-point-step-size': '10px', // specifies the distance between successive bezier edges.
