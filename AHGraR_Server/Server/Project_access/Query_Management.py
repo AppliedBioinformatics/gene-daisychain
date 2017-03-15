@@ -287,7 +287,7 @@ class QueryManagement:
         gene_node_hits.sort(key=lambda x: (x[1], x[2], x[3]))
         #protein_node_hits = [[item[0]] + item[1] for item in protein_node_hits.items()]
         # Reformat data into json format:
-        gene_node_json = ['{"data": {"id":"g' + str(gene_node[0])
+        gene_node_json = ['{"data": {"id":"' + str(gene_node[0])
                           + '", "type":"Gene", "species":"' + str(gene_node[1])
                           + '", "contig":"' + str(gene_node[2])
                           + '", "start":' + str(gene_node[3])
