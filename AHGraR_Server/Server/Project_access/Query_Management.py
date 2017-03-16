@@ -411,7 +411,7 @@ class QueryManagement:
                           + '", "nt_seq":"' + str(gene_node[7])+'"}}'
                           for gene_node in gene_node_hits]
         protein_node_json = ['{"data": {"id":"' + protein_node[0] + '", "type":"Protein", "aa_seq":"' + protein_node[1]
-                             + ', "species":"' + protein_node[2] +
+                             + '", "species":"' + protein_node[2] +
                              '"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": [' + ', '.join(gene_node_json+protein_node_json) + ']'
         gene_gene_nb_json = ['{"data": {"id":"'+str(rel[0])+'_'+rel[1]+"_"+str(rel[2])+'", "source":"' +
