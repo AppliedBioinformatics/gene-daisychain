@@ -53,14 +53,16 @@ class QueryManagement:
     # User_request is a list of the "_" split command
     # e.g. [SEAR, ProjectID, Organism:Chromosome:Name:Annotation:Gene/Protein(Both]
     def evaluate_user_request(self, user_request):
-        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7:
+        if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7 \
+                and user_request[6] != "BLAST":
             self.find_node(user_request[1:])
+        elif user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7 \
+                and user_request[6] == "BLAST":
+            self.blast(user_request[1:])
         elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 5:
             self.find_node_relations(user_request[1:])
         elif user_request[0] == "LIST" and user_request[1].isdigit() and 3 <=len(user_request) <= 4:
             self.list_items(user_request[1:])
-        elif user_request[0] == "BLAS" and user_request[1].isdigit() and len(user_request) ==6:
-            self.blast(user_request[1:])
         else:
             self.send_data("-8")
 
@@ -75,6 +77,9 @@ class QueryManagement:
         user_request = [item.replace("\t", "_") for item in user_request]
         proj_id = user_request[0]
         return_format = user_request[1]
+        if not return_format in ["CMD", "WEB"]:
+            self.send_data("-9")
+            return
         query_species = user_request[2] if user_request[2] != "*" else ""
         query_contig = user_request[3] if user_request[3] != "*" else ""
         query_seq = user_request[4].upper()
