@@ -72,7 +72,7 @@
 
                 gene_name = selectedElement.data("name");
                 nt_seq = selectedElement.data("nt_seq");
-                fasta_format_seq = ">"+gene_name+"\n"+nt_seq.replace(/(.{80})/g, "$1\n")
+                fasta_format_seq = ">"+gene_name+"\n"+nt_seq
                 row= table.insertRow(7);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
@@ -92,7 +92,7 @@
             {
                 protein_name = selectedElement.data("name");
                 prot_seq = selectedElement.data("aa_seq");
-                fasta_format_seq = ">"+protein_name+"\n"+prot_seq.replace(/(.{80})/g, "$1\n")
+                fasta_format_seq = ">"+protein_name+"\n"+prot_seq
                 row= table.insertRow(3);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
