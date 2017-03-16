@@ -85,6 +85,8 @@
             select_species_menu = document.getElementById("select_species");
             // Each line of data contains one species
             species_items = received_msg.split("\n");
+            // Send species items list to color legend
+            update_color_legend(species_items);
             // Delete old options
             while (select_species_menu.length > 0)
             {
