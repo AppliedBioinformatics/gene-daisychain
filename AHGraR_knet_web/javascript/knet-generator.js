@@ -61,7 +61,7 @@ function initializeNetworkView() {
           'font-size': '8px',
           'curve-style': function(edge){
           if (edge.data('type') == 'HOMOLOG'){return "bezier";}
-          if (edge.data('type') == 'CODING'){return "haystacl";}
+          if (edge.data('type') == 'CODING'){return "haystack";}
           else {return "unbundled-bezier";}}, /* options: bezier (curved) (default), unbundled-bezier (curved with manual control points), haystack (straight edges) */
           'control-point-step-size': '10px', // specifies the distance between successive bezier edges.
           'control-point-distance': '20px', /* overrides control-point-step-size to curves single edges as well, in addition to parallele edges */
