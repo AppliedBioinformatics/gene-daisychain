@@ -199,9 +199,8 @@ class QueryManagement:
                                              {"geneId": node_id})
             for record in query_hits:
                 protein_node_hits[record["prot"]["proteinId"]] = [record["prot"]["prot_seq"], record["gene.species"]]
-                print(protein_node_hits)
-                gene_protein_coding_rel.append((node_id, "CODING", record["prot"]["proteinId"]))
-                print(gene_protein_coding_rel)
+                if (node_id, "CODING", record["prot"]["proteinId"]) not in gene_protein_coding_rel:
+                    gene_protein_coding_rel.append((node_id, "CODING", record["prot"]["proteinId"]))
                 try:
                     rel_type = record["hmlg_rel"].type
                 except:
@@ -356,6 +355,7 @@ class QueryManagement:
                                                     record["relrelNode.proteinId"]))
 
         print("Gene nodes: " + str(len(gene_node_hits)))
+        print("Protein nodes: "+ str(len(protein_node_hits)))
         print("Gene-gene NB relations: " + str(len(gene_node_nb_rel)))
         print("Gene-gene hmlg relations: " + str(len(gene_node_hmlg_rel)))
         print("Gene-protein coding relations: "+str(len(gene_protein_coding_rel)))
