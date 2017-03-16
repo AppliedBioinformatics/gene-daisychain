@@ -93,7 +93,7 @@ class AHGraRAdminServer(socketserver.BaseRequestHandler):
             db_runner.evaluate_user_request(user_request[1:])
         elif user_request[0] == "QURY":
             # Initialize query manager
-            query_manager = QueryManagement(self.get_db_conn(), self.send_data)
+            query_manager = QueryManagement(self.get_db_conn(), self.send_data, self.ahgrar_config)
             # Evaluate user request
             query_manager.evaluate_user_request(user_request[1:])
         else:

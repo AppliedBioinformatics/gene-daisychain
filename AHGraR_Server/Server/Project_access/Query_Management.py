@@ -19,9 +19,10 @@ import subprocess
 
 
 class QueryManagement:
-    def __init__(self,  main_db_connection, send_data):
+    def __init__(self,  main_db_connection, send_data, ahgrar_config):
         self.main_db_conn = main_db_connection
         self.send_data = send_data
+        self.ahgrar_config = ahgrar_config
 
     # Establish a connection to project-specific graph db
     def get_project_db_connection(self, proj_id):
@@ -75,51 +76,78 @@ class QueryManagement:
         proj_id = user_request[0]
         return_format = user_request[1]
         query_species = user_request[2] if user_request[2] != "*" else ""
-        query_chromosome = user_request[3] if user_request[3] != "*" else ""
-        query_seq = user_request[4]
+        query_contig = user_request[3] if user_request[3] != "*" else ""
+        query_seq = user_request[4].upper()
         BlastDB_path = os.path.join("Projects", str(proj_id), "BlastDB")
-        # Write protein sequence to temp. file
-        with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
-            tmp_fasta_file.write(">query_seq\n"+query_seq)
-        subprocess.run(["blastp", "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
-                        os.path.join(BlastDB_path, "BlastPDB"), "-outfmt", "6 sseqid",
-                        "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "0.05",
-                        "-num_threads", "8", "-parse_deflines"])
-        with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
-            protein_names = [line.strip().lower() for line in tmp_res_file]
+        cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
         project_db_conn = self.get_project_db_connection(proj_id)
+        # Detect whether we are dealing with a nucleotide or protein sequence
+        is_nucleotide = True
+        for res in query_seq:
+            if res not in ["A","C","G","T","U"]:
+                is_nucleotide = False
+                break
+        # Write sequence to temp. file
+        with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
+            tmp_fasta_file.write(">query_seq\n" + query_seq)
+        if is_nucleotide:
+            blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
+            subprocess.run([blastn_path, "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
+                            os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 sseqid",
+                            "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "1e-5",
+                            "-num_threads", cpu_cores, "-parse_deflines"])
+            with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
+                gene_names = [line.strip().lower() for line in tmp_res_file]
+            query_hits = project_db_conn.run(
+                "MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
+                "AND LOWER(gene.contig) CONTAINS {query_contig} "
+                "AND LOWER(gene.name) in {gene_name_list} "
+                "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
+                {"query_species": query_species, "gene_name_list": gene_names[:20],
+                 "query_contig": query_contig})
+        else: # If not nucleotide i.e. proteins eq
+            blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
+            subprocess.run([blastp_path, "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
+                            os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 sseqid",
+                            "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "1e-5",
+                            "-num_threads", cpu_cores, "-parse_deflines"])
+            with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
+                protein_names = [line.strip().lower() for line in tmp_res_file]
+            query_hits = project_db_conn.run(
+                "MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) CONTAINS {query_species} "
+                "AND LOWER(gene.contig) CONTAINS {query_contig} "
+                "AND LOWER(prot.name) in {prot_name_list} "
+                "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
+                {"query_species": query_species, "prot_name_list": protein_names[:20],
+                 "query_contig": query_contig})
+
         gene_node_hits = {}
-        gene_node_rel = []
-        protein_node_hits = {}
-        protein_node_rel = []
-        protein_gene_node_rel = []
-        # Search for protein names in project db. Only take the first 20 protein names.
-        query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) "
-                                         "CONTAINS {query_species} AND LOWER(gene.chromosome) CONTAINS "
-                                         "{query_chromosome} AND LOWER(prot.protein_name) IN {query_name_list} "
-                                         "OPTIONAL MATCH (prot)-[rel]->(prot_nb:Protein) "
-                                         "RETURN prot,rel,prot_nb,gene.species,gene.chromosome",
-                                         {"query_species": query_species.lower(), "query_name_list": protein_names[:20],
-                                          "query_chromosome": query_chromosome.lower()})
+        gene_node_nb_rel = []
+        gene_node_hmlg_rel = []
         for record in query_hits:
-            protein_node_hits[record["prot"]["proteinId"]] = \
-                [record["prot"]["protein_name"], record["prot"]["protein_descr"],
-                 record["gene.species"], record["gene.chromosome"]]
-            # Check if protein p1 has a relationship to protein p2
-            # Possible types of relationship: HOMOLOG or SYNTENY,
-            # both with the additional attribute "sensitivity" (of clustering)
+            gene_node_hits[record["gene"]["geneId"]] = \
+                [record["gene"][item] for item in ["species", "contig",
+                                                   "start", "stop", "name", "descr", "nt_seq"]]
             if record["rel"] is not None:
-                protein_node_rel.append((record["prot"]["proteinId"], record["rel"].type,
-                                         record["rel"]["sensitivity"], record["prot_nb"]["proteinId"]))
+                if record["rel"].type in ["5_NB", "3_NB"]:
+                    gene_node_nb_rel.append(
+                        (record["gene"]["geneId"], record["rel"].type, record["gene_nb"]["geneId"]))
+                elif record["rel"].type == "HOMOLOG":
+                    gene_node_hmlg_rel.append(
+                        (record["gene"]["geneId"], record["rel"].type, record["rel"]["clstr_sens"],
+                         record["rel"]["perc_match"], record["gene_nb"]["geneId"]))
+        print("Gene nodes: " + str(len(gene_node_hits)))
+        print("Gene-gene NB relations: " + str(len(gene_node_nb_rel)))
+        print("Gene-gene hmlg relations: " + str(len(gene_node_hmlg_rel)))
+        # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
         # Close connection to the project-db
         project_db_conn.close()
-        # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
         if return_format == "CMD":
-            self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
-                               protein_gene_node_rel)
+            self.send_data_cmd(gene_node_hits, {}, gene_node_nb_rel, gene_node_hmlg_rel, [],
+                               [])
         else:
-            self.send_data_web(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
-                               protein_gene_node_rel)
+            self.send_data_web(gene_node_hits, {}, gene_node_nb_rel, gene_node_hmlg_rel, [],
+                               [])
 
 
 
