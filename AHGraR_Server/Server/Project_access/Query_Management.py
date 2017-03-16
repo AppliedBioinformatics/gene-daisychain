@@ -242,6 +242,9 @@ class QueryManagement:
                 # First retrieve the set of homologeous genes
                 # and the set of HOMOLOG edges starting from this gene to all homologeous genes
                 if rel_type == "HOMOLOG":
+                    # Don't add the node for which we are searching homologs to the list of nodes
+                    if record["relNode"]["geneId"] == node_id:
+                        continue
                     gene_node_hits[record["relNode"]["geneId"]] = \
                         [record["relNode"][item] for item in ["species", "contig",
                                                            "start", "stop", "name", "descr", "nt_seq"]]
