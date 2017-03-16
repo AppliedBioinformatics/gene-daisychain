@@ -129,11 +129,9 @@
    window.open("https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&BLAST_SPEC=&QUERY="+seq+"&LINK_LOC=blasttab&LAST_PAGE=blastp&QUERY=%22%20fasta_seq%20%22", "", "width=200,height=100");
  };
 
- function blastProtFASTA(protein_name)
+ function blastProtFASTA(seq)
  {
-   console.log("BLAST", protein_name, project_id);  
-   fasta_seq = "ATGATGATGATGATG";
-   window.open("https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&QUERY="+fasta_seq+"&LINK_LOC=protein&PAGE_TYPE=BlastSearch", "", "width=200,height=100");
+   window.open("https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE=Proteins&PROGRAM=blastp&BLAST_PROGRAMS=blastp&QUERY="+seq+"&LINK_LOC=protein&PAGE_TYPE=BlastSearch", "", "width=200,height=100");
  };
  
  // Open the Item Info pane when the "Item Info" option is selected for a concept or relation.

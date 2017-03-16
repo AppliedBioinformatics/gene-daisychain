@@ -293,6 +293,48 @@ class QueryManagement:
         #         protein_gene_node_rel.append((record["targetGene"]["geneId"], "CODING", record["prot"]["proteinId"]))
         # Search for a "HOMOLOG" or "SYNTENY" relationship between a protein node and other protein nodes
 
+        # Retrieve all homologs for a certain Protein ID. Include all relations going out from each homolog gene, i.e.
+        # all HOMOLOG and all CODING edges.
+        if relationship_type == "HOMOLOG" and node_type == "Protein":
+            query_hits = project_db_conn.run("MATCH(protein:Protein)-[rel:HOMOLOG]->(protH:Protein)<-[:CODING]-(geneH:Gene) "
+                                             "WHERE protein.proteinId = {protId} "
+                                             "RETURN rel, protH, geneH.species, geneH.name, "
+                                             "secRel, secNode.geneId, secNode.proteinId", {"protId": node_id})
+            for record in query_hits:
+                try:
+                    rel_type = record["rel"].type
+                except:
+                    rel_type = "None"
+                if rel_type == "HOMOLOG":
+                    # Don't add the node for which we are searching homologs to the list of nodes
+                    if record["protH"]["proteinId"] != node_id:
+                        protein_node_hits[record["protH"]["proteinId"]] = \
+                            [record["protH"]["prot_seq"], record["geneH.species"], record["geneH.name"]]
+                    protein_node_hmlg_rel.append(
+                        (node_id, rel_type, record["rel"]["clstr_sens"],
+                         record["rel"]["perc_match"], record["protH"]["proteinId"]))
+                # Analyse relation going out from this homologeous protein
+                try:
+                    relNode_rel_type = record["secRel"].type
+                except:
+                    relNode_rel_type = "None"
+                if relNode_rel_type == "HOMOLOG":
+                    protein_node_hmlg_rel.append((record["protH"]["proteinId"],
+                                               "HOMOLOG",
+                                               record["secRel"]["clstr_sens"],
+                                               record["secRel"]["perc_match"],
+                                               record["secNode.proteinId"]))
+                    protein_node_hmlg_rel.append((record["secNode.proteinId"],
+                                               "HOMOLOG",
+                                               record["secRel"]["clstr_sens"],
+                                               record["secRel"]["perc_match"],
+                                               record["protH"]["proteinId"]))
+                if relNode_rel_type == "CODING":
+                    gene_protein_coding_rel.append((record["secNode.geneId"],
+                                                    "CODING",
+                                                    record["protH"]["proteinId"]))
+
+
         #  Retrieve all homologs of a certain Gene-ID. Include all relations going out from each homolog gene. Also
         # include each relation of the Gene-ID as there might be new 5 or 3 prime relations with the extended set of
         # genes. We therefore search for all Gene nodes related to our node of interest but return only homologeous gene
