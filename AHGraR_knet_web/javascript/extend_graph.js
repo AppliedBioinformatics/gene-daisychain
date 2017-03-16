@@ -39,23 +39,26 @@ function addPath(node, rel_type)
   content: function() {
       var qtipMsg= "";
      try {
-      if(this.isNode()) {
+       if(this.isNode()) {
           if(this.data('type')=="Gene")
           {
-         qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
-         +", <b>Species:</b> "+ this.data('species')
-         +", <b>Chromosome:</b> "+ this.data('chromosome');     
+         qtipMsg= "<b>Name:</b> "+ this.data('name') + "\n" +", <b>Type:</b> "+ this.data('type') + "\n"
+         +", <b>Species:</b> "+ this.data('species')+ "\n"
+         +", <b>Contig:</b> "+ this.data('contig');
         }
          else
          {
              qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
              +", <b>Description:</b> "+ this.data('description')
                     +", <b>Species:</b> "+ this.data('species')
-          +", <b>Chromosome:</b> "+ this.data('chromosome'); 
+          +", <b>Chromosome:</b> "+ this.data('chromosome');
         }
         }
       else if(this.isEdge()) {
-              qtipMsg= "<b>Relation:</b> "+ this.data('type');
+              if(this.data('type')=="HOMOLOG")
+              {
+              qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";
+              }
              }
       }
       catch(err) { qtipMsg= "Selected element is neither a Concept nor a Relation"; }
