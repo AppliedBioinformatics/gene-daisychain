@@ -192,7 +192,7 @@ class QueryManagement:
         gene_protein_coding_rel = []
 
         # Retrieve gene coding for a protein
-        if relationship_type == "CODING" and node_type == "Gene":
+        if relationship_type == "CODING" and node_type == "Protein":
             query_hits = project_db_conn.run("MATCH(coding_gene:Gene)-[:CODING]->(prot:Protein) WHERE prot.proteinId={protId} "
                                              "OPTIONAL MATCH (coding_gene)-[gen_Rel]->(geneRel:Gene) "
                                              "RETURN  coding_gene, gen_Rel, geneRel.geneId",
