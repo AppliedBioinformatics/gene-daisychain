@@ -148,9 +148,8 @@ cy.elements().qtip({
          else
          {
              qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
-             +", <b>Description:</b> "+ this.data('description')
                     +", <b>Species:</b> "+ this.data('species')
-          +", <b>Chromosome:</b> "+ this.data('chromosome');
+          +", <b>Contig:</b> "+ this.data('contig');
         }
         }
       else if(this.isEdge()) {
