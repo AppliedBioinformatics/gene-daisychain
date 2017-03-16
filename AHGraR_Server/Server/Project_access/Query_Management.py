@@ -43,7 +43,7 @@ class QueryManagement:
         # Except errors while establishing a connection to project db and return error code
         except:
             self.send_data("-7")
-            return
+
 
 
 
@@ -53,15 +53,15 @@ class QueryManagement:
     # e.g. [SEAR, ProjectID, Organism:Chromosome:Name:Annotation:Gene/Protein(Both]
     def evaluate_user_request(self, user_request):
         if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7:
-            return(self.find_node(user_request[1:]))
-        elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 6:
-            return(self.find_node_relations(user_request[1:]))
+            self.find_node(user_request[1:])
+        elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 4:
+            self.find_node_relations(user_request[1:])
         elif user_request[0] == "LIST" and user_request[1].isdigit() and 3 <=len(user_request) <= 4:
-            return(self.list_items(user_request[1:]))
+            self.list_items(user_request[1:])
         elif user_request[0] == "BLAS" and user_request[1].isdigit() and len(user_request) ==6:
-            return(self.blast(user_request[1:]))
+            self.blast(user_request[1:])
         else:
-            return "-8"
+            self.send_data("-8")
 
     # BLAST a protein sequence against the project-specific BLAST protein database
     # to find matching proteins
@@ -115,10 +115,10 @@ class QueryManagement:
         project_db_conn.close()
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
         if return_format == "CMD":
-            return self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
+            self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
                                protein_gene_node_rel)
         else:
-            return self.send_data_web(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
+            self.send_data_web(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
                                protein_gene_node_rel)
 
 
@@ -153,13 +153,12 @@ class QueryManagement:
                 query_hits = []
             for record in query_hits:
                 reply_container.append(record["gene.contig"])
-        return("\n".join(reply_container))
+        self.send_data("\n".join(reply_container))
 
 
 
     # Find a nodes relation(s)
-    # Input: Node-ID plus type of relation
-    # i,e. 5NB,3NB,CODING,HOMOLOG,SYNTENY
+    # Input:ProjectID_CMD/WEB_NodeID_Relationship
     def find_node_relations(self, user_request):
         # Connect to the project-db
         project_db_conn = self.get_project_db_connection(user_request[0])
@@ -170,26 +169,25 @@ class QueryManagement:
             self.send_data("-9")
             return
         # Determine node type and ID, first letter of ID determines whether node is a gene or protein
-        node_type = user_request[2]
-        if not node_type in ["Gene", "Protein"]:
+        if not user_request[2][0] in ["g","p"]:
             self.send_data("-10")
             return
-        node_id = user_request[3]
-        relationship_type = user_request[4]
+        else:
+            node_type = "Gene" if user_request[2][0]=="g" else "Protein"
+        node_id = user_request[2][1:]
+        relationship_type = user_request[3]
         # Modify 5NB and 3NB to 5_NB and 3_NB
         if relationship_type == "5NB":
             relationship_type = "5_NB"
         if relationship_type == "3NB":
             relationship_type = "3_NB"
-        if not relationship_type in ["5_NB", "3_NB", "CODING", "HOMOLOG", "SYNTENY"]:
+        if not relationship_type in ["5_NB", "3_NB", "HOMOLOG"]: # CODING
             self.send_data("-12")
-            return
         # Collect nodes and relationships in two lists
         gene_node_hits = {}
-        gene_node_rel = []
-        protein_node_hits = {}
-        protein_node_rel = []
-        protein_gene_node_rel = []
+        gene_node_nb_rel = []
+        gene_node_hmlg_rel = []
+        gene_protein_coding_rel = []
         # Search for a "5_NB" pr "3_NB" relationship between gene node and gene node
         if relationship_type in ["5_NB", "3_NB"]and node_type == "Gene":
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[rel:`"+relationship_type+"`]->(targetGene:Gene) "
@@ -197,59 +195,100 @@ class QueryManagement:
                                              {"geneId": node_id} )
             for record in query_hits:
                 gene_node_hits[record["targetGene"]["geneId"]] = \
-                    [record["targetGene"][item] for item in ["species", "chromosome", "contig_name", "strand",
-                                                       "start", "stop", "gene_name", "gene_descr"]]
+                    [record["targetGene"][item] for item in ["species", "contig",
+                                                   "start", "stop", "name", "descr", "nt_seq"]]
                 if relationship_type == "5_NB":
-                    gene_node_rel.append((record["gene"]["geneId"], "5_NB", record["targetGene"]["geneId"]))
-                    gene_node_rel.append((record["targetGene"]["geneId"], "3_NB", record["gene"]["geneId"]))
+                    gene_node_nb_rel.append((record["gene"]["geneId"], "5_NB", record["targetGene"]["geneId"]))
+                    gene_node_nb_rel.append((record["targetGene"]["geneId"], "3_NB", record["gene"]["geneId"]))
                 else:
-                    gene_node_rel.append((record["gene"]["geneId"], "3_NB", record["targetGene"]["geneId"]))
-                    gene_node_rel.append((record["targetGene"]["geneId"], "5_NB", record["gene"]["geneId"]))
-        # Search for a "CODING" relationship between a gene node and a protein node
-        if relationship_type == "CODING" and node_type == "Gene":
-            query_hits = project_db_conn.run("MATCH(gene:Gene)-[rel:CODING]->(targetProt:Protein) "
-                                             "WHERE gene.geneId = {geneId} RETURN gene, rel, targetProt",
-                                             {"geneId": node_id})
-            for record in query_hits:
-                protein_node_hits[record["targetProt"]["proteinId"]] = \
-                    [record["targetProt"]["protein_name"], record["targetProt"]["protein_descr"],
-                     record["gene"]["species"], record["gene"]["chromosome"]]
-                protein_gene_node_rel.append((record["gene"]["geneId"], "CODING", record["targetProt"]["proteinId"]))
-        # Search for a "CODING" relationship between a protein node and a gene node
-        if relationship_type == "CODING" and node_type == "Protein":
-            query_hits = project_db_conn.run("MATCH(targetGene:Gene)-[rel:CODING]->(prot:Protein) "
-                                             "WHERE prot.proteinId = {protId} RETURN targetGene, rel, prot",
-                                             {"protId": node_id})
-            for record in query_hits:
-                gene_node_hits[record["targetGene"]["geneId"]] = \
-                    [record["targetGene"][item] for item in ["species", "chromosome", "contig_name", "strand",
-                                                       "start", "stop", "gene_name", "gene_descr"]]
-                protein_gene_node_rel.append((record["targetGene"]["geneId"], "CODING", record["prot"]["proteinId"]))
+                    gene_node_nb_rel.append((record["gene"]["geneId"], "3_NB", record["targetGene"]["geneId"]))
+                    gene_node_nb_rel.append((record["targetGene"]["geneId"], "5_NB", record["gene"]["geneId"]))
+        # # Search for a "CODING" relationship between a gene node and a protein node
+        # if relationship_type == "CODING" and node_type == "Gene":
+        #     query_hits = project_db_conn.run("MATCH(gene:Gene)-[rel:CODING]->(targetProt:Protein) "
+        #                                      "WHERE gene.geneId = {geneId} RETURN gene, rel, targetProt",
+        #                                      {"geneId": node_id})
+        #     for record in query_hits:
+        #         protein_node_hits[record["targetProt"]["proteinId"]] = \
+        #             [record["targetProt"]["protein_name"], record["targetProt"]["protein_descr"],
+        #              record["gene"]["species"], record["gene"]["chromosome"]]
+        #         protein_gene_node_rel.append((record["gene"]["geneId"], "CODING", record["targetProt"]["proteinId"]))
+        # # Search for a "CODING" relationship between a protein node and a gene node
+        # if relationship_type == "CODING" and node_type == "Protein":
+        #     query_hits = project_db_conn.run("MATCH(targetGene:Gene)-[rel:CODING]->(prot:Protein) "
+        #                                      "WHERE prot.proteinId = {protId} RETURN targetGene, rel, prot",
+        #                                      {"protId": node_id})
+        #     for record in query_hits:
+        #         gene_node_hits[record["targetGene"]["geneId"]] = \
+        #             [record["targetGene"][item] for item in ["species", "chromosome", "contig_name", "strand",
+        #                                                "start", "stop", "gene_name", "gene_descr"]]
+        #         protein_gene_node_rel.append((record["targetGene"]["geneId"], "CODING", record["prot"]["proteinId"]))
         # Search for a "HOMOLOG" or "SYNTENY" relationship between a protein node and other protein nodes
-        if relationship_type in ["HOMOLOG", "SYNTENY"] and node_type == "Protein":
-            query_hits = project_db_conn.run("MATCH (prot:Protein)-[:"+relationship_type+"]->(prot_new:Protein) WHERE "
-                                             "prot.proteinId = {protId} MATCH "
-                                             "(gene_new:Gene)-[:CODING]->(prot_new)-[rel:"+relationship_type+"]->"
-                                             "(prot_new_homolog:Protein) RETURN DISTINCT gene_new.species, "
-                                             "gene_new.chromosome, prot_new, rel, prot_new_homolog.proteinId",
-                                             {"protId": node_id})
 
-            # query_hits = project_db_conn.run("MATCH(prot:Protein)-[rel:"+relationship_type+"]->(targetProt:Protein) "
-            #                                  "WHERE prot.proteinId = {protId} RETURN prot, rel, targetProt",
-            #                                  {"protId": node_id})
+        #  Retrieve all homologs of a certain Gene-ID. Include all relations going out from each homolog gene. Also
+        # include each relation of the Gene-ID as there might be new 5 or 3 prime relations with the extended set of
+        # genes. We therefore search for all Gene nodes related to our node of interest but return only homologeous gene
+        # nodes but all possible relations. For each new gene we also retrieve the complete set of relations, incl.
+        # CODING to proteins.
+        if relationship_type =="HOMOLOG" and node_type == "Gene":
+            query_hits = project_db_conn.run("MATCH (gene:Gene)-[rel]->(relNode:Gene) WHERE "
+                                             "gene.geneId = {geneId} "
+                                             "OPTIONAL MATCH (relNode)-[relNode_rel]->(relrelNode) "
+                                             "RETURN rel, relNode, relNode_rel, relrelNode",
+                                             {"geneId": node_id})
+
             for record in query_hits:
-                protein_node_hits[record["prot_new"]["proteinId"]] = \
-                    [record["prot_new"]["protein_name"], record["prot_new"]["protein_descr"],
-                     record["gene_new.species"], record["gene_new.chromosome"]]
-                protein_node_rel.append((record["prot_new"]["proteinId"], record["rel"].type,
-                                         record["rel"]["sensitivity"], record["prot_new_homolog.proteinId"]))
-        # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
+                rel_type = record["rel"].type
+                # First retrieve the set of homologeous genes
+                # and the set of HOMOLOG edges starting from this gene to all homologeous genes
+                if rel_type == "HOMOLOG":
+                    gene_node_hits[record["relNode"]["geneId"]] = \
+                        [record["relNode"][item] for item in ["species", "contig",
+                                                           "start", "stop", "name", "descr", "nt_seq"]]
+                    gene_node_hmlg_rel.append(
+                        (node_id, rel_type, record["rel"]["clstr_sens"],
+                         record["rel"]["perc_match"], record["relNode"]["geneId"]))
+                # Retrieve 5' and 3' edges starting from this gene
+                if rel_type == "5_NB":
+                    gene_node_nb_rel.append((node_id, "5_NB", record["relNode"]["geneId"]))
+                    gene_node_nb_rel.append((record["relNode"]["geneId"], "3_NB", node_id))
+                if rel_type == "3_NB":
+                    gene_node_nb_rel.append((node_id, "3_NB", record["relNode"]["geneId"]))
+                    gene_node_nb_rel.append((record["relNode"]["geneId"], "5_NB", node_id))
+                # Analyse relation going out from this homologeous gene
+                if record["relNode_rel"]:
+                    relNode_rel_type = record["relNode_rel"].type
+                    if relNode_rel_type == "5_NB":
+                        gene_node_nb_rel.append((record["relNode"]["geneId"], "5_NB", record["relrelNode"]["geneId"]))
+                        gene_node_nb_rel.append((record["relrelNode"]["geneId"], "3_NB", record["relNode"]["geneId"]))
+                    if relNode_rel_type == "3_NB":
+                        gene_node_nb_rel.append((record["relNode"]["geneId"], "3_NB", record["relrelNode"]["geneId"]))
+                        gene_node_nb_rel.append((record["relrelNode"]["geneId"], "5_NB", record["relNode"]["geneId"]))
+                    if relNode_rel_type == "HOMOLOG":
+                        gene_node_hmlg_rel.append((record["relNode"]["geneId"],
+                                                   "HOMOLOG",
+                                                   record["relNode_rel"]["clstr_sens"],
+                                                   record["relNode_rel"]["perc_match"],
+                                                   record["relrelNode"]["geneId"]))
+                        gene_node_hmlg_rel.append((record["relrelNode"]["geneId"],
+                                                   "HOMOLOG",
+                                                   record["relNode_rel"]["clstr_sens"],
+                                                   record["relNode_rel"]["perc_match"],
+                                                   record["relNode"]["geneId"]))
+                    if relNode_rel_type == "CODING":
+                        gene_protein_coding_rel.append((record["relrelNode"]["geneId"],
+                                                        "CODING",
+                                                        record["relrelNode"]["proteinId"]))
+
+        print("Gene nodes: " + str(len(gene_node_hits)))
+        print("Gene-gene NB relations: " + str(len(gene_node_nb_rel)))
+        print("Gene-gene hmlg relations: " + str(len(gene_node_hmlg_rel)))
+        print("Gene-protein coding relations: "+str(len(gene_protein_coding_rel)))
+
         if return_format == "CMD":
-            self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
-                               protein_gene_node_rel)
+            self.send_data_cmd(gene_node_hits, {}, gene_node_nb_rel, gene_node_hmlg_rel, [], gene_protein_coding_rel)
         else:
-            self.send_data_web(gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
-                               protein_gene_node_rel)
+            self.send_data_web(gene_node_hits, {}, gene_node_nb_rel, gene_node_hmlg_rel, [], gene_protein_coding_rel)
         # Close connection to the project-db
         project_db_conn.close()
 
@@ -275,12 +314,12 @@ class QueryManagement:
             reply += "\t".join(str(x) for x in prot_prot_rel) + "\n"
         for gene_prot_rel in protein_gene_node_rel:
             reply += "\t".join(str(x) for x in gene_prot_rel) + "\n"
-        return(reply)
+        self.send_data(reply)
 
     # Reformat node and edge data to fit the format expected by AHGraR-web
     # Each node and each edge gets an unique and reproducible ID
     def send_data_web(self, gene_node_hits, protein_node_hits, gene_node_nb_rel,gene_node_hmlg_rel, protein_node_rel,
-                      protein_gene_node_rel):
+                      gene_prot_coding_rel):
         # Transfer gene node and protein node dicts into list structures
         # Sort gene node list by species,chromosome, contig, start
         gene_node_hits = [[item[0]] + item[1] for item in gene_node_hits.items()]
@@ -301,9 +340,12 @@ class QueryManagement:
         #                      '", "species":"' + protein_node[3] +
         #                      '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": [' + ', '.join(gene_node_json) + ']'
-        gene_gene_nb_json = ['{"data": {"id":"'+str(gene_gene_rel[0])+'_'+str(gene_gene_rel[2])+'", "source":"' +
-                              str(gene_gene_rel[0]) + '", "type":"' + str(gene_gene_rel[1]) +
-                              '", "target":"' + str(gene_gene_rel[2]) + '"}}' for gene_gene_rel in gene_node_nb_rel]
+        gene_gene_nb_json = ['{"data": {"id":"'+str(rel[0])+'_'+rel[1]+"_"+str(rel[2])+'", "source":"' +
+                              str(rel[0]) + '", "type":"' + str(rel[1]) +
+                              '", "target":"' + str(rel[2]) + '"}}' for rel in gene_node_nb_rel]
+        gene_protein_coding_json = ['{"data": {"id":"'+str(rel[0])+'_'+rel[1]+"_"+str(rel[2])+'", "source":"' +
+                              str(rel[0]) + '", "type":"' + str(rel[1]) +
+                              '", "target":"' + str(rel[2]) + '"}}' for rel in gene_prot_coding_rel]
         # Remove self-Homology loops
         gene_node_hmlg_rel = [gene_gene_rel for gene_gene_rel in gene_node_hmlg_rel if gene_gene_rel[0] != gene_gene_rel[4]]
         #protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
@@ -333,8 +375,8 @@ class QueryManagement:
         # gene_protein_rel_json = ['{"data": {"id":"g'+prot_gene_rel[0]+'_p'+prot_gene_rel[2]+'", "source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"p' +
         #                          prot_gene_rel[2] + '"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": [' + ', '.join(
-            gene_gene_nb_json + gene_gene_hmlg_rel_json) + ']'
-        return('{' + nodes_json + ',' + edges_json + '}')
+            gene_gene_nb_json + gene_gene_hmlg_rel_json+gene_protein_coding_json) + ']'
+        self.send_data('{' + nodes_json + ',' + edges_json + '}')
 
 
 
@@ -504,9 +546,9 @@ class QueryManagement:
         # Close connection to the project-db
         project_db_conn.close()
         if return_format == "CMD":
-            return(self.send_data_cmd(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
-                               []))
+            self.send_data_cmd(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
+                               [])
         else:
-            return(self.send_data_web(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
-                               []))
+            self.send_data_web(gene_node_hits, {}, gene_node_nb_rel,gene_node_hmlg_rel, [],
+                               [])
 

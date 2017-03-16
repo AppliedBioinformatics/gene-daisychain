@@ -141,8 +141,8 @@ cy.elements().qtip({
       if(this.isNode()) {
           if(this.data('type')=="Gene")
           {
-         qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
-         +", <b>Species:</b> "+ this.data('species')
+         qtipMsg= "<b>Name:</b> "+ this.data('name') + "\n" +", <b>Type:</b> "+ this.data('type') + "\n"
+         +", <b>Species:</b> "+ this.data('species')+ "\n"
          +", <b>Contig:</b> "+ this.data('contig');
         }
          else
