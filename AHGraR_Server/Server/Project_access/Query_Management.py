@@ -54,7 +54,7 @@ class QueryManagement:
     def evaluate_user_request(self, user_request):
         if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7:
             self.find_node(user_request[1:])
-        elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 4:
+        elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 5:
             self.find_node_relations(user_request[1:])
         elif user_request[0] == "LIST" and user_request[1].isdigit() and 3 <=len(user_request) <= 4:
             self.list_items(user_request[1:])
