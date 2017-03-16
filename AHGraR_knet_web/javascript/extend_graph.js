@@ -16,9 +16,9 @@ function addPath(node, rel_type)
         new_edge_data = new_graph_data.edges;
         var angle_rotation = (2 * Math.PI)/new_node_data.length;
         var angle = 0;
-        if (new_node_data.len != 0){
+        if (new_node_data.length != 0){
         window.alert("sometext");
-        console.log(new_node_data.len);
+        console.log(new_node_data.length);
         };
         new_node_data.forEach(function(val)
         {
