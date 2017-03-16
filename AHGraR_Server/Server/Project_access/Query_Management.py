@@ -191,6 +191,44 @@ class QueryManagement:
         protein_node_hmlg_rel = []
         gene_protein_coding_rel = []
 
+        # Retrieve gene coding for a protein
+        if relationship_type == "CODING" and node_type == "Gene":
+            query_hits = project_db_conn.run("MATCH(coding_gene:Gene)-[:CODING]->(prot:Protein) WHERE prot.proteinId={protId} "
+                                             "OPTIONAL MATCH (coding_gene)-[gen_Rel]->(geneRel:Gene) "
+                                             "RETURN  coding_gene, gen_Rel, geneRel.geneId",
+                                             {"protId": node_id})
+            for record in query_hits:
+                gene_node_hits[record["coding_gene"]["geneId"]] = \
+                    [record["coding_gene"][item] for item in ["species", "contig",
+                                                   "start", "stop", "name", "descr", "nt_seq"]]
+                if (record["coding_gene"]["geneId"], "CODING", node_id) not in gene_protein_coding_rel:
+                    gene_protein_coding_rel.append((record["coding_gene"]["geneId"], "CODING", node_id))
+                try:
+                    coding_gene_rel = record["gen_Rel"].type
+                except:
+                    coding_gene_rel = "None"
+                if coding_gene_rel == "5_NB":
+                    gene_node_nb_rel.append(
+                        (record["coding_gene"]["geneId"], "5_NB", record["geneRel.geneId"]))
+                    gene_node_nb_rel.append(
+                        (record["geneRel.geneId"], "3_NB", record["coding_gene"]["geneId"]))
+                if coding_gene_rel == "3_NB":
+                    gene_node_nb_rel.append(
+                        (record["coding_gene"]["geneId"], "3_NB", record["geneRel.geneId"]))
+                    gene_node_nb_rel.append(
+                        (record["geneRel.geneId"], "5_NB", record["coding_gene"]["geneId"]))
+                if coding_gene_rel == "HOMOLOG":
+                    gene_node_hmlg_rel.append((record["coding_gene"]["geneId"],
+                                               "HOMOLOG",
+                                               record["gen_Rel"]["clstr_sens"],
+                                               record["gen_Rel"]["perc_match"],
+                                               record["geneRel.geneId"]))
+                    gene_node_hmlg_rel.append((record["geneRel.geneId"],
+                                               "HOMOLOG",
+                                               record["gen_Rel"]["clstr_sens"],
+                                               record["gen_Rel"]["perc_match"],
+                                               record["coding_gene"]["geneId"]))
+
         # Retrieve protein coded by gene
         if relationship_type == "CODING" and node_type == "Gene":
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE gene.geneId={geneId} "

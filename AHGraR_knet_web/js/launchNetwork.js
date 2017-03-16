@@ -36,11 +36,9 @@ window.onload= function() {
                             "<option value='40'>Label size: 40px</option>"+
                         "</select>"+
                         "<select id='select_sensitivity' class='knet-dropdowns' onChange='changeSensitivity()';title='Select cluster size'>"+
-                        "<option value='1.4'>Very large clusters</option>"+
-                        "<option value='2.0'>Large clusters</option>"+
-                        "<option value='4.0'>Medium clusters</option>"+
-                        "<option value='6.0'>Small clusters</option>"+
-                        "<option value='10.0'>Very small clusters</option>"+
+                        "<option value='1.4'>Large clusters</option>"+
+                        "<option value='5.0'>Medium clusters</option>"+
+                        "<option value='10.0'>Small clusters</option>"+
                     "</select>"+
 			        "</span>"+
                     "<input type='image' id='savePNG' src='image/savePNG.png' onclick='exportAsImage();' title='Export the network as a .png image' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>"+
