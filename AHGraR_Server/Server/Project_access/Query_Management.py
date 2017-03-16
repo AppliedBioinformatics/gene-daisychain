@@ -198,9 +198,10 @@ class QueryManagement:
                                              "RETURN  gene.species, prot, hmlg_rel, protH.proteinId",
                                              {"geneId": node_id})
             for record in query_hits:
-                print(record)
                 protein_node_hits[record["prot"]["proteinId"]] = [record["prot"]["prot_seq"], record["gene.species"]]
+                print(protein_node_hits)
                 gene_protein_coding_rel.append((node_id, "CODING", record["prot"]["proteinId"]))
+                print(gene_protein_coding_rel)
                 try:
                     rel_type = record["hmlg_rel"].type
                 except:
