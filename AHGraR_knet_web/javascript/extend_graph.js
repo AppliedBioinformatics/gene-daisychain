@@ -18,7 +18,7 @@ function addPath(node, rel_type)
         var angle = 0;
         if (new_node_data.len != 0){
         window.alert("sometext");
-        console.log("zero :-(");
+        console.log(new_node_data.len);
         };
         new_node_data.forEach(function(val)
         {
