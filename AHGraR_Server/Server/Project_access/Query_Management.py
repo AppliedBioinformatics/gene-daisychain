@@ -210,6 +210,7 @@ class QueryManagement:
 
                 try:
                     target_gene_rel_type = record["targetGene_rel"].type
+                    print(target_gene_rel_type)
                 except:
                     target_gene_rel_type = "None"
                 if target_gene_rel_type == "5_NB":
