@@ -1,6 +1,7 @@
 function update_color_legend()
 {
 //$('#colorLegend span').text("Huhu");
-var r= $('<input type="button" value="new button"/>');
-$('#colorLegend span').add(r)
+var colorLegend = document.getElementById('colorLegend');
+var btn = document.createElement('button');
+colorLegend.appendChild(btn);
 }
