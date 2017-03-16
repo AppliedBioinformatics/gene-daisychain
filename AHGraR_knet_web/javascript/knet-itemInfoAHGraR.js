@@ -72,7 +72,7 @@
 
                 gene_name = selectedElement.data("name");
                 nt_seq = selectedElement.data("nt_seq");
-                fasta_format_seq = ">"+gene_name+"\n"+nt_seq
+                fasta_format_seq = ">"+gene_name+"%0"+nt_seq
                 row= table.insertRow(7);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
@@ -93,13 +93,13 @@
                 protein_name = selectedElement.data("name");
                 prot_seq = selectedElement.data("aa_seq");
                 fasta_format_seq = ">"+protein_name+"%0"+aa_seq
-                row= table.insertRow(5);
+                row= table.insertRow(3);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
                 cell1.innerHTML= "Coding sequence:";
                 cell2.innerHTML=  '<button type="button" onclick=loadFASTA(fasta_format_seq)>Click Me!</button>' ;
                 
-                row= table.insertRow(6);
+                row= table.insertRow(4);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
                 cell1.innerHTML= "BLAST:";
