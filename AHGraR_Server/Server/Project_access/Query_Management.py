@@ -243,11 +243,10 @@ class QueryManagement:
                 # and the set of HOMOLOG edges starting from this gene to all homologeous genes
                 if rel_type == "HOMOLOG":
                     # Don't add the node for which we are searching homologs to the list of nodes
-                    if record["relNode"]["geneId"] == node_id:
-                        continue
-                    gene_node_hits[record["relNode"]["geneId"]] = \
-                        [record["relNode"][item] for item in ["species", "contig",
-                                                           "start", "stop", "name", "descr", "nt_seq"]]
+                    if record["relNode"]["geneId"] != node_id:
+                        gene_node_hits[record["relNode"]["geneId"]] = \
+                            [record["relNode"][item] for item in ["species", "contig",
+                                                               "start", "stop", "name", "descr", "nt_seq"]]
                     gene_node_hmlg_rel.append(
                         (node_id, rel_type, record["rel"]["clstr_sens"],
                          record["rel"]["perc_match"], record["relNode"]["geneId"]))
