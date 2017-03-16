@@ -111,8 +111,8 @@ class QueryManagement:
                 "AND LOWER(gene.contig) CONTAINS {query_contig} "
                 "AND LOWER(gene.geneId) in {gene_id_list} "
                 "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
-                {"query_species": query_species, "gene_id_list": gene_ids[:20],
-                 "query_contig": query_contig})
+                {"query_species": query_species.lower(), "gene_id_list": gene_ids[:20],
+                 "query_contig": query_contig.lower()})
         else: # If not nucleotide i.e. proteins eq
             blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
             subprocess.run([blastp_path, "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
@@ -126,8 +126,8 @@ class QueryManagement:
                 "AND LOWER(gene.contig) CONTAINS {query_contig} "
                 "AND LOWER(prot.proteinId) in {prot_id_list} "
                 "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
-                {"query_species": query_species, "prot_id_list": protein_ids[:20],
-                 "query_contig": query_contig})
+                {"query_species": query_species.lower(), "prot_id_list": protein_ids[:20],
+                 "query_contig": query_contig.lower()})
 
         gene_node_hits = {}
         gene_node_nb_rel = []
