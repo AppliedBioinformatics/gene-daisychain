@@ -208,7 +208,7 @@ class QueryManagement:
                     #gene_node_nb_rel.append((record["targetGene"]["geneId"], "5_NB", record["gene"]["geneId"]))
                 # Now add secondary relations of new nodes to list of relations
                 if record["targetGene_rel"]:
-                    print("2nd: "+record["targetGene_rel"])
+                    print("2nd: "+record["targetGene_rel"].type)
                     target_gene_rel_type = record["targetGene_rel"].type
                     if target_gene_rel_type == "5_NB":
                         gene_node_nb_rel.append(
