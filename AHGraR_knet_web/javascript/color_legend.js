@@ -4,6 +4,10 @@ function update_color_legend(species_list)
 var colorLegend = document.getElementById('colorLegend');
 console.log("Update color legend");
 console.log(species_list);
+// Remove old elements
+while (colorLegend.firstChild) {
+    colorLegend.removeChild(colorLegend.firstChild);
+}
 var btn = document.createElement('button');
 btn.setAttribute('type', 'button');
 //btn.setAttribute('onclick', functions[i]);
