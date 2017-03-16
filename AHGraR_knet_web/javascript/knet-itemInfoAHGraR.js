@@ -91,17 +91,19 @@
             if (selectedElement.data('type') == "Protein")
             {
                 protein_name = selectedElement.data("name");
+                prot_seq = selectedElement.data("aa_seq");
+                fasta_format_seq = ">"+protein_name+"\n"+aa_seq
                 row= table.insertRow(5);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
                 cell1.innerHTML= "Coding sequence:";
-                cell2.innerHTML=  '<button type="button" onclick=loadFASTA(protein_name)>Click Me!</button>' ; 
+                cell2.innerHTML=  '<button type="button" onclick=loadFASTA(fasta_format_seq)>Click Me!</button>' ;
                 
                 row= table.insertRow(6);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
                 cell1.innerHTML= "BLAST:";
-                cell2.innerHTML=  '<button type="button" onclick=blastFASTA(protein_name)>Click Me!</button>' ; 
+                cell2.innerHTML=  '<button type="button" onclick=blastProtFASTA(fasta_format_seq)>Click Me!</button>' ;
             }
   
            }
@@ -121,10 +123,10 @@
     fastaShow.document.write(fasta_format_seq);
  };
  
- function blastNtFASTA(gene_name, nt_seq)
+ function blastNtFASTA(seq)
  {
-   console.log("BLAST", gene_name, nt_seq);
-   window.open("https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&BLAST_SPEC=&QUERY="+nt_seq+"LINK_LOC=blasttab&LAST_PAGE=blastp&QUERY=%22%20fasta_seq%20%22", "", "width=200,height=100");
+
+   window.open("https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&BLAST_SPEC=&QUERY="+seq+"&LINK_LOC=blasttab&LAST_PAGE=blastp&QUERY=%22%20fasta_seq%20%22", "", "width=200,height=100");
  };
 
  function blastProtFASTA(protein_name)
