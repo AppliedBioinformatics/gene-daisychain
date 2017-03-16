@@ -181,13 +181,43 @@ class QueryManagement:
             relationship_type = "5_NB"
         if relationship_type == "3NB":
             relationship_type = "3_NB"
-        if not relationship_type in ["5_NB", "3_NB", "HOMOLOG"]: # CODING
+        if not relationship_type in ["5_NB", "3_NB", "HOMOLOG", "CODING"]:
             self.send_data("-12")
         # Collect nodes and relationships in two lists
         gene_node_hits = {}
+        protein_node_hits = {}
         gene_node_nb_rel = []
         gene_node_hmlg_rel = []
+        protein_node_hmlg_rel = []
         gene_protein_coding_rel = []
+
+        # Retrieve protein coded by gene
+        if relationship_type == "CODING" and node_type == "Gene":
+            query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE gene.geneId={geneId} "
+                                             "OPTIONAL MATCH (prot)-[hmlg_rel:HOMOLOG]->(protH) "
+                                             "RETURN  prot, hmlg_rel, protH.proteinId",
+                                             {"geneId": node_id})
+            for record in query_hits:
+                protein_node_hits[record["prot"]["proteinId"]] = [record["prot"][item] for item in ["prot_seq"]]
+                gene_protein_coding_rel.append((node_id, "CODING", record["prot"]["proteinId"]))
+                try:
+                    rel_type = record["hmlg_rel"].type
+                except:
+                    rel_type = "None"
+                if rel_type == "HOMOLOG":
+                    protein_node_hmlg_rel.append((record["prot"]["proteinId"],
+                                               "HOMOLOG",
+                                               record["hmlg_rel"]["clstr_sens"],
+                                               record["hmlg_rel"]["perc_match"],
+                                               record["protH.proteinId"]))
+                    protein_node_hmlg_rel.append((record["protH.proteinId"],
+                                               "HOMOLOG",
+                                               record["hmlg_rel"]["clstr_sens"],
+                                               record["hmlg_rel"]["perc_match"],
+                                               record["prot"]["proteinId"]))
+
+
+
         # Search for a "5_NB" pr "3_NB" relationship between gene node and gene node
         if relationship_type in ["5_NB", "3_NB"]and node_type == "Gene":
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[rel:`"+relationship_type+"`]->(targetGene:Gene) "
@@ -329,9 +359,9 @@ class QueryManagement:
         print("Gene-protein coding relations: "+str(len(gene_protein_coding_rel)))
 
         if return_format == "CMD":
-            self.send_data_cmd(gene_node_hits, {}, gene_node_nb_rel, gene_node_hmlg_rel, [], gene_protein_coding_rel)
+            self.send_data_cmd(gene_node_hits, protein_node_hits, gene_node_nb_rel, gene_node_hmlg_rel, [], gene_protein_coding_rel)
         else:
-            self.send_data_web(gene_node_hits, {}, gene_node_nb_rel, gene_node_hmlg_rel, [], gene_protein_coding_rel)
+            self.send_data_web(gene_node_hits, protein_node_hits, gene_node_nb_rel, gene_node_hmlg_rel, [], gene_protein_coding_rel)
         # Close connection to the project-db
         project_db_conn.close()
 
@@ -367,7 +397,7 @@ class QueryManagement:
         # Sort gene node list by species,chromosome, contig, start
         gene_node_hits = [[item[0]] + item[1] for item in gene_node_hits.items()]
         gene_node_hits.sort(key=lambda x: (x[1], x[2], x[3]))
-        #protein_node_hits = [[item[0]] + item[1] for item in protein_node_hits.items()]
+        protein_node_hits = [[item[0]] + item[1] for item in protein_node_hits.items()]
         # Reformat data into json format:
         gene_node_json = ['{"data": {"id":"' + str(gene_node[0])
                           + '", "type":"Gene", "species":"' + str(gene_node[1])
@@ -378,11 +408,9 @@ class QueryManagement:
                           + '", "description":"' + str(gene_node[6])
                           + '", "nt_seq":"' + str(gene_node[7])+'"}}'
                           for gene_node in gene_node_hits]
-        # protein_node_json = ['{"data": {"id":"p' + protein_node[0] + '", "type":"Protein", "name":"' + protein_node[1] +
-        #                      '", "description":"' + protein_node[2] +
-        #                      '", "species":"' + protein_node[3] +
-        #                      '", "chromosome":"' + protein_node[4] +'"}}' for protein_node in protein_node_hits]
-        nodes_json = '"nodes": [' + ', '.join(gene_node_json) + ']'
+        protein_node_json = ['{"data": {"id":"' + protein_node[0] + '", "type":"Protein", "aa_seq":"' + protein_node[1] +
+                             '"}}' for protein_node in protein_node_hits]
+        nodes_json = '"nodes": [' + ', '.join(gene_node_json+protein_node_json) + ']'
         gene_gene_nb_json = ['{"data": {"id":"'+str(rel[0])+'_'+rel[1]+"_"+str(rel[2])+'", "source":"' +
                               str(rel[0]) + '", "type":"' + str(rel[1]) +
                               '", "target":"' + str(rel[2]) + '"}}' for rel in gene_node_nb_rel]
