@@ -174,7 +174,7 @@ class QueryManagement:
             return
         else:
             node_type = "Gene" if user_request[2][0]=="g" else "Protein"
-        node_id = user_request[2][1:]
+        node_id = user_request[2]
         relationship_type = user_request[3]
         # Modify 5NB and 3NB to 5_NB and 3_NB
         if relationship_type == "5NB":
