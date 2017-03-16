@@ -195,10 +195,11 @@ class QueryManagement:
         if relationship_type == "CODING" and node_type == "Gene":
             query_hits = project_db_conn.run("MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE gene.geneId={geneId} "
                                              "OPTIONAL MATCH (prot)-[hmlg_rel:HOMOLOG]->(protH) "
-                                             "RETURN  gene.species, prot, hmlg_rel, protH.proteinId",
+                                             "RETURN  gene.species, gene.name, prot, hmlg_rel, protH.proteinId",
                                              {"geneId": node_id})
             for record in query_hits:
-                protein_node_hits[record["prot"]["proteinId"]] = [record["prot"]["prot_seq"], record["gene.species"]]
+                protein_node_hits[record["prot"]["proteinId"]] = [record["prot"]["prot_seq"], record["gene.species"],
+                                                                  record["gene.name"]+("\n(Protein)")]
                 if (node_id, "CODING", record["prot"]["proteinId"]) not in gene_protein_coding_rel:
                     gene_protein_coding_rel.append((node_id, "CODING", record["prot"]["proteinId"]))
                 try:
@@ -413,6 +414,7 @@ class QueryManagement:
                           for gene_node in gene_node_hits]
         protein_node_json = ['{"data": {"id":"' + protein_node[0] + '", "type":"Protein", "aa_seq":"' + protein_node[1]
                              + '", "species":"' + protein_node[2] +
+                             + '", "name":"' + protein_node[3] +
                              '"}}' for protein_node in protein_node_hits]
         nodes_json = '"nodes": [' + ', '.join(gene_node_json+protein_node_json) + ']'
         gene_gene_nb_json = ['{"data": {"id":"'+str(rel[0])+'_'+rel[1]+"_"+str(rel[2])+'", "source":"' +
