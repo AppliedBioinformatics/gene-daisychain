@@ -13,7 +13,10 @@ for(var i = 0; i < species_list.length; i++)
                  // Create a new select option
                  var btn = document.createElement("button");
                  btn.setAttribute('type', 'button');
+                 btn.setAttribute('show', 'True')
                  btn.setAttribute('id', 'show_hide' + "_"+species_list[i]);
+                 btn.setAttribute('onclick', function(species_list[i]){
+                 console.log("click :-)");});
                  // Fill select option with data:
                  btn.innerHTML = species_list[i];
                  btn.value = species_list[i];
