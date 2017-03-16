@@ -72,17 +72,18 @@
 
                 gene_name = selectedElement.data("name");
                 nt_seq = selectedElement.data("nt_seq");
+                fasta_format_seq = ">"+gene_name+"\n"+nt_seq
                 row= table.insertRow(7);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
                 cell1.innerHTML= "Nucleotide sequence:";
-                cell2.innerHTML=  '<button type="button" onclick=loadFASTA(gene_name)>Click Me!</button>' ;
+                cell2.innerHTML=  '<button type="button" onclick=loadFASTA(fasta_format_seq)>Click Me!</button>' ;
 
                 row= table.insertRow(8);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
                 cell1.innerHTML= "BLAST nt sequence:";
-                cell2.innerHTML=  '<button type="button" onclick=blastNtFASTA(gene_name)>Click Me!</button>' ;
+                cell2.innerHTML=  '<button type="button" onclick=blastNtFASTA(fasta_format_seq)>Click Me!</button>' ;
 
 
 
@@ -114,12 +115,10 @@
    }
 
  // Function to load Coding Sequence
- function loadFASTA(name, seq)
+ function loadFASTA(seq)
  {
-    console.log("Loading FASTA for ", name, seq);
-    var fastaShow = window.open("", "Sequence for "+name, "width=200,height=100,menubar=no");
-    fastaShow.document.write(">"+name+"\n");
-    fastaShow.document.write(seq);
+    var fastaShow = window.open("", "FASTA sequence", "width=200,height=100,menubar=no");
+    fastaShow.document.write(fasta_format_seq);
  };
  
  function blastNtFASTA(gene_name, nt_seq)
