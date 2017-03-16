@@ -197,6 +197,7 @@ class QueryManagement:
                                              "secondary_node.geneId, secondary_node.proteinId",
                                              {"geneId": node_id} )
             for record in query_hits:
+                print(record)
                 gene_node_hits[record["targetGene"]["geneId"]] = \
                     [record["targetGene"][item] for item in ["species", "contig",
                                                    "start", "stop", "name", "descr", "nt_seq"]]
