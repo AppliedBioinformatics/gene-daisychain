@@ -298,6 +298,7 @@ class QueryManagement:
         if relationship_type == "HOMOLOG" and node_type == "Protein":
             query_hits = project_db_conn.run("MATCH(protein:Protein)-[rel:HOMOLOG]->(protH:Protein)<-[:CODING]-(geneH:Gene) "
                                              "WHERE protein.proteinId = {protId} "
+                                             "OPTIONAL MATCH (protH)-[secRel]-(secNode) "
                                              "RETURN rel, protH, geneH.species, geneH.name, "
                                              "secRel, secNode.geneId, secNode.proteinId", {"protId": node_id})
             for record in query_hits:
