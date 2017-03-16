@@ -8,10 +8,19 @@ console.log(species_list);
 while (colorLegend.firstChild) {
     colorLegend.removeChild(colorLegend.firstChild);
 }
-var btn = document.createElement('button');
-btn.setAttribute('type', 'button');
+for(var i = 0; i < species_list.length; i++)
+            {
+                 // Create a new select option
+                 var btn = document.createElement("button");
+                 btn.setAttribute('type', 'button');
+                 btn.setAttribute('id', 'show_hide' + "_"+species_list[i]);
+                 // Fill select option with data:
+                 btn.innerHTML = species_list[i];
+                 btn.value = species_list[i];
+                 colorLegend.appendChild(btn);
+             };
+
 //btn.setAttribute('onclick', functions[i]);
-btn.setAttribute('id', 'button' + "1");
-btn.innerHTML = 'test value';
-colorLegend.appendChild(btn);
+
+
 }
