@@ -17,7 +17,8 @@ for(var i = 0; i < species_list.length; i++)
                  // Fill select option with data:
                  btn.innerHTML = species_list[i];
                  btn.value = species_list[i];
-                 btn.style.background=color_node(species_list[i], "");
+                 btn.style.border="2px solid #4CAF50"
+                 //btn.style.background=color_node(species_list[i], "");
                  colorLegend.appendChild(btn);
              };
 
