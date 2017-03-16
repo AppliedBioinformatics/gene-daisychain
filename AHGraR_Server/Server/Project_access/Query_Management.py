@@ -102,13 +102,13 @@ class QueryManagement:
                             "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "1e-5",
                             "-num_threads", cpu_cores, "-parse_deflines"])
             with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
-                gene_names = [line.strip().lower() for line in tmp_res_file]
+                gene_ids = ["g"+line.strip().lower() for line in tmp_res_file]
             query_hits = project_db_conn.run(
                 "MATCH(gene:Gene) WHERE LOWER(gene.species) CONTAINS {query_species} "
                 "AND LOWER(gene.contig) CONTAINS {query_contig} "
-                "AND LOWER(gene.name) in {gene_name_list} "
+                "AND LOWER(gene.geneId) in {gene_id_list} "
                 "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
-                {"query_species": query_species, "gene_name_list": gene_names[:20],
+                {"query_species": query_species, "gene_id_list": gene_ids[:20],
                  "query_contig": query_contig})
         else: # If not nucleotide i.e. proteins eq
             blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
@@ -117,13 +117,13 @@ class QueryManagement:
                             "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "1e-5",
                             "-num_threads", cpu_cores, "-parse_deflines"])
             with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
-                protein_names = [line.strip().lower() for line in tmp_res_file]
+                protein_ids = ["p"+line.strip().lower() for line in tmp_res_file]
             query_hits = project_db_conn.run(
                 "MATCH(gene:Gene)-[:CODING]->(prot:Protein) WHERE LOWER(gene.species) CONTAINS {query_species} "
                 "AND LOWER(gene.contig) CONTAINS {query_contig} "
-                "AND LOWER(prot.name) in {prot_name_list} "
+                "AND LOWER(prot.proteinId) in {prot_id_list} "
                 "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
-                {"query_species": query_species, "prot_name_list": protein_names[:20],
+                {"query_species": query_species, "prot_id_list": protein_ids[:20],
                  "query_contig": query_contig})
 
         gene_node_hits = {}
