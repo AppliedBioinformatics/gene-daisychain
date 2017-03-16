@@ -197,7 +197,6 @@ class QueryManagement:
                                              "secondary_node.geneId, secondary_node.proteinId",
                                              {"geneId": node_id} )
             for record in query_hits:
-                print(record)
                 gene_node_hits[record["targetGene"]["geneId"]] = \
                     [record["targetGene"][item] for item in ["species", "contig",
                                                    "start", "stop", "name", "descr", "nt_seq"]]
@@ -209,6 +208,7 @@ class QueryManagement:
                     #gene_node_nb_rel.append((record["targetGene"]["geneId"], "5_NB", record["gene"]["geneId"]))
                 # Now add secondary relations of new nodes to list of relations
                 if record["targetGene_rel"]:
+                    print("2nd: "+record["targetGene_rel"])
                     target_gene_rel_type = record["targetGene_rel"].type
                     if target_gene_rel_type == "5_NB":
                         gene_node_nb_rel.append(
