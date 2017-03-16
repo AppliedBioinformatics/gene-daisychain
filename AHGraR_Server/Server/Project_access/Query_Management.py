@@ -208,7 +208,10 @@ class QueryManagement:
                     #gene_node_nb_rel.append((record["targetGene"]["geneId"], "5_NB", record["gene"]["geneId"]))
                 # Now add secondary relations of new nodes to list of relations
 
-                target_gene_rel_type = record["targetGene_rel"].type
+                try:
+                    target_gene_rel_type = record["targetGene_rel"].type
+                except:
+                    target_gene_rel_type = "None"
                 if target_gene_rel_type == "5_NB":
                     gene_node_nb_rel.append(
                         (record["targetGene"]["geneId"], "5_NB", record["secondary_node.geneId"]))
@@ -270,7 +273,10 @@ class QueryManagement:
                                              {"geneId": node_id})
 
             for record in query_hits:
-                rel_type = record["rel"].type
+                try:
+                    rel_type = record["rel"].type
+                except:
+                    rel_type = "None"
                 # First retrieve the set of homologeous genes
                 # and the set of HOMOLOG edges starting from this gene to all homologeous genes
                 if rel_type == "HOMOLOG":
