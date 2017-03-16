@@ -199,7 +199,7 @@ class QueryManagement:
                                              {"geneId": node_id})
             for record in query_hits:
                 protein_node_hits[record["prot"]["proteinId"]] = [record["prot"]["prot_seq"], record["gene.species"],
-                                                                  record["gene.name"]+("\n(Protein)")]
+                                                                  record["gene.name"]+("(Protein)")]
                 if (node_id, "CODING", record["prot"]["proteinId"]) not in gene_protein_coding_rel:
                     gene_protein_coding_rel.append((node_id, "CODING", record["prot"]["proteinId"]))
                 try:
