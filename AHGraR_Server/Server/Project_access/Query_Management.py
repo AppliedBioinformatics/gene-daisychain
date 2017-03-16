@@ -234,7 +234,7 @@ class QueryManagement:
             query_hits = project_db_conn.run("MATCH (gene:Gene)-[rel]->(relNode:Gene) WHERE "
                                              "gene.geneId = {geneId} "
                                              "OPTIONAL MATCH (relNode)-[relNode_rel]->(relrelNode) "
-                                             "RETURN rel, relNode, relNode_rel, relrelNode",
+                                             "RETURN rel, relNode, relNode_rel, relrelNode.geneId, relrelNode.proteinId",
                                              {"geneId": node_id})
 
             for record in query_hits:
@@ -259,26 +259,26 @@ class QueryManagement:
                 if record["relNode_rel"]:
                     relNode_rel_type = record["relNode_rel"].type
                     if relNode_rel_type == "5_NB":
-                        gene_node_nb_rel.append((record["relNode"]["geneId"], "5_NB", record["relrelNode"]["geneId"]))
-                        gene_node_nb_rel.append((record["relrelNode"]["geneId"], "3_NB", record["relNode"]["geneId"]))
+                        gene_node_nb_rel.append((record["relNode"]["geneId"], "5_NB", record["relrelNode.geneId"]))
+                        gene_node_nb_rel.append((record["relrelNode.geneId"], "3_NB", record["relNode"]["geneId"]))
                     if relNode_rel_type == "3_NB":
-                        gene_node_nb_rel.append((record["relNode"]["geneId"], "3_NB", record["relrelNode"]["geneId"]))
-                        gene_node_nb_rel.append((record["relrelNode"]["geneId"], "5_NB", record["relNode"]["geneId"]))
+                        gene_node_nb_rel.append((record["relNode"]["geneId"], "3_NB", record["relrelNode.geneId"]))
+                        gene_node_nb_rel.append((record["relrelNode.geneId"], "5_NB", record["relNode"]["geneId"]))
                     if relNode_rel_type == "HOMOLOG":
                         gene_node_hmlg_rel.append((record["relNode"]["geneId"],
                                                    "HOMOLOG",
                                                    record["relNode_rel"]["clstr_sens"],
                                                    record["relNode_rel"]["perc_match"],
-                                                   record["relrelNode"]["geneId"]))
-                        gene_node_hmlg_rel.append((record["relrelNode"]["geneId"],
+                                                   record["relrelNode.geneId"]))
+                        gene_node_hmlg_rel.append((record["relrelNode.geneId"],
                                                    "HOMOLOG",
                                                    record["relNode_rel"]["clstr_sens"],
                                                    record["relNode_rel"]["perc_match"],
                                                    record["relNode"]["geneId"]))
                     if relNode_rel_type == "CODING":
-                        gene_protein_coding_rel.append((record["relrelNode"]["geneId"],
+                        gene_protein_coding_rel.append((record["relNode"]["geneId"],
                                                         "CODING",
-                                                        record["relrelNode"]["proteinId"]))
+                                                        record["relrelNode.proteinId"]))
 
         print("Gene nodes: " + str(len(gene_node_hits)))
         print("Gene-gene NB relations: " + str(len(gene_node_nb_rel)))
