@@ -17,6 +17,8 @@ for(var i = 0; i < species_list.length; i++)
                  btn.setAttribute('species', species_list[i])
                  btn.setAttribute('id', 'show_hide' + "_"+species_list[i]);
                  btn.addEventListener("click", function(){
+                 if (this.getAttribute('show')=='True'){console.log("hiding now");this.setAttribute('show', 'False');};
+                 if (this.getAttribute('show')=='False'){console.log("showing now");this.setAttribute('show', 'True');};
                 console.log(this.getAttribute('species'));
                    });
                  // Fill select option with data:
