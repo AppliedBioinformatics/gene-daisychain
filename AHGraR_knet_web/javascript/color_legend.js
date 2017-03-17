@@ -4,7 +4,7 @@ console.log("Retrieve  color legend");
 buttons = document.getElementById('colorLegend').childNodes;
 for (var but in buttons)
 {
-console.log(buttons[but]);
+console.log(buttons[but].species);
 //show_hide(buttons[but].getAttribute('species'), buttons[but].getAttribute('show'));
 }
 }
