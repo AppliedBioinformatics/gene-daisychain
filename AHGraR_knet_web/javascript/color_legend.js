@@ -24,6 +24,7 @@ for(var i = 0; i < species_list.length; i++)
                  else
                  {console.log("showing now");
                  this.setAttribute('show', 'True');
+                 show_hide(this.getAttribute('species'), 'True');
                  this.style.background = "#91ffd4";};
                 console.log(this.getAttribute('species'));
                    });
