@@ -1,9 +1,17 @@
+function set_color_legend()
+{
+console.log("Retrieve  color legend");
+buttons = document.getElementById('colorLegend').childNodes;
+for (var but in buttons)
+{
+console.log(but.getAttribute('show'));
+}
+}
 function update_color_legend(species_list)
 {
-//$('#colorLegend span').text("Huhu");
+
 var colorLegend = document.getElementById('colorLegend');
-console.log("Update color legend");
-console.log(species_list);
+console.log("Set color legend");
 // Remove old elements
 while (colorLegend.firstChild) {
     colorLegend.removeChild(colorLegend.firstChild);
