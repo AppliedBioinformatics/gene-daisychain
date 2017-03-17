@@ -19,6 +19,7 @@ for(var i = 0; i < species_list.length; i++)
                  btn.addEventListener("click", function(){
                  if (this.getAttribute('show')=='True')
                  {console.log("hiding now");
+                 show_hide(this.getAttribute('species'), 'False');
                  this.setAttribute('show', 'False');
                  this.style.background = "#ff9263";}
                  else
