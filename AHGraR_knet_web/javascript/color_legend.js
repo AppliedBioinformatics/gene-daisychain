@@ -14,10 +14,10 @@ for(var i = 0; i < species_list.length; i++)
                  var btn = document.createElement("button");
                  btn.setAttribute('type', 'button');
                  btn.setAttribute('show', 'True')
+                 btn.setAttribute('species', species_list[i])
                  btn.setAttribute('id', 'show_hide' + "_"+species_list[i]);
-                 var cur_species = species_list[i];
                  btn.addEventListener("click", function(){
-                console.log(this.getAttribute('type'));
+                console.log(this.getAttribute('species'));
                    });
                  // Fill select option with data:
                  btn.innerHTML = species_list[i];
