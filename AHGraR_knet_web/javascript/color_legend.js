@@ -4,7 +4,7 @@ console.log("Retrieve  color legend");
 buttons = document.getElementById('colorLegend').childNodes;
 for (var but in buttons)
 {
-console.log(but);
+console.log(buttons[but]);
 }
 }
 function update_color_legend(species_list)
