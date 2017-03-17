@@ -3,10 +3,10 @@
 function color_node(species, chromosome)
 {
    colors = {
-        0: "#00ffff", //aqua 
+        0: "#a9a9a9", //darkgrey
         1: "#0000ff", //blue
         2: "#a52a2a", //brown
-        3: "#e9967a", //darksalmon
+        3: "#ff8c00", //darkorange
         4: "#ff00ff", //fuchsia
         5: "#ffd700", //gold
         6: "#008000", //green
@@ -26,12 +26,12 @@ function color_node(species, chromosome)
         20: "#ffff00", //yellow
         21: "#00008b", //darkblue
         22: "#008b8b", //darkcyan
-        23: "#a9a9a9", //darkgrey
+        23: "#00ffff", //aqua
         24: "#006400", //darkgreen
         25: "#bdb76b", //darkkhaki
         26: "#8b008b", //darkmagenta
         27: "#556b2f", //darkolivegreen
-        28: "#ff8c00", //darkorange
+        28: "#e9967a", //darksalmon
         29: "#9932cc", //darkorchid
         30: "#8b0000" //darkred
  
