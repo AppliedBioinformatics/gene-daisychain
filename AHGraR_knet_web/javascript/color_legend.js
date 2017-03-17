@@ -23,7 +23,7 @@ for(var i = 0; i < species_list.length; i++)
                  else
                  {console.log("showing now");
                  this.setAttribute('show', 'True');
-                 this.style.background-color = "#4CAF50"};
+                 this.style.background = "#4CAF50";};
                 console.log(this.getAttribute('species'));
                    });
                  // Fill select option with data:
