@@ -17,8 +17,8 @@ for(var i = 0; i < species_list.length; i++)
                  btn.setAttribute('id', 'show_hide' + "_"+species_list[i]);
                  var cur_species = species_list[i];
                  btn.addEventListener("click", function(){
-                console.log(cur_species);
-});
+                console.log(this.getAttribute('type'));
+                   });
                  // Fill select option with data:
                  btn.innerHTML = species_list[i];
                  btn.value = species_list[i];
