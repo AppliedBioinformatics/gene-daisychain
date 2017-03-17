@@ -19,17 +19,19 @@ for(var i = 0; i < species_list.length; i++)
                  btn.addEventListener("click", function(){
                  if (this.getAttribute('show')=='True')
                  {console.log("hiding now");
-                 this.setAttribute('show', 'False');}
+                 this.setAttribute('show', 'False');
+                 this.style.background = "#ff9263";}
                  else
                  {console.log("showing now");
                  this.setAttribute('show', 'True');
-                 this.style.background = "#4CAF50";};
+                 this.style.background = "#91ffd4";};
                 console.log(this.getAttribute('species'));
                    });
                  // Fill select option with data:
                  btn.innerHTML = species_list[i];
                  btn.value = species_list[i];
                  btn.style.border="2px solid "+color_node(species_list[i], "")
+                 btn.style.background = "#91ffd4";
                  //btn.style.background=color_node(species_list[i], "");
                  colorLegend.appendChild(btn);
              };
