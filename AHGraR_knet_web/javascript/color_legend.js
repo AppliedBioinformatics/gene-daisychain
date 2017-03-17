@@ -21,7 +21,9 @@ for(var i = 0; i < species_list.length; i++)
                  {console.log("hiding now");
                  this.setAttribute('show', 'False');}
                  else
-                 {console.log("showing now");this.setAttribute('show', 'True');};
+                 {console.log("showing now");
+                 this.setAttribute('show', 'True');
+                 this.style.background-color = "#4CAF50"};
                 console.log(this.getAttribute('species'));
                    });
                  // Fill select option with data:
