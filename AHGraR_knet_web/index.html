@@ -54,7 +54,8 @@
         <title>AHGraR-web with KnetMaps.js</title>
 </head>
 <!-- KnetMaps -->
-   <body> 
+   <body>
+    <div id="search-bar">
         <select id="select_proj" onChange="javascript:changeProjectID();">
        </select>
        <select id="select_species" onChange="javascript:changeSpecies()";>
@@ -68,6 +69,8 @@
             <option value="BLAST">BLAST</option>
        </select>
         <button type="button" onclick="searchNow(this)">Search!</button>
+    </div>
+
     <!--<select id="select_sensitivity" onChange="javascript:changeSensitivity()";>
             <option value="1.4">Very large clusters</option>
             <option value="2.0">Large clusters</option>
