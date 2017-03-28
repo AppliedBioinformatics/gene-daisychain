@@ -11,6 +11,9 @@
       <!--Load Bootstrap CSS and JS-->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <!-- Load jsTree -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
       <!-- Load KnetMaps.js as described here:
       https://github.com/Rothamsted/knetmaps.js/blob/master/docs/QuickStart_Guide.md-->
       <link href="css/index-style.css" rel="stylesheet" /> <!-- page stylesheet-->
@@ -110,6 +113,7 @@
     </div>
     <div class="row">
     <div class="col-sm-12 collapse" id="result-picker" style="background-color:grey;">
+         <div style="height: 400 px;" id="jstree_div"></div>
         <button type="button" class="btn btn-default" id="render_data_btn" data="" onclick="renderJSON()">Render data</button>
     </div>
     </div>

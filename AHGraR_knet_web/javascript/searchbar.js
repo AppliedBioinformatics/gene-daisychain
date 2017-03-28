@@ -206,6 +206,7 @@
          // Load search result into jstree
          function showSearchResult()
          {
+         $(function () { $('#jstree_div').jstree(); });
          node_data = search_result["nodes"];
          for (var i = 0, len = node_data.length; i < len; i++){
          console.log(node_data[i]);
