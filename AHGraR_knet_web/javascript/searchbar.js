@@ -207,7 +207,7 @@
          function showSearchResult()
          {
          $(function () { $('#jstree_div').jstree(); });
-         $('#jstree_divfffff').jstree({ 'core' : {
+         $('#jstree_div').jstree({ 'core' : {
     'data' : [
        'Simple root node',
        {
