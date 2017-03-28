@@ -190,6 +190,7 @@
                 $('#knet-maps-row').collapse("hide");
                 $('#result-picker').collapse("show");
                 search_result = JSON.parse(evt.data);
+                showSearchResult();
                 //graphJSON = JSON.parse(evt.data);
                 //console.log(graphJSON);
             //initializeNetworkView();
@@ -200,6 +201,13 @@
             //search_button.disabled = false;
                 };
          };
+
+
+         // Load search result into jstree
+         function showSearchResult()
+         {
+         console.log(search_result);
+         }
          // Render json node/edge data into a visual representation
          function renderJSON()
          {
