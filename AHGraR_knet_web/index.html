@@ -43,6 +43,16 @@
       <script src="javascript/color_legend.js"></script>
       <script src="javascript/node_show_hide.js"></script>
       <script src="javascript/searchbar.js"></script>
+      <script type="text/javascript">
+      // Global variables
+      var project_id = "0";
+      var species = "";
+      // Trigger load list of available projects
+         window.onload = function(){
+             LoadProjectList();
+      };
+
+      </script>
       <!-- Launch viewer -->
       <script src="js/launchNetwork.js"></script>
 
@@ -122,10 +132,10 @@
   <script>
            //generateNetworkGraph("data/test_data.json");
 
-      var project_id = "0";
-      var species = "";
-      var color_map = {};
-      LoadProjectList();
+      //var project_id = "0";
+      //var species = "";
+      //var color_map = {};
+      //LoadProjectList();
       // Trigger load list of available projects
 
             </script>
