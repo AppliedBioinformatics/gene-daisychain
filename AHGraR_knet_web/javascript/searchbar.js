@@ -83,6 +83,7 @@
             console.log("SetSpeciesList");
             // Find select menu
             select_species_menu = document.getElementById("select_species");
+            console.log(select_species_menu)
             // Each line of data contains one species
             species_items = received_msg.split("\n");
             // Send species items list to color legend
