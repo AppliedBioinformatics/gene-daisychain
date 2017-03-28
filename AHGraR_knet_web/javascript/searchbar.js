@@ -159,10 +159,10 @@
          };
          // Search for genes/proteins in the project database
          // Collects current settings in select menus and text field
-         function searchKeyword()
+         function searchKeyword(search_button)
          {
             // Deactivate search button until results are retrieved
-            //search_button.disabled = true;
+            search_button.disabled = true;
             // Project ID and species selection are global variables,
             // retrieve chromosome selection and keyword
             var select_chrom_menu = document.getElementById("select_chromosome");
@@ -183,7 +183,7 @@
 
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
             chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);
-            //search_button.innerHTML = "Searching"};
+            search_button.innerHTML = "Searching"};
             set_color_legend();
              // Receive and process query result
             wsconn.onmessage = function (evt){
@@ -191,11 +191,11 @@
                 graphJSON = JSON.parse(evt.data)
                 console.log(graphJSON);
             initializeNetworkView();
-            //search_button.innerHTML = "Building graph"
+            search_button.innerHTML = "Building graph"
             updateCyLegend();
             changeSensitivity();
-            //search_button.innerHTML = "Search!"
-            //search_button.disabled = false;
+            search_button.innerHTML = "Search!"
+            search_button.disabled = false;
                 };
 
          };
