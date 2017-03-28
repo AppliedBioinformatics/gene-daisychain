@@ -83,7 +83,6 @@
             console.log("SetSpeciesList");
             // Find select menu
             select_species_menu = document.getElementById("select_species");
-            console.log(select_species_menu)
             // Each line of data contains one species
             species_items = received_msg.split("\n");
             // Send species items list to color legend
@@ -92,6 +91,7 @@
             while (select_species_menu.length > 0)
             {
             select_species_menu.remove(select_species_menu.length-1);
+            console.log("remove")
             }
             // Add default option: All species
             option = document.createElement("option");
@@ -100,6 +100,7 @@
             option.value = "*";
             // Add new option to select menu
             select_species_menu.add(option);
+            console.log("added option")
             // Iterate through project data
             for(var i = 0; i < species_items.length; i++)
             {
