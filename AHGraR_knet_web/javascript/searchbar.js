@@ -170,13 +170,12 @@
             var keyword = document.getElementById("keyword").value;
             if(document.getElementById("radio_all").checked)
             {
-            type = "ALL";
+            var type = "ALL";
             }
             else
             {
-            type = "ANY";
+            var type = "ANY";
             };
-            var type = document.getElementById("select_type").value;
             // Open websocket to send query to server
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Replace underscores in queries with tabs
