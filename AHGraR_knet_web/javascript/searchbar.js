@@ -189,8 +189,7 @@
                 search_button.innerHTML = "Receiving data";
                 $('#knet-maps-row').collapse("hide");
                 $('#result-picker').collapse("show");
-                $('#render_data_btn').data=JSON.parse(evt.data);
-                console.log(JSON.parse(evt.data));
+                $('#render_data_btn').attr('data',JSON.parse(evt.data));
                 //graphJSON = JSON.parse(evt.data);
                 //console.log(graphJSON);
             //initializeNetworkView();
