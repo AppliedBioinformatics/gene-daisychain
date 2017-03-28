@@ -207,6 +207,22 @@
          function showSearchResult()
          {
          $(function () { $('#jstree_div').jstree(); });
+         $('#using_json').jstree({ 'core' : {
+    'data' : [
+       'Simple root node',
+       {
+         'text' : 'Root node 2',
+         'state' : {
+           'opened' : true,
+           'selected' : true
+         },
+         'children' : [
+           { 'text' : 'Child 1' },
+           'Child 2'
+         ]
+      }
+    ]
+} });
          node_data = search_result["nodes"];
          for (var i = 0, len = node_data.length; i < len; i++){
          console.log(node_data[i]);
