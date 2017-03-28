@@ -161,8 +161,6 @@
          // Collects current settings in select menus and text field
          function searchKeyword(search_button)
          {
-            // Open new window
-            var myWindow = window.open("", "", "width=200,height=100");
             // Deactivate search button until results are retrieved
             search_button.disabled = true;
             // Project ID and species selection are global variables,
@@ -181,8 +179,6 @@
             // Open websocket to send query to server
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Replace underscores in queries with tabs
-            //PAQURY_SEAR_ProjectID/ProjectName_CMD/WEB_Organism_Chromosome_Keyword_ALL/ANY
-
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
             chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);
             search_button.innerHTML = "Searching"};
@@ -190,6 +186,8 @@
              // Receive and process query result
             wsconn.onmessage = function (evt){
                 search_button.innerHTML = "Receiving data"
+                // Open new window
+                var myWindow = window.open("", "", "width=200,height=100");
                 graphJSON = JSON.parse(evt.data)
                 console.log(graphJSON);
             initializeNetworkView();
