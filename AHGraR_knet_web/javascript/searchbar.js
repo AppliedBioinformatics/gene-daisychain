@@ -162,7 +162,7 @@
          function searchKeyword(search_button)
          {
             // Open new window
-            window.open("www.racingblog.de");
+            var myWindow = window.open("", "", "width=200,height=100");
             // Deactivate search button until results are retrieved
             search_button.disabled = true;
             // Project ID and species selection are global variables,
