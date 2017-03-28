@@ -46,7 +46,7 @@ window.onload= function() {
                     "<input type='image' id='helpURL' src='image/help.png' onclick='openKnetHelpPage();' title='Go to help documentation' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>";
  $('#knetmaps-menu').html(knet_menu);
 
- launchNetwork($('#dataset_dropdown').val());
+ //launchNetwork($('#dataset_dropdown').val());
 }
 
 function launchNetwork(jsonFileName) {
