@@ -110,7 +110,20 @@
     </div>
     <div class="row">
     <div class="col-sm-12" style="background-color:grey;">
-      <p>knet</p>
+      <div id="knet-maps">
+                <div id="itemInfo" class="infoDiv" style="display:none;"><!-- Item Info pane -->
+                    <table id="itemInfo_Table" class="infoTable" cellspacing=1>
+                        <thead><th>Item Info:</th>
+                    <th><button id="btnCloseItemInfoPane" onclick="closeItemInfoPane();">Close</button></th>
+                        </thead><tbody></tbody></table>
+                </div>
+                <!-- KnetMaps Menubar -->
+                <div id="knetmaps-menu"></div>
+                <!-- The core cytoscapeJS container -->
+                <div id="cy"></div><br/>
+                <!-- popup dialog -->
+                <div id="infoDialog"></div>
+            </div>
     </div>
     </div>
     <div class="row">
