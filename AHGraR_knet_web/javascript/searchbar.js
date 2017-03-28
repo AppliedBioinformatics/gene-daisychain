@@ -189,7 +189,7 @@
                 var search_result = "Hallo :-)";
                 // Open new window
                 var myWindow = window.open("popup_selector.html", "", "width=200,height=100");
-                graphJSON = JSON.parse(search_result)
+                graphJSON = JSON.parse(evt.data);
                 console.log(graphJSON);
             initializeNetworkView();
             search_button.innerHTML = "Building graph"
