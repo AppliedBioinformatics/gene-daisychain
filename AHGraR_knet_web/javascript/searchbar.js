@@ -185,14 +185,12 @@
             set_color_legend();
              // Receive and process query result
             wsconn.onmessage = function (evt){
-                search_button.innerHTML = "Receiving data"
-                var search_result = "Hallo :-)";
-                // Open new window
-                var myWindow = window.open("popup_selector.html", "", "width=200,height=100");
+                search_button.innerHTML = "Receiving data";
+                $('.collapse').collapse("hide");
                 graphJSON = JSON.parse(evt.data);
                 console.log(graphJSON);
             initializeNetworkView();
-            search_button.innerHTML = "Building graph"
+            search_button.innerHTML = "Building graph";
             updateCyLegend();
             changeSensitivity();
             search_button.innerHTML = "Search!"
