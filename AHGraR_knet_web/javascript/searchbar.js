@@ -159,7 +159,7 @@
          };
          // Search for genes/proteins in the project database
          // Collects current settings in select menus and text field
-         function searchNow(search_button)
+         function searchKeyword(search_button)
          {
             // Deactivate search button until results are retrieved
             search_button.disabled = true;
@@ -168,6 +168,14 @@
             var select_chrom_menu = document.getElementById("select_chromosome");
             var chromosome = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
             var keyword = document.getElementById("keyword").value;
+            if(document.getElementById("radio_all").checked)
+            {
+            type = "ALL";
+            }
+            else
+            {
+            type = "ANY";
+            };
             var type = document.getElementById("select_type").value;
             // Open websocket to send query to server
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
