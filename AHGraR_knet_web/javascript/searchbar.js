@@ -187,6 +187,7 @@
             wsconn.onmessage = function (evt){
                 search_button.innerHTML = "Receiving data";
                 $('#result-picker').collapse("show");
+                $('#knet-maps-row').collapse("hide");
                 graphJSON = JSON.parse(evt.data);
                 console.log(graphJSON);
             initializeNetworkView();
