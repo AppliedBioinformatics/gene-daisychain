@@ -190,6 +190,7 @@
                 $('#knet-maps-row').collapse("hide");
                 $('#result-picker').collapse("show");
                 $('#render_data_btn').attr('data',JSON.parse(evt.data));
+                console.log($('#render_data_btn').attr('data'));
                 //graphJSON = JSON.parse(evt.data);
                 //console.log(graphJSON);
             //initializeNetworkView();
