@@ -189,8 +189,7 @@
                 search_button.innerHTML = "Receiving data";
                 $('#knet-maps-row').collapse("hide");
                 $('#result-picker').collapse("show");
-                $('#render_data_btn').attr('data',JSON.parse(evt.data));
-                console.log($('#render_data_btn').attr('data'));
+                search_result = JSON.parse(evt.data);
                 //graphJSON = JSON.parse(evt.data);
                 //console.log(graphJSON);
             //initializeNetworkView();
@@ -202,10 +201,10 @@
                 };
          };
          // Render json node/edge data into a visual representation
-         function renderJSON(json_data_filtered)
+         function renderJSON()
          {
          // Set global graphJSON variable to new json_data
-         graphJSON = json_data_filtered;
+         graphJSON = search_result;
          console.log(graphJSON);
          initializeNetworkView();
          search_button = $('#search_kwd_btm')
