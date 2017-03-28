@@ -161,6 +161,8 @@
          // Collects current settings in select menus and text field
          function searchKeyword(search_button)
          {
+            // Open new window
+            window.open("www.racingblog.de");
             // Deactivate search button until results are retrieved
             search_button.disabled = true;
             // Project ID and species selection are global variables,
