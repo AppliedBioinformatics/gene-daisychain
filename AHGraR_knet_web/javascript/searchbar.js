@@ -187,7 +187,7 @@
             wsconn.onmessage = function (evt){
                 search_button.innerHTML = "Receiving data"
                 // Open new window
-                var myWindow = window.open("popup_selector.html", "", "width=200,height=100");
+                var myWindow = window.open("popup_selector.html?data="+evt.data, "", "width=200,height=100");
                 graphJSON = JSON.parse(evt.data)
                 console.log(graphJSON);
             initializeNetworkView();
