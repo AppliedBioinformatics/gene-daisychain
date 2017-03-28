@@ -186,7 +186,7 @@
              // Receive and process query result
             wsconn.onmessage = function (evt){
                 search_button.innerHTML = "Receiving data";
-                $('.collapse').collapse("hide");
+                $('.collapse').collapse("show");
                 graphJSON = JSON.parse(evt.data);
                 console.log(graphJSON);
             initializeNetworkView();
