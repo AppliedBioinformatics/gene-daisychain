@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title>AHGraR-web with KnetMaps.js and Bootstrap</title>
+      <meta charset="utf-8">
+      <!-- Load jquery required by Bootstrap and KnetMaps.js -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <!-- Bootstrap -->
+      <!-- Define screen width and initial scale-->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!--Load Bootstrap CSS and JS-->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <!-- KnetMaps.js -->
+
+
+  </head>
+  <body>
+    <div class="container-fluid">
+    <div class="row">
+    <div class="col-sm-12" style="background-color:yellow;">
+      <h1>AHGraR</h1>
+    </div>
+    </div>
+    <div class="row">
+    <div class="col-sm-12" style="background-color:green;">
+    <form class="form-inline">
+        <div class="form-group">
+            <label for="selprj">Project:</label>
+            <select class="form-control" id="selprj">
+            </select>
+            <label for="selspec">Species:</label>
+            <select class="form-control" id="selspec">
+            </select>
+            <label for="selcontig">Contig:</label>
+            <select class="form-control" id="selcontig">
+            </select>
+        </div>
+    </form>
+    </div>
+    </div>
+    <div class="row">
+    <div class="col-sm-6" style="background-color:blue;">
+    <form class="form">
+        <div class="input-group">
+            <label for="kwd">Enter keyword(s):</label>
+            <input id="kwd" type="text" class="form-control" name="kwd" placeholder="Keyword(s)">
+        </div>
+        <div>
+        <label class="radio-inline"><input type="radio" name="optradio">Match all keywords</label>
+        <label class="radio-inline"><input type="radio" name="optradio">Match at least one keyword</label>
+        </div>
+        <button type="button" class="btn btn-default">Search by keyword</button>
+        </form>
+    </div>
+    <div class="col-sm-6" style="background-color:red;">
+    <form>
+        <div class="form-group">
+            <label for="tbfasta">Fasta sequence:</label>
+            <textarea class="form-control" rows="2" id="tbfasta" placeholder="Nucleotide or protein sequence"></textarea>
+        </div>
+        <form class="form-inline">
+            <div class="col-sm-6" style="background-color:red;">
+            <div class="input-group">
+            <span class="input-group-addon">BLAST sensitivity</span>
+            <input id="blastsens" type="text" class="form-control" name="blastsens" value="0.95">
+            </div>
+            </div>
+            <div class="col-sm-6" style="background-color:red;">
+            <button type="button" class="btn btn-default">Search by BLAST2</button>
+            </div>
+        </form>
+    </form>
+    </div>
+    </div>
+    <div class="row">
+    <div class="col-sm-12" style="background-color:grey;">
+      <p>knet</p>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="background-color:orange;">
+      <p>Status</p>
+    </div>
+    </div>
+    </div>
+  </body>
+</html>
