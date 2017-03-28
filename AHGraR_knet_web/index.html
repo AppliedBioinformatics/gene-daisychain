@@ -35,7 +35,7 @@
       <script src="javascript/knet-container.js"></script>
       <script src="javascript/knet-toggleFullScreen.js"></script>
       <script src="javascript/knet-generator.js"></script>
-      <!-- Specific for AHGraR -->
+      <!-- Code specific for AHGraR that interacts with KnetMaps-->
       <script src="javascript/knet-itemInfoAHGraR.js"></script>
       <script src="javascript/select_sensitivity.js"></script>
       <script src="javascript/extend_graph.js"></script>
@@ -53,7 +53,7 @@
   <body>
     <div class="container-fluid">
     <div class="row">
-    <div class="col-sm-12" style="background-color:yellow;">
+    <div class="col-sm-12" style="background-color:white;">
       <h1>AHGraR</h1>
     </div>
     </div>
@@ -61,14 +61,14 @@
     <div class="col-sm-12" style="background-color:green;">
     <form class="form-inline">
         <div class="form-group">
-            <label for="selprj">Project:</label>
-            <select class="form-control" id="selprj">
+            <label for="select_proj">Project:</label>
+            <select class="form-control" id="select_proj" onChange="javascript:changeProjectID();">
             </select>
-            <label for="selspec">Species:</label>
-            <select class="form-control" id="selspec">
+            <label for="select_species">Species:</label>
+            <select class="form-control" id="select_species" onChange="javascript:changeSpecies();">
             </select>
-            <label for="selcontig">Contig:</label>
-            <select class="form-control" id="selcontig">
+            <label for="select_chromosome">Contig:</label>
+            <select class="form-control" id="select_chromosome">
             </select>
         </div>
     </form>
