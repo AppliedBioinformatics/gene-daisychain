@@ -159,8 +159,9 @@
          };
          // Search for genes/proteins in the project database
          // Collects current settings in select menus and text field
-         function searchKeyword(search_button)
+         function searchKeyword()
          {
+            search_button = $('#search_kwd_btm')
             // Deactivate search button until results are retrieved
             search_button.disabled = true;
             // Project ID and species selection are global variables,
@@ -186,16 +187,32 @@
              // Receive and process query result
             wsconn.onmessage = function (evt){
                 search_button.innerHTML = "Receiving data";
-                $('#result-picker').collapse("show");
                 $('#knet-maps-row').collapse("hide");
-                graphJSON = JSON.parse(evt.data);
-                console.log(graphJSON);
-            initializeNetworkView();
-            search_button.innerHTML = "Building graph";
-            updateCyLegend();
-            changeSensitivity();
-            search_button.innerHTML = "Search!"
-            search_button.disabled = false;
+                $('#result-picker').collapse("show");
+                $('#render_data_btn').data=evt.data;
+                //graphJSON = JSON.parse(evt.data);
+                //console.log(graphJSON);
+            //initializeNetworkView();
+            //search_button.innerHTML = "Building graph";
+            //updateCyLegend();
+            //changeSensitivity();
+            //search_button.innerHTML = "Search!"
+            //search_button.disabled = false;
                 };
-
          };
+         // Render json node/edge data into a visual representation
+         function renderJSON(json_data_filtered)
+         {
+         // Set global graphJSON variable to new json_data
+         graphJSON = json_data_filtered;
+         console.log(graphJSON);
+         initializeNetworkView();
+         search_button = $('#search_kwd_btm')
+         search_button.innerHTML = "Building graph";
+         updateCyLegend();
+         changeSensitivity();
+         search_button.innerHTML = "Search!"
+         search_button.disabled = false;
+         $('#result-picker').collapse("hide");
+         $('#knet-maps-row').collapse("show");
+         }

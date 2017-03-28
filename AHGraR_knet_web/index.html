@@ -85,7 +85,7 @@
         <label class="radio-inline"><input checked type="radio" id="radio_all">Match all keywords</label>
         <label class="radio-inline"><input type="radio" name="radio_any">Match at least one keyword</label>
         </div>
-        <button type="button" class="btn btn-default" onclick="searchKeyword(this)">Search by keyword</button>
+        <button type="button" class="btn btn-default" id = "search_kwd_btm" onclick="searchKeyword()">Search by keyword</button>
         </form>
     </div>
     <div class="col-sm-6" style="background-color:red;">
@@ -110,7 +110,7 @@
     </div>
     <div class="row">
     <div class="col-sm-12 collapse" id="result-picker" style="background-color:grey;">
-        <p>Collapse me</p>
+        <button type="button" class="btn btn-default" id="render_data_btn" data="" onclick="renderJSON(this.data)">Render data</button>
     </div>
     </div>
     <div class="row">
