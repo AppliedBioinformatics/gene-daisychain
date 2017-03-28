@@ -206,7 +206,7 @@
          // Load search result into jstree
          function showSearchResult()
          {
-         console.log(search_result);
+         console.log(search_result["nodes"]);
          }
          // Render json node/edge data into a visual representation
          function renderJSON()
