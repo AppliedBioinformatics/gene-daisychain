@@ -620,8 +620,12 @@ class QueryManagement:
         query_contig = str(query_term[1]).lower()
         # Separate keywords by whitespace
         query_keyword = str(query_term[2]).lower().split(" ")
+        # Remove keywords that are empty, i.e. ""
+        query_keyword = [item for item in query_keyword if item]
         match_all_any = str(query_term[3]).upper()
-
+        # If there are no query keywords, set match_all_any to "none"
+        if len(query_keyword)==0:
+            match_all_any = "none"
         # Collect gene node hits and protein node hits
         # Also collect relations between gene nodes, protein nodes
         # and gene/protein nodes

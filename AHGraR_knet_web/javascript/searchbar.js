@@ -169,6 +169,15 @@
             var select_chrom_menu = document.getElementById("select_chromosome");
             var chromosome = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
             var keyword = document.getElementById("keyword").value;
+            // Trim string, i.e. remove leadind and trailing white spaces
+            keyword = $.trim(keyword);
+            // Check for empty keyword after trimming
+            if(keyword.length == 0)
+            {
+            console.log("Short kwd");
+            search_button.attr("disabled",false);
+            return;
+            }
             if(document.getElementById("radio_all").checked)
             {
             var type = "ALL";
