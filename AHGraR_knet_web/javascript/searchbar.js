@@ -182,11 +182,11 @@
             // Replace underscores in queries with tabs
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
             chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);
-            search_button.attr("innerHTML", "Searching");};
+            search_button.attr("HTML", "Searching");};
             set_color_legend();
              // Receive and process query result
             wsconn.onmessage = function (evt){
-                search_button.attr("innerHTML", "Receiving data");
+                search_button.attr("HTML", "Receiving data");
                 $('#knet-maps-row').collapse("hide");
                 $('#statusbar').collapse("hide");
                 $('#result-tree').collapse("show");
