@@ -211,7 +211,7 @@
          $('#jstree_div').jstree("destroy").empty();
          // jsTree accepts node data in JSON format
          // Initialize an empty container for node data
-         var jsdata = {'core': {'data': [], 'themes': {'variant':'large'}, 'animation':false}, 'plugins':["checkbox", "sort"]};
+         var jsdata = {'core': {'data': [{'id': "$$$all_res", "parent":"#", "text": "Search results"}], 'themes': {'variant':'large'}, 'animation':false}, 'plugins':["checkbox", "sort"]};
          // Retrieve node data from search results (edges are not filtered)
          node_data = search_result["nodes"];
          // Collect assembly ids and contig ids in a separate array
@@ -236,7 +236,7 @@
          contig_ids = contig_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
          // Add assembly_id nodes to jsTree
          for (var i = 0, len = assembly_ids.length; i < len; i++){
-            jsdata['core']['data'].push({'id': assembly_ids[i], "parent":"#", "text": assembly_ids[i]});
+            jsdata['core']['data'].push({'id': assembly_ids[i], "parent":"$$$all_res", "text": assembly_ids[i]});
          };
          // Add contig_id nodes to jsTree
          for (var i = 0, len = contig_ids.length; i < len; i++){
