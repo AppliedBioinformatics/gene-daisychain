@@ -206,21 +206,32 @@
          // Load search result into jstree
          function showSearchResult()
          {
-         var jsdata = {'core': {'data': [{'id': "a", "parent":"b", "text": "node A"}, {'id': "b", "parent":"#", "text": "node B"}]}};
+         // Remove old instance of jstree
+         $('#jstree_div').jstree("destroy").empty();
+         // jsTree accepts node data in JSON format
+         // Initialize an empty container for node data
+         var jsdata = {'core': {'data': []}};
+         // Retrieve node data from search results (edges are not filtered)
          node_data = search_result["nodes"];
+         // Collect assembly ids and contig ids in a separate array
+         // Make ids unique, they serve as parent nodes to gene nodes
+         // Assembly->Contig-> Gene
          assembly_ids = [];
          contig_ids = []
+         // Loop through found gene nodes
          for (var i = 0, len = node_data.length; i < len; i++){
-         //assembly_ids.push({'id':node_data[i]['data']['species'], "parent":"#", "text":node_data[i]['data']['species']});
+         // Collect assembly and contig ids
+         // contig id is stored as assembly_name$$$contig_name
+         // to allow for similar contig names in different assemblies
          assembly_ids.push(node_data[i]['data']['species']);
          contig_ids.push(node_data[i]['data']['species']+"$$$"+node_data[i]['data']['contig']);
+         console.log(node_data[i]);
+         //jsdata['core']['data'].push({'id': node_data[i]['data']['species']+"$$$"+node_data[i]['data']['contig'], "parent":assembly_name, "text": contig_name});
          };
-         console.log(assembly_ids);
-         console.log(contig_ids);
+
          assembly_ids = assembly_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
          contig_ids = contig_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
-         console.log(assembly_ids);
-         console.log(contig_ids);
+
          for (var i = 0, len = assembly_ids.length; i < len; i++){
             jsdata['core']['data'].push({'id': assembly_ids[i], "parent":"#", "text": assembly_ids[i]});
          };
