@@ -217,11 +217,11 @@
          };
          console.log(assembly_ids);
          console.log(contig_ids);
-         assembly_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
-         contig_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
+         assembly_ids = assembly_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
+         contig_ids = contig_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
          console.log(assembly_ids);
          console.log(contig_ids);
-         jsdata['core']['data']=assembly_nodes.filter( function(value,index,self){return self.indexOf(value) === index;} );
+         jsdata['core']['data']={};
          $('#jstree_div').jstree(jsdata);
          }
          // Render json node/edge data into a visual representation
