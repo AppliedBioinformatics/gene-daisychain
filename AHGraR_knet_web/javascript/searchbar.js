@@ -253,10 +253,12 @@
          {
          // Retrieve selected genes from jsTree
          selected_gene_data =$('#jstree_div').jstree("get_selected", true);
+         selected_genes = [];
          for (var i = 0, len = selected_gene_data.length; i < len; i++){
-         console.log(selected_gene_data[i]['original']['node_data']);
+         selected_genes.push(selected_gene_data[i]['original']['node_data']);
          };
          // Set global graphJSON variable to new json_data
+         search_result["nodes"]=selected_genes;
          graphJSON = search_result;
          console.log(graphJSON);
          initializeNetworkView();
