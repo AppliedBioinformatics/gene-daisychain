@@ -207,12 +207,14 @@
          function showSearchResult()
          {
          var jsdata = {'core': {'data': [{'id': "a", "parent":"b", "text": "node A"}, {'id': "b", "parent":"#", "text": "node B"}]}};
-         $('#jstree_div').jstree(jsdata);
          node_data = search_result["nodes"];
+         assembly_nodes = [];
          for (var i = 0, len = node_data.length; i < len; i++){
+         assembly_nodes.push({'id':node_data[i]['data']['species'], "parent":"#", "text":node_data[i]['data']['species']});
          console.log(node_data[i]['data']['species']);
          };
-
+         jsdata['core']['data']=assembly_nodes;
+         $('#jstree_div').jstree(jsdata);
          }
          // Render json node/edge data into a visual representation
          function renderJSON()
