@@ -210,7 +210,7 @@
          $('#jstree_div').jstree("destroy").empty();
          // jsTree accepts node data in JSON format
          // Initialize an empty container for node data
-         var jsdata = {'core': {'data': []}, 'plugins':["checkbox"]};
+         var jsdata = {'core': {'data': [], 'themes': {'variant':'large'}, 'animation':'false'}, 'plugins':["checkbox"]};
          // Retrieve node data from search results (edges are not filtered)
          node_data = search_result["nodes"];
          // Collect assembly ids and contig ids in a separate array
