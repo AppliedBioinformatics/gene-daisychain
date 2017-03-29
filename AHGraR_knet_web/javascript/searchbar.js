@@ -206,10 +206,11 @@
          // Load search result into jstree
          function showSearchResult()
          {
-         jsdata = {'core': 'data': [
-         {'id': "a", "parent":"#", "text": "node A"},
-         {'id': "b", "parent":"a", "text": "node B"}
-         ]};
+         //jsdata = {'core': 'data': [
+         //{'id': "a", "parent":"#", "text": "node A"},
+         //{'id': "b", "parent":"a", "text": "node B"}
+         //]};
+         jsdata = {};
          $('#jstree_div').jstree(jsdata);
          node_data = search_result["nodes"];
          for (var i = 0, len = node_data.length; i < len; i++){
