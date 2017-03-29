@@ -227,7 +227,7 @@
          contig_ids.push(node_data[i]['data']['species']+"$$$"+node_data[i]['data']['contig']);
          jsdata['core']['data'].push({'id': node_data[i]['data']['id'],
          "parent":node_data[i]['data']['species']+"$$$"+node_data[i]['data']['contig'],
-         "text": node_data[i]['data']['name'], "node_data" = node_data[i]});
+         "text": node_data[i]['data']['name'], "node_data" : node_data[i]});
          };
          assembly_ids = assembly_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
          contig_ids = contig_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
