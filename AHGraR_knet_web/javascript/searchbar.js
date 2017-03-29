@@ -95,7 +95,7 @@
             // Add default option: All species
             option = document.createElement("option");
             // Fill select option with data:
-            option.innerHTML = "All species";
+            option.innerHTML = "All assemblies";
             option.value = "*";
             // Add new option to select menu
             select_species_menu.add(option);
