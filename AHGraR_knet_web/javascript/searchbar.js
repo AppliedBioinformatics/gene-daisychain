@@ -210,7 +210,7 @@
          $('#jstree_div').jstree(jsdata);
          node_data = search_result["nodes"];
          for (var i = 0, len = node_data.length; i < len; i++){
-         console.log(node_data[i]);
+         console.log(node_data[i]['data']['species']);
          };
 
          }
