@@ -258,6 +258,8 @@
          selected_genes.push(selected_gene_data[i]['original']['node_data']);
          };
          // Set global graphJSON variable to new json_data
+         console.log(search_result["nodes"])
+         console.log(selected_genes);
          search_result["nodes"]=selected_genes;
          graphJSON = search_result;
          console.log(graphJSON);
