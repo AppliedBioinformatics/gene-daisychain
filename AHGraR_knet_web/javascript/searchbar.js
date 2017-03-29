@@ -252,7 +252,7 @@
          function renderJSON()
          {
          // Retrieve selected genes from jsTree
-         console.log($('#jstree_div').get_selected(true));
+         console.log($('#jstree_div').jstree.get_selected(true));
          // Set global graphJSON variable to new json_data
          graphJSON = search_result;
          console.log(graphJSON);
