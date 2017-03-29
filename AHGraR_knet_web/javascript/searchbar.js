@@ -190,7 +190,7 @@
                 $('#knet-maps-row').collapse("hide");
                 $('#statusbar').collapse("hide");
                 $('#result-tree').collapse("show");
-                $('#result-buton').collapse("show");
+                $('#result-button').collapse("show");
                 search_result = JSON.parse(evt.data);
                 showSearchResult();
                 //graphJSON = JSON.parse(evt.data);
@@ -274,7 +274,7 @@
          search_button.innerHTML = "Search!"
          search_button.disabled = false;
          $('#result-tree').collapse("hide");
-         $('#result-buton').collapse("hide");
+         $('#result-button').collapse("hide");
          $('#knet-maps-row').collapse("show");
          $('#statusbar').collapse("show");
          }
