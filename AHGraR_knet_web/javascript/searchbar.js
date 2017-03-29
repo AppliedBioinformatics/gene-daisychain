@@ -188,6 +188,7 @@
             wsconn.onmessage = function (evt){
                 search_button.innerHTML = "Receiving data";
                 $('#knet-maps-row').collapse("hide");
+                $('#statusbar').collapse("hide");
                 $('#result-picker').collapse("show");
                 search_result = JSON.parse(evt.data);
                 showSearchResult();
@@ -273,4 +274,5 @@
          search_button.disabled = false;
          $('#result-picker').collapse("hide");
          $('#knet-maps-row').collapse("show");
+         $('#statusbar').collapse("show");
          }

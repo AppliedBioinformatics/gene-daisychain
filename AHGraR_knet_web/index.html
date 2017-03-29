@@ -136,7 +136,7 @@
     </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 well" style="background-color:orange;">
+        <div class="col-sm-12 collapse well" id = "statusbar" style="background-color:orange;">
       <div id="countsLegend"><span>KnetMaps</span></div>
             <div id="colorLegend" ></div>
     </div>
@@ -149,6 +149,7 @@
       var species = "";
       var color_map = {};
       var search_result = [];
+      $.support.transition = false;
       // Load lists of available projects
       LoadProjectList();
 
