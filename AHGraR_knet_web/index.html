@@ -81,7 +81,7 @@
     <div class="col-sm-6" style="background-color:blue;">
     <form class="form">
         <div class="input-group">
-            <label for="keyword">Enter keyword(s):</label>
+            <label for="keyword">Search by keyword(s):</label>
             <input id="keyword" type="text" class="form-control" name="keyword" placeholder="Keyword(s)">
         </div>
         <div>
@@ -94,8 +94,8 @@
     <div class="col-sm-6" style="background-color:red;">
     <form>
         <div class="form-group">
-            <label for="tbfasta">Fasta sequence:</label>
-            <textarea class="form-control" rows="2" id="tbfasta" placeholder="Nucleotide or protein sequence"></textarea>
+            <label for="tbfasta">Search by sequence:</label>
+            <textarea class="form-control" rows="2" id="tbfasta" placeholder="Nucleotide or protein FASTA"></textarea>
         </div>
         <form class="form-inline">
             <div class="col-sm-6" style="background-color:red;">
@@ -144,10 +144,12 @@
     </div>
   <script>
 
+      // Define global variables
       var project_id = "0";
       var species = "";
       var color_map = {};
       var search_result = [];
+      // Load lists of available projects
       LoadProjectList();
 
 
