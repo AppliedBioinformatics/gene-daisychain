@@ -213,7 +213,7 @@
          for (var i = 0, len = node_data.length; i < len; i++){
          //assembly_ids.push({'id':node_data[i]['data']['species'], "parent":"#", "text":node_data[i]['data']['species']});
          assembly_ids.push(node_data[i]['data']['species']);
-         contig_ids.push(node_data[i]['data']['species']+"_"+node_data[i]['data']['contig']);
+         contig_ids.push(node_data[i]['data']['species']+"$$$"+node_data[i]['data']['contig']);
          };
          console.log(assembly_ids);
          console.log(contig_ids);
@@ -221,7 +221,16 @@
          contig_ids = contig_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
          console.log(assembly_ids);
          console.log(contig_ids);
-         jsdata['core']['data']={};
+         for (var i = 0, len = assembly_ids.length; i < len; i++){
+            jsdata['core']['data'].push({'id': assembly_ids[i], "parent":"#", "text": assembly_ids[i]});
+         };
+         for (var i = 0, len = contig_ids.length; i < len; i++){
+            var contig_id = contig_ids[i].split("$$$");
+            var assembly_name = contig_id[0];
+            var contig_name = contig_id[1];
+            jsdata['core']['data'].push({'id': contig_ids[i], "parent":assembly_name, "text": contig_name});
+         };
+         //jsdata['core']['data']={};
          $('#jstree_div').jstree(jsdata);
          }
          // Render json node/edge data into a visual representation
