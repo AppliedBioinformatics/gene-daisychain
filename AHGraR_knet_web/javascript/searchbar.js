@@ -189,7 +189,8 @@
                 search_button.innerHTML = "Receiving data";
                 $('#knet-maps-row').collapse("hide");
                 $('#statusbar').collapse("hide");
-                $('#result-row').collapse("show");
+                $('#result-tree').collapse("show");
+                $('#result-buton').collapse("show");
                 search_result = JSON.parse(evt.data);
                 showSearchResult();
                 //graphJSON = JSON.parse(evt.data);
@@ -272,7 +273,8 @@
          changeSensitivity();
          search_button.innerHTML = "Search!"
          search_button.disabled = false;
-         $('#result-row').collapse("hide");
+         $('#result-tree').collapse("hide");
+         $('#result-buton').collapse("hide");
          $('#knet-maps-row').collapse("show");
          $('#statusbar').collapse("show");
          }
