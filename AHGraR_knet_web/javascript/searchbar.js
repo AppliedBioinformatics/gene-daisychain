@@ -213,7 +213,7 @@
          for (var i = 0, len = node_data.length; i < len; i++){
          //assembly_ids.push({'id':node_data[i]['data']['species'], "parent":"#", "text":node_data[i]['data']['species']});
          assembly_ids.push(node_data[i]['data']['species']);
-         contig_ids.push(node_data[i]['data']['contig']);
+         contig_ids.push([node_data[i]['data']['species'], node_data[i]['data']['contig']]);
          };
          console.log(assembly_ids);
          console.log(contig_ids);
