@@ -208,13 +208,19 @@
          {
          var jsdata = {'core': {'data': [{'id': "a", "parent":"b", "text": "node A"}, {'id': "b", "parent":"#", "text": "node B"}]}};
          node_data = search_result["nodes"];
-         assembly_nodes = [];
+         assembly_ids = [];
+         contig_ids = []
          for (var i = 0, len = node_data.length; i < len; i++){
-         assembly_nodes.push({'id':node_data[i]['data']['species'], "parent":"#", "text":node_data[i]['data']['species']});
-         console.log(node_data[i]['data']['species']);
+         //assembly_ids.push({'id':node_data[i]['data']['species'], "parent":"#", "text":node_data[i]['data']['species']});
+         assembly_ids.push(node_data[i]['data']['species']);
+         contig_ids.push(node_data[i]['data']['contig']);
          };
-         console.log(assembly_nodes);
-         console.log(assembly_nodes.filter( function(value,index,self){return self.indexOf(value) === index;} ));
+         console.log(assembly_ids);
+         console.log(contig_ids);
+         assembly_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
+         contig_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
+         console.log(assembly_ids);
+         console.log(contig_ids);
          jsdata['core']['data']=assembly_nodes.filter( function(value,index,self){return self.indexOf(value) === index;} );
          $('#jstree_div').jstree(jsdata);
          }
