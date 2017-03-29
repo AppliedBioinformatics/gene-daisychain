@@ -255,7 +255,8 @@
          selected_gene_data =$('#jstree_div').jstree("get_selected", true);
          selected_genes = [];
          for (var i = 0, len = selected_gene_data.length; i < len; i++){
-         selected_genes.push(selected_gene_data[i]['original']['node_data']);
+         var selected_node_data = selected_gene_data[i]['original']['node_data'];
+         if (selected_node_data){selected_genes.push(selected_node_data)};
          };
          // Set global graphJSON variable to new json_data
          console.log(search_result["nodes"])
