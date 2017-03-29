@@ -163,7 +163,7 @@
          {
             search_button = $('#search_kwd_btm')
             // Deactivate search button until results are retrieved
-            search_button.disabled = true;
+            search_button.attr("disabled",true);
             // Project ID and species selection are global variables,
             // retrieve chromosome selection and keyword
             var select_chrom_menu = document.getElementById("select_chromosome");
@@ -193,14 +193,7 @@
                 $('#result-button').collapse("show");
                 search_result = JSON.parse(evt.data);
                 showSearchResult();
-                //graphJSON = JSON.parse(evt.data);
-                //console.log(graphJSON);
-            //initializeNetworkView();
-            //search_button.innerHTML = "Building graph";
-            //updateCyLegend();
-            //changeSensitivity();
-            //search_button.innerHTML = "Search!"
-            //search_button.disabled = false;
+
                 };
          };
 
@@ -275,6 +268,6 @@
          search_button.disabled = false;
          $('#result-tree').collapse("hide");
          $('#result-button').collapse("hide");
-         $('#knet-maps-row').collapse("show");
          $('#statusbar').collapse("show");
+         $('#knet-maps-row').collapse("show");
          }
