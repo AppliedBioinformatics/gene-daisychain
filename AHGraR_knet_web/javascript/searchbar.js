@@ -210,7 +210,7 @@
          $('#jstree_div').jstree("destroy").empty();
          // jsTree accepts node data in JSON format
          // Initialize an empty container for node data
-         var jsdata = {'core': {'data': [], 'themes': {'variant':'large'}, 'animation':false}, 'plugins':["checkbox"]};
+         var jsdata = {'core': {'data': [], 'themes': {'variant':'large'}, 'animation':false}, 'plugins':["checkbox", "sort"]};
          // Retrieve node data from search results (edges are not filtered)
          node_data = search_result["nodes"];
          // Collect assembly ids and contig ids in a separate array
@@ -225,28 +225,34 @@
          // to allow for similar contig names in different assemblies
          assembly_ids.push(node_data[i]['data']['species']);
          contig_ids.push(node_data[i]['data']['species']+"$$$"+node_data[i]['data']['contig']);
+         // Add gene node to jsTree, using assembly_name$$$contig_name as parent node
          jsdata['core']['data'].push({'id': node_data[i]['data']['id'],
          "parent":node_data[i]['data']['species']+"$$$"+node_data[i]['data']['contig'],
          "text": node_data[i]['data']['name'], "node_data" : node_data[i]});
          };
+         // Create unique array of assembly ids and contig ids
          assembly_ids = assembly_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
          contig_ids = contig_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
-
+         // Add assembly_id nodes to jsTree
          for (var i = 0, len = assembly_ids.length; i < len; i++){
             jsdata['core']['data'].push({'id': assembly_ids[i], "parent":"#", "text": assembly_ids[i]});
          };
+         // Add contig_id nodes to jsTree
          for (var i = 0, len = contig_ids.length; i < len; i++){
             var contig_id = contig_ids[i].split("$$$");
             var assembly_name = contig_id[0];
             var contig_name = contig_id[1];
             jsdata['core']['data'].push({'id': contig_ids[i], "parent":assembly_name, "text": contig_name});
          };
-         //jsdata['core']['data']={};
+         // Load JSON data into jsTree
          $('#jstree_div').jstree(jsdata);
          }
+
          // Render json node/edge data into a visual representation
          function renderJSON()
          {
+         // Retrieve selected genes from jsTree
+         console.log($('#jstree_div').get_selected(true));
          // Set global graphJSON variable to new json_data
          graphJSON = search_result;
          console.log(graphJSON);
