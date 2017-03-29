@@ -213,7 +213,7 @@
          assembly_nodes.push({'id':node_data[i]['data']['species'], "parent":"#", "text":node_data[i]['data']['species']});
          console.log(node_data[i]['data']['species']);
          };
-         jsdata['core']['data']=jQuery.unique(assembly_nodes);
+         jsdata['core']['data']=assembly_nodes.filter( function(value,index,self){return self.indexOf(value) === index;} );;
          $('#jstree_div').jstree(jsdata);
          }
          // Render json node/edge data into a visual representation
