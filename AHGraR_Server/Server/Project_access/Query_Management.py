@@ -102,6 +102,7 @@ class QueryManagement:
             query_seq = re.split(">.*\n", query_seq)
             # Remove any special character from sequences
             query_seq = [re.sub("[^A-Z]", "", item.upper()) for item in query_seq if item]
+            print(query_seq)
             # Test if sequences are nucleotide or protein
             # If one sequence is protein, all sequences will be treated as protein
             is_nucleotide = True
