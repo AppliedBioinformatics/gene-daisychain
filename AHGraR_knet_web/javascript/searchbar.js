@@ -282,7 +282,7 @@
          // Add gene node to jsTree, using assembly_name$$$contig_name as parent node
          jsdata['core']['data'].push({'id': node_data[i]['data']['id'],
          "parent":node_data[i]['data']['species']+"$$$"+node_data[i]['data']['contig'],
-         "text": node_data[i]['data']['name'], "node_data" : node_data[i]});
+         "text": node_data[i]['data']['name']+":"+node_data[i]['data']['annotation'], "node_data" : node_data[i]});
          };
          // Create unique array of assembly ids and contig ids
          assembly_ids = assembly_ids.filter( function(value,index,self){return self.indexOf(value) === index;} );
