@@ -113,7 +113,8 @@ class QueryManagement:
             with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
                 seq_count = 0
                 for seq in query_seq:
-                    tmp_fasta_file.write(">query_seq_"+str(seq_count)+"\n" + seq)
+                    print(seq)
+                    tmp_fasta_file.write(">query_seq_"+str(seq_count)+"\n" + seq+"\n")
                     seq_count += 1
         else:
             # Only one sequence in string, remove any special characters
