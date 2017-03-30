@@ -221,6 +221,7 @@
             var select_chrom_menu = document.getElementById("select_chromosome");
             var contig = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
             var fasta_seq = document.getElementById("tbfasta").value;
+            var eval_cutoff = document.getElementById("blastsens").value;
             // Trim string, i.e. remove leadind and trailing white spaces
             fasta_seq = $.trim(fasta_seq);
             // Check for empty keyword after trimming

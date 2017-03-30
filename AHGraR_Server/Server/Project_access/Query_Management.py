@@ -16,6 +16,7 @@
 import os
 from neo4j.v1 import GraphDatabase, basic_auth
 import subprocess
+import re
 
 
 class QueryManagement:
@@ -56,8 +57,8 @@ class QueryManagement:
         if user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7 \
                 and user_request[6] != "BLAST":
             self.find_node(user_request[1:])
-        elif user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 7 \
-                and user_request[6] == "BLAST":
+        elif user_request[0] == "SEAR" and user_request[1].isdigit() and len(user_request) == 8 \
+                and user_request[7] == "BLAST":
             self.blast(user_request[1:])
         elif user_request[0] == "RELA" and user_request[1].isdigit() and len(user_request) == 5:
             self.find_node_relations(user_request[1:])
@@ -82,24 +83,52 @@ class QueryManagement:
             return
         query_species = user_request[2] if user_request[2] != "*" else ""
         query_contig = user_request[3] if user_request[3] != "*" else ""
-        query_seq = user_request[4].upper()
+        evalue_cutoff = user_request[4]
+        query_seq = user_request[5].upper()
         BlastDB_path = os.path.join("Projects", str(proj_id), "BlastDB")
         cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
         project_db_conn = self.get_project_db_connection(proj_id)
-        # Detect whether we are dealing with a nucleotide or protein sequence
-        is_nucleotide = True
-        for res in query_seq:
-            if res not in ["A","C","G","T","U"]:
-                is_nucleotide = False
-                break
-        # Write sequence to temp. file
-        with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
-            tmp_fasta_file.write(">query_seq\n" + query_seq)
+        # Check if a valid evalue cutoff was submitted, if not use default value 1e-5
+        try:
+            evalue_cutoff = str(float(evalue_cutoff))
+        except ValueError:
+            evalue_cutoff = str(1e-5)
+        # Convert the sequence input into a valid fasta sequence
+        # First check if there is a ">" in the string, if not, consider the entire string to be one sequence
+        if ">" in query_seq:
+            # Remove all characters before the first ">"
+            query_seq = query_seq[query_seq.index(">"):]
+            # Split the string at each header line
+            query_seq = re.split(">.*\n", query_seq)
+            # Remove any special character from sequences
+            query_seq = [re.sub("[^A-Z]", "", item.upper()) for item in query_seq if item]
+            # Test if sequences are nucleotide or protein
+            # If one sequence is protein, all sequences will be treated as protein
+            is_nucleotide = True
+            for seq in query_seq:
+                if re.search("[^ACGTU]", seq):
+                    is_nucleotide = False
+                    break;
+            # Write sequence(s) to temp. file
+            with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
+                seq_count = 0
+                for seq in query_seq:
+                    tmp_fasta_file.write(">query_seq_"+str(seq_count)+"\n" + seq)
+                    seq_count += 1
+        else:
+            # Only one sequence in string, remove any special characters
+            query_seq= re.sub("[^A-Z]","",query_seq.upper())
+            # Test if sequence is nucleotide or protein
+            is_nucleotide = not re.search("[^ACGTU]", query_seq)
+            # Write sequence to temp. file
+            with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
+                tmp_fasta_file.write(">query_seq\n" + query_seq)
+
         if is_nucleotide:
             blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
             subprocess.run([blastn_path, "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
                             os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 sseqid",
-                            "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "1e-5",
+                            "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", evalue_cutoff,
                             "-num_threads", cpu_cores, "-parse_deflines"])
             with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
                 gene_ids = ["g"+line.strip().lower() for line in tmp_res_file]
@@ -113,11 +142,11 @@ class QueryManagement:
                 "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb",
                 {"query_species": query_species.lower(), "gene_id_list": gene_ids[:20],
                  "query_contig": query_contig.lower()})
-        else: # If not nucleotide i.e. proteins eq
+        else: # If not nucleotide i.e. proteins seq
             blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
             subprocess.run([blastp_path, "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
                             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 sseqid",
-                            "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", "1e-5",
+                            "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", evalue_cutoff,
                             "-num_threads", cpu_cores, "-parse_deflines"])
             with open(os.path.join(BlastDB_path, "query_res.tab"), "r") as tmp_res_file:
                 protein_ids = ["p"+line.strip().lower() for line in tmp_res_file]
@@ -621,9 +650,7 @@ class QueryManagement:
         # Separate keywords by whitespace
         query_keyword = str(query_term[2]).lower().split(" ")
         # Remove keywords that are empty, i.e. ""
-        print("Keyword before: "+str(query_keyword))
         query_keyword = [item for item in query_keyword if item]
-        print("Keyword after: "+str(query_keyword))
         match_all_any = str(query_term[3]).upper()
         # If there are no query keywords, set match_all_any to "none"
         if len(query_keyword)==0:
