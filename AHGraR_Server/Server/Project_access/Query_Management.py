@@ -621,7 +621,9 @@ class QueryManagement:
         # Separate keywords by whitespace
         query_keyword = str(query_term[2]).lower().split(" ")
         # Remove keywords that are empty, i.e. ""
+        print("Keyword before: "+str(query_keyword))
         query_keyword = [item for item in query_keyword if item]
+        print("Keyword after: "+str(query_keyword))
         match_all_any = str(query_term[3]).upper()
         # If there are no query keywords, set match_all_any to "none"
         if len(query_keyword)==0:
