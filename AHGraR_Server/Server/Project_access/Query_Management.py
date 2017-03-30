@@ -93,6 +93,7 @@ class QueryManagement:
             evalue_cutoff = str(float(evalue_cutoff))
         except ValueError:
             evalue_cutoff = str(1e-5)
+        print(evalue_cutoff)
         # Convert the sequence input into a valid fasta sequence
         # First check if there is a ">" in the string, if not, consider the entire string to be one sequence
         if ">" in query_seq:
