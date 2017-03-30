@@ -210,6 +210,50 @@
                 };
          };
 
+         // BLAST search for genes in the project database
+         function searchBLAST()
+         {
+            blast_button = $('#btn_blast')
+            // Deactivate search button until results are retrieved
+            blast_button.attr("disabled",true);
+            // Project ID and assembly selection are global variables,
+            // retrieve contig selection and keyword(s)
+            var select_chrom_menu = document.getElementById("select_chromosome");
+            var contig = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
+            var fasta_seq = document.getElementById("tbfasta").value;
+            // Trim string, i.e. remove leadind and trailing white spaces
+            fasta_seq = $.trim(fasta_seq);
+            // Check for empty keyword after trimming
+            if(fasta_seq.length == 0)
+            {
+            alert("Please enter at least one sequence.");
+            blast_button.attr("disabled",false);
+            return;
+            }
+            // Open websocket to send query to server
+            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            // Replace underscores in queries with tabs
+            wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
+            contig.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+"BLAST");};
+            set_color_legend();
+             // Receive and process query result
+            wsconn.onmessage = function (evt){
+                // Change layout of website
+                // Hide graph and status bar
+                // Show search result tree
+                $('#knet-maps-row').collapse("hide");
+                $('#statusbar').collapse("hide");
+                $('#result-tree').collapse("show");
+                $('#result-button').collapse("show");
+                // Convert received string into JSON format
+                search_result = JSON.parse(evt.data);
+                // Enable search button
+                blast_button.attr("disabled",false);
+                // Show search result in tree
+                showSearchResult();
+                };
+         };
+
 
          // Load search result into jstree
          function showSearchResult()
