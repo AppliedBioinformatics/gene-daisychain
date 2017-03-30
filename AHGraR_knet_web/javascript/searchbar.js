@@ -233,6 +233,7 @@
             // Open websocket to send query to server
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Replace underscores in queries with tabs
+            fasta_seq = "";
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
             contig.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+"BLAST");};
             set_color_legend();
