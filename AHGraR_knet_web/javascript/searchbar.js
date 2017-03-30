@@ -235,7 +235,7 @@
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Replace underscores in queries with tabs
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
-            contig.split("_").join("\t")+"_"+fasta_seq.split("_").join("\t")+"_"+"BLAST");};
+            contig.split("_").join("\t")+"_"+eval_cutoff+"_"+fasta_seq.split("_").join("\t")+"_"+"BLAST");};
             set_color_legend();
              // Receive and process query result
             wsconn.onmessage = function (evt){
