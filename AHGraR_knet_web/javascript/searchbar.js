@@ -157,27 +157,27 @@
                  select_chrom_menu.add(option);
              };
          };
-         // Search for genes/proteins in the project database
-         // Collects current settings in select menus and text field
+         // Keyword search for genes in the project database
          function searchKeyword()
          {
             search_button = $('#search_kwd_btm')
             // Deactivate search button until results are retrieved
             search_button.attr("disabled",true);
-            // Project ID and species selection are global variables,
-            // retrieve chromosome selection and keyword
+            // Project ID and assembly selection are global variables,
+            // retrieve contig selection and keyword(s)
             var select_chrom_menu = document.getElementById("select_chromosome");
-            var chromosome = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
+            var contig = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
             var keyword = document.getElementById("keyword").value;
             // Trim string, i.e. remove leadind and trailing white spaces
             keyword = $.trim(keyword);
             // Check for empty keyword after trimming
             if(keyword.length == 0)
             {
-            console.log("Short kwd");
+            alert("Please enter at least one keyword.");
             search_button.attr("disabled",false);
             return;
             }
+            // Look for a match of ALL or ANY keywords
             if(document.getElementById("radio_all").checked)
             {
             var type = "ALL";
@@ -190,16 +190,22 @@
             var wsconn = new WebSocket("ws://146.118.99.190:7687/");
             // Replace underscores in queries with tabs
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
-            chromosome.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);};
+            contig.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);};
             set_color_legend();
              // Receive and process query result
             wsconn.onmessage = function (evt){
+                // Change layout of website
+                // Hide graph and status bar
+                // Show search result tree
                 $('#knet-maps-row').collapse("hide");
                 $('#statusbar').collapse("hide");
                 $('#result-tree').collapse("show");
                 $('#result-button').collapse("show");
+                // Convert received string into JSON format
                 search_result = JSON.parse(evt.data);
+                // Enable search button
                 search_button.attr("disabled",false);
+                // Show search result in tree
                 showSearchResult();
                 };
          };
@@ -212,7 +218,8 @@
          $('#jstree_div').jstree("destroy").empty();
          // jsTree accepts node data in JSON format
          // Initialize an empty container for node data
-         var jsdata = {'core': {'data': [{'id': "$$$all_res", "parent":"#", "text": "Search results"}], 'themes': {'variant':'large'}, 'animation':false}, 'plugins':["checkbox", "sort"]};
+         var jsdata = {'core': {'data': [{'id': "$$$all_res", "parent":"#", "text": "Search results"}],
+         'themes': {'variant':'large'}, 'animation':false}, 'plugins':["checkbox", "sort"]};
          // Retrieve node data from search results (edges are not filtered)
          node_data = search_result["nodes"];
          // Collect assembly ids and contig ids in a separate array
@@ -251,28 +258,30 @@
          }
 
          // Render json node/edge data into a visual representation
+         // Function is triggered by "Show graph" button in search result panel
          function renderJSON()
          {
          // Retrieve selected genes from jsTree
          selected_gene_data =$('#jstree_div').jstree("get_selected", true);
          selected_genes = [];
+         // Node data is stored as attribute "node_data" in attribute "original"
          for (var i = 0, len = selected_gene_data.length; i < len; i++){
          var selected_node_data = selected_gene_data[i]['original']['node_data'];
+         // Artificial assembly and contig nodes do not habe node_data, collect
+         // only actual gene nodes
          if (selected_node_data){selected_genes.push(selected_node_data)};
          };
-         // Set global graphJSON variable to new json_data
-         console.log(search_result["nodes"])
-         console.log(selected_genes);
+         // Exchange node data in search results with user-filtered node data
          search_result["nodes"]=selected_genes;
+         // Set global graphJSON variable to new json_data
          graphJSON = search_result;
-         console.log(graphJSON);
+         // Initialize graph
          initializeNetworkView();
-         search_button = $('#search_kwd_btm')
-         search_button.innerHTML = "Building graph";
+         // Update status bar
          updateCyLegend();
+         // Set cluster size to currently selected value
          changeSensitivity();
-         search_button.innerHTML = "Search!"
-         search_button.disabled = false;
+         // Change layout, show graph and status bar, hide result panel
          $('#result-tree').collapse("hide");
          $('#result-button').collapse("hide");
          $('#statusbar').collapse("show");
