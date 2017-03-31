@@ -45,7 +45,7 @@ function initializeNetworkView() {
           /** Using 'data(conceptColor)' leads to a "null" mapping error if that attribute is not defined 
            * in cytoscapeJS. Using 'data[conceptColor]' is hence preferred as it limits the scope of 
            * assigning a property value only if it is defined in cytoscapeJS as well. */
-          'display': 'show', // 'element' (show) or 'none' (hide).
+          'display': function(node){if($("show_hide_"+node.data("species")).attr("show")){return 'show';} else{return "none";};}, // 'element' (show) or 'none' (hide).
           'text-opacity': '1', // to make the label visible by default.
           'text-halign': 'center',
           'text-valign': 'center'
