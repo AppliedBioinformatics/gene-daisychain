@@ -13,7 +13,14 @@ var protein_nodes = cy.filter(function(i,ele){
             {return true;}
             else {return false;}
             });
+var coding_edges = cy.filter(function(i,ele){
+            if (ele.isEdge() &&  ele.visible())
+            {return true;}
+            else {return false;}
+            });
+
 console.log(gene_nodes);
 console.log(protein_nodes);
+console.log(coding_edges);
 
 }
