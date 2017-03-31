@@ -25,9 +25,7 @@ function addPath(node, rel_type)
                 { x: node_x+(50*Math.cos(angle)), y: node_y+(50*Math.sin(angle)) }});
             console.log(new_node);
             new_node.qtip({
-  content: function() {
-      var qtipMsg= "huhu";
-      return qtipMsg;},
+  content: "huguhu",
   style: {
     classes: 'qtip-bootstrap',
     tip: {
