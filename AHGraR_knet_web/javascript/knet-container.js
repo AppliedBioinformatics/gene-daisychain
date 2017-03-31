@@ -215,5 +215,10 @@ cy.cxtmenu(ctxt_menu_edge); // set Context Menu for all the edges.
  $('#infoDialog').click(function() {
    $('#infoDialog').slideToggle(300);
   });
-
+/** Event handling: mouse 'tap' event on all the elements of the core (i.e., the cytoscape container).
+ * Note: Specify 'node' or 'edge' to bind an event to a specific type of element.
+ * e.g, cy.on('tap', 'node', function(e){ }); or cy.on('tap', 'edge', function(e){ }); */
+ cy.on('tap', function(e) {
+    showItemInfo(e.cyTarget);
+   });
 }
