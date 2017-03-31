@@ -72,7 +72,7 @@
 
                 gene_name = selectedElement.data("name");
                 nt_seq = selectedElement.data("nt_seq");
-                fasta_format_seq = ">"+gene_name+"\n"+nt_seq
+                fasta_format_seq = ">"+gene_name+"<br>"+nt_seq
                 row= table.insertRow(7);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
