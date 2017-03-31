@@ -15,7 +15,7 @@ function addPath(node, rel_type)
         new_node_data = new_graph_data.nodes;
         new_edge_data = new_graph_data.edges;
         var angle_rotation = (2 * Math.PI)/new_node_data.length;
-        var angle = 0;
+        var angle = 180;
         if (new_node_data.length == 0){
         window.alert("No new nodes found.");
         };
@@ -23,17 +23,6 @@ function addPath(node, rel_type)
         {
             new_node = cy.add({group: "nodes","data":val.data, position:
                 { x: node_x+(50*Math.cos(angle)), y: node_y+(50*Math.sin(angle)) }});
-            console.log(new_node);
-            new_node.qtip({
-  content: "huguhu",
-  style: {
-    classes: 'qtip-bootstrap',
-    tip: {
-      width: 12,
-      height: 6
-    }
-  }
-});
             angle += angle_rotation;
         });
         new_edge_data.forEach(function(val)
