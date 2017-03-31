@@ -1,4 +1,4 @@
-function show_hide(species, show)
+function show_hide(assembly, show)
 {
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
 if (typeof(cy) == 'undefined')
@@ -7,8 +7,7 @@ return;
 }
 cy.nodes().forEach(function( node )
     {
-        console.log(node.data('species'));
-        if (node.data('species')==species)
+        if (node.data('species')==assembly)
         {
          if(show == 'True')
          {
@@ -19,7 +18,9 @@ cy.nodes().forEach(function( node )
          node.hide();
          };
         };
-
-
     });
+}
+function is_visible(assembly)
+{
+return "show";
 }

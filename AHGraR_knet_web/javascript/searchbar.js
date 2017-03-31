@@ -48,7 +48,7 @@
             console.log("New PI: "+project_id);
             // Load project-specific list of species
             LoadSpeciesList();
-            update_color_legend();
+            //update_color_legend();
          };
          // Load list of species for this project
          function LoadSpeciesList()
