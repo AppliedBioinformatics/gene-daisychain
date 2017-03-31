@@ -2,6 +2,8 @@
 // A graph can then be extended via the context menu
 // Those functions are provided by extend_graph
 
+
+
 function load_reload_Network(network_json, network_style) {
 // Initialise a cytoscape container instance on the HTML DOM using JQuery.
 $('#cy').cytoscape({
@@ -34,52 +36,8 @@ $('#cy').cytoscape({
 // Get the cytoscape instance as a Javascript object from JQuery.
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
 cy.boxSelectionEnabled(true); // enable box selection (highlight & select multiple elements for moving via mouse click and drag).
-
-// Add a qtip message for all nodes
-cy.elements('node').qtip({
-  content: function() {
-  var qtipMsg= "";
-  if(this.data('type')=="Gene"){
-    qtipMsg= "<b>Name:</b> "+ this.data('name')  + " [Gene]<br>"
-    +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
-    +"<b>Contig:</b> "+ this.data('contig');}
-
-  else if(this.data('type')=="Protein"){
-    qtipMsg= "<b>Name:</b> "+ this.data('name')  + " [Protein]<br>"
-    +"<b>Assembly:</b> "+ this.data('species')+ "<br>";}
-    return qtipMsg;},
-
-  style: {
-    classes: 'qtip-bootstrap',
-    tip: {
-      width: 12,
-      height: 6
-    }
-  }
-});
-
-// Add a qtip message for all edges
-cy.elements('edge').qtip({
-  content: function() {
-      var qtipMsg= "";
-      if(this.data('type')=="HOMOLOG"){
-        qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";}
-      if(this.data('type')=="CODING"){
-        qtipMsg= "Gene coding for a protein";}
-      if(this.data('type')=="5_NB"){
-        qtipMsg= "Located upstream on contig";}
-      if(this.data('type')=="3_NB"){
-        qtipMsg= "Located downstream on contig";}
-      return qtipMsg;},
-  style: {
-    classes: 'qtip-bootstrap',
-    tip: {
-      width: 12,
-      height: 6
-    }
-  }
-});
-
+// Add tooltips to every node and edge
+add_qtips();
 
  //Popup (context) menu: a circular Context Menu for each Node (concept) & Edge (relation) using the 'cxtmenu' jQuery plugin.
  // Define indidivual ctxt menus for genes, proteins and edges

@@ -15,7 +15,7 @@ function addPath(node, rel_type)
         new_node_data = new_graph_data.nodes;
         new_edge_data = new_graph_data.edges;
         var angle_rotation = (2 * Math.PI)/new_node_data.length;
-        var angle = 180;
+        var angle = 0;
         if (new_node_data.length == 0){
         window.alert("No new nodes found.");
         };
@@ -27,33 +27,15 @@ function addPath(node, rel_type)
         });
         new_edge_data.forEach(function(val)
         {
-            console.log(val.data);
             new_edge = cy.add({group: "edges","data":val.data});
-            /*new_edge.qtip({
-          content: function() {
-              var qtipMsg= "";
-              if(this.data('type')=="HOMOLOG"){
-                qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";}
-              if(this.data('type')=="CODING"){
-                qtipMsg= "Gene coding for a protein";}
-              if(this.data('type')=="5_NB"){
-                qtipMsg= "Located upstream on contig";}
-              if(this.data('type')=="3_NB"){
-                qtipMsg= "Located downstream on contig";}
-              return qtipMsg;},
-          style: {
-            classes: 'qtip-bootstrap',
-            tip: {
-              width: 12,
-              height: 6
-            }
-          }
-        });*/
         });
+        // Add qtips
+        add_qtips();
         updateCyLegend();
         changeSensitivity();
         // Update show/hide
         show_hide_refresh();
+
 
       /*  cy.elements().qtip({
   content: function() {
