@@ -155,7 +155,7 @@ cy.elements('edge').qtip({
 // Context menu for proteins
  var ctxt_menu_protein= {
     menuRadius: 75, // the radius of the circular menu in pixels
-    selector: 'node[type="Gene"]',
+    selector: 'node[type="Protein"]',
     commands: [ // an array of commands to list in the menu
         {
          content: 'Show Info',
