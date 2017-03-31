@@ -38,7 +38,7 @@ function addPath(node, rel_type)
         // Update show/hide
         show_hide_refresh();
 
-        cy.elements().qtip({
+      /*  cy.elements().qtip({
   content: function() {
       var qtipMsg= "";
      try {
@@ -73,7 +73,7 @@ function addPath(node, rel_type)
       height: 6
     }
   }
-});
+}); */
         
     }
 

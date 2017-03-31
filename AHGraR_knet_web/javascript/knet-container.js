@@ -41,12 +41,12 @@ cy.elements('node').qtip({
   if(this.data('type')=="Gene"){
     qtipMsg= "<b>Name:</b> "+ this.data('name')  + " (Gene)<br>"
     +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
-    +", <b>Contig:</b> "+ this.data('contig');}
+    +"<b>Contig:</b> "+ this.data('contig');}
 
   else if(this.data('type')=="Protein"){
     qtipMsg= "<b>Name:</b> "+ this.data('name')  + " (Protein)<br>"
-    +", <b>Assembly:</b> "+ this.data('species')+ "<br>"
-    +", <b>Contig:</b> "+ this.data('contig');}
+    +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
+    +"<b>Contig:</b> "+ this.data('contig');}
     return qtipMsg;},
 
   style: {
@@ -61,27 +61,11 @@ cy.elements('node').qtip({
 cy.elements('edge').qtip({
   content: function() {
       var qtipMsg= "";
-
-      if(this.isNode()) {
-          if(this.data('type')=="Gene")
-          {
-         qtipMsg= "<b>Name:</b> "+ this.data('name') + "\n" +", <b>Type:</b> "+ this.data('type') + "\n"
-         +", <b>Species:</b> "+ this.data('species')+ "\n"
-         +", <b>Contig:</b> "+ this.data('contig');
-        }
-         else
-         {
-             qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
-                    +", <b>Species:</b> "+ this.data('species')
-          +", <b>Contig:</b> "+ this.data('contig');
-        }
-        }
-      else if(this.isEdge()) {
-              if(this.data('type')=="HOMOLOG")
+       if(this.data('type')=="HOMOLOG")
               {
               qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";
               }
-             }
+
      },
   style: {
     classes: 'qtip-bootstrap',
