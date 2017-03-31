@@ -31,10 +31,7 @@ $('#cy').cytoscape({
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
 cy.boxSelectionEnabled(true); // enable box selection (highlight & select multiple elements for moving via mouse click and drag).
 
-/** Add a Qtip message to all the nodes & edges using QTip displaying their Concept Type & value when a
- * node/ edge is clicked.
- * Note: Specify 'node' or 'edge' to bind an event to a specific type of element.
- * e.g, cy.elements('node').qtip({ }); or cy.elements('edge').qtip({ }); */
+// Add a qtip message for all nodes
 cy.elements('node').qtip({
   content: function() {
   var qtipMsg= "";
@@ -58,15 +55,19 @@ cy.elements('node').qtip({
   }
 });
 
+// Add a qtip message for all edges
 cy.elements('edge').qtip({
   content: function() {
       var qtipMsg= "";
-       if(this.data('type')=="HOMOLOG")
-              {
-              qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";
-              }
-
-     },
+      if(this.data('type')=="HOMOLOG"){
+        qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";}
+      if(this.data('type')=="CODING"){
+        qtipMsg= "Gene coding for a protein";}
+      if(this.data('type')=="5_NB"){
+        qtipMsg= "Located upstream on contig";}
+      if(this.data('type')=="5_NB"){
+        qtipMsg= "Located downstream on contig";}
+      return qtipMsg;},
   style: {
     classes: 'qtip-bootstrap',
     tip: {
