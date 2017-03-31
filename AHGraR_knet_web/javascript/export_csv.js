@@ -33,7 +33,8 @@ var homolog_edges = cy.filter(function(i,ele){
             {return true;}
             else {return false;}
             });
-console.log(gene_nodes.data());
+var gene_nodes_data = gene_nodes.forEach(function(item){return item.data();});
+console.log(gene_nodes_data);
 console.log(protein_nodes);
 console.log(coding_edges);
 console.log(nb5_edges);
