@@ -92,7 +92,7 @@
             {
                 protein_name = selectedElement.data("name");
                 prot_seq = selectedElement.data("aa_seq");
-                fasta_format_seq = ">"+protein_name+"\n"+prot_seq
+                fasta_format_seq = ">"+protein_name+"<br>"+prot_seq
                 row= table.insertRow(3);
                 cell1= row.insertCell(0);
                 cell2= row.insertCell(1);
