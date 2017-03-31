@@ -23,28 +23,8 @@ function addPath(node, rel_type)
         {
             new_node = cy.add({group: "nodes","data":val.data, position:
                 { x: node_x+(50*Math.cos(angle)), y: node_y+(50*Math.sin(angle)) }});
-                console.log(new_node);
-            new_node.qtip({
-              content: function() {
-              var qtipMsg= "";
-              if(this.data('type')=="Gene"){
-                qtipMsg= "<b>Name:</b> "+ this.data('name')  + " [Gene]<br>"
-                +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
-                +"<b>Contig:</b> "+ this.data('contig');}
-
-              else if(this.data('type')=="Protein"){
-                qtipMsg= "<b>Name:</b> "+ this.data('name')  + " [Protein]<br>"
-                +"<b>Assembly:</b> "+ this.data('species')+ "<br>";}
-                return qtipMsg;},
-
-              style: {
-                classes: 'qtip-bootstrap',
-                tip: {
-                  width: 12,
-                  height: 6
-                }
-              }
-            });
+            console.log(new_node);
+            new_node.qtip();
             angle += angle_rotation;
         });
         new_edge_data.forEach(function(val)
