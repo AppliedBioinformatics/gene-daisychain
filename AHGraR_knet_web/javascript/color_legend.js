@@ -66,7 +66,7 @@ var colorLegend_buttons = document.getElementById('colorLegend').children;
 // Itterate through buttons, each represents an assembly
 // Call show_hide to set visibility according to current status
 for (var i = 0; i < colorLegend_buttons.length; i++){
-show_hide(colorLegend_buttons[i].attr('assembly'), colorLegend_buttons[i].attr('show'));
+show_hide(colorLegend_buttons[i].getAttribute('assembly'), colorLegend_buttons[i].getAttribute('show'));
 };
 }
 
