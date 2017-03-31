@@ -33,9 +33,13 @@ var homolog_edges = cy.filter(function(i,ele){
             {return true;}
             else {return false;}
             });
-var gene_nodes_data = {}
+var gene_nodes_data = {};
 for (i = 0; i < gene_nodes.length; ++i){
-gene_nodes_data[gene_nodes[i].data("id")]=[gene_nodes[i].data("name"),gene_nodes[i].data("contig")];
+gene_nodes_data[gene_nodes[i].data("id")]=[gene_nodes[i].data("name"),gene_nodes[i].data("species"),gene_nodes[i].data("contig"),gene_nodes[i].data("start"), gene_nodes[i].data("stop"), gene_nodes[i].data("description")];
+};
+var protein_nodes_data = {};
+for (i = 0; i < protein_nodes.length; ++i){
+protein_nodes_data[protein_nodes[i].data("id")]=[protein_nodes[i].data("name"),protein_nodes[i].data("species")]
 };
 console.log(gene_nodes);
 console.log(protein_nodes);
