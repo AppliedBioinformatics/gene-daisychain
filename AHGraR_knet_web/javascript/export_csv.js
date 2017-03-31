@@ -38,7 +38,7 @@ for (i = 0; i < gene_nodes.length; ++i){
 gene_nodes_data[gene_nodes[i].data("id")]=[gene_nodes[i].data("name"),gene_nodes[i].data("contig")];
 };
 console.log(gene_nodes);
-console.log(protein);
+console.log(protein_nodes);
 //console.log(coding_edges);
 //console.log(nb5_edges);
 //console.log(nb3_edges);
