@@ -28,14 +28,13 @@ function addPath(node, rel_type)
               content: function() {
               var qtipMsg= "";
               if(this.data('type')=="Gene"){
-                qtipMsg= "<b>Name:</b> "+ this.data('name')  + " (Gene)<br>"
+                qtipMsg= "<b>Name:</b> "+ this.data('name')  + " [Gene]<br>"
                 +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
                 +"<b>Contig:</b> "+ this.data('contig');}
 
               else if(this.data('type')=="Protein"){
-                qtipMsg= "<b>Name:</b> "+ this.data('name')  + " (Protein)<br>"
-                +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
-                +"<b>Contig:</b> "+ this.data('contig');}
+                qtipMsg= "<b>Name:</b> "+ this.data('name')  + " [Protein]<br>"
+                +"<b>Assembly:</b> "+ this.data('species')+ "<br>";}
                 return qtipMsg;},
 
               style: {

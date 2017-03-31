@@ -1,3 +1,7 @@
+// This function is used to convert search results (keyword or blast) into a graph visualization
+// A graph can then be extended via the context menu
+// Those functions are provided by extend_graph
+
 function load_reload_Network(network_json, network_style) {
 // Initialise a cytoscape container instance on the HTML DOM using JQuery.
 $('#cy').cytoscape({
@@ -36,14 +40,13 @@ cy.elements('node').qtip({
   content: function() {
   var qtipMsg= "";
   if(this.data('type')=="Gene"){
-    qtipMsg= "<b>Name:</b> "+ this.data('name')  + " (Gene)<br>"
+    qtipMsg= "<b>Name:</b> "+ this.data('name')  + " [Gene]<br>"
     +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
     +"<b>Contig:</b> "+ this.data('contig');}
 
   else if(this.data('type')=="Protein"){
-    qtipMsg= "<b>Name:</b> "+ this.data('name')  + " (Protein)<br>"
-    +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
-    +"<b>Contig:</b> "+ this.data('contig');}
+    qtipMsg= "<b>Name:</b> "+ this.data('name')  + " [Protein]<br>"
+    +"<b>Assembly:</b> "+ this.data('species')+ "<br>";}
     return qtipMsg;},
 
   style: {
@@ -117,14 +120,14 @@ cy.elements('edge').qtip({
             }
         },
         {
-         content: "Show CODING",
+         content: "Show protein",
          select: function()
             {
                 addPath(this, "CODING");
             } 
         },
         {
-         content: "Show HOMOLOG",
+         content: "Show homologs",
          select: function()
             {
                 addPath(this, "HOMOLOG");
@@ -145,10 +148,10 @@ cy.elements('edge').qtip({
             }
         }
     ], 
-    fillColor: 'rgba(0, 0, 0, 0.75)', // the background colour of the menu
+    fillColor: 'rgba(0, 54, 142, 0.75)', // the background colour of the menu
     activeFillColor: 'rgba(92, 194, 237, 0.75)', // the colour used to indicate the selected command
     activePadding: 2, // 20, // additional size in pixels for the active command
-    indicatorSize: 15, // 24, // the size in pixels of the pointer to the active command
+    indicatorSize: 24, // 15, // the size in pixels of the pointer to the active command
     separatorWidth: 3, // the empty spacing in pixels between successive commands
     spotlightPadding: 3, // extra spacing in pixels between the element and the spotlight
     minSpotlightRadius: 5, // 24, // the minimum radius in pixels of the spotlight
