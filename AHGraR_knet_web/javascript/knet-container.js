@@ -214,7 +214,7 @@ cy.elements('edge').qtip({
  };
 
  // Context menu for edges
- var ctxt_menu_protein= {
+ var ctxt_menu_edge= {
     menuRadius: 75, // the radius of the circular menu in pixels
     selector: 'edge',
     commands: [ // an array of commands to list in the menu
@@ -252,6 +252,7 @@ cy.elements('edge').qtip({
 
 cy.cxtmenu(ctxt_menu_gene); // set Context Menu for all the core elements.
 cy.cxtmenu(ctxt_menu_protein); // set Context Menu for all the core elements.
+//cy.cxtmenu(ctxt_menu_edge); // set Context Menu for all the core elements.
  // Show the popup Info. dialog box.
  $('#infoDialog').click(function() {
    $('#infoDialog').slideToggle(300);
