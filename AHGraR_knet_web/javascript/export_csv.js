@@ -43,7 +43,7 @@ protein_nodes_data[protein_nodes[i].data("id")]=[protein_nodes[i].data("name"),p
 };
 // Iterate through gene homologs
 for (i = 0; i < homolog_edges.length; ++i){
-console.log(gene_nodes_data[homolog_edges[i]}]);
+console.log(gene_nodes_data[homolog_edges[i].data("source")}]);
 }
 //console.log(gene_nodes_data);
 //console.log(protein_nodes_data);
