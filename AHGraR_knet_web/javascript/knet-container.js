@@ -81,14 +81,12 @@ cy.elements('edge').qtip({
 });
 
 
- /** Popup (context) menu: a circular Context Menu for each Node (concept) & Edge (relation) using the 'cxtmenu' jQuery plugin. */
+ //Popup (context) menu: a circular Context Menu for each Node (concept) & Edge (relation) using the 'cxtmenu' jQuery plugin.
+ // Define indidivual ctxt menus for genes, proteins and edges
+
+ // Context menu for genes
  var ctxt_menu_gene= {
     menuRadius: 75, // the radius of the circular menu in pixels
-
-    // Use selector: '*' to set this circular Context Menu on all the elements of the core.
-    /** Note: Specify selector: 'node' or 'edge' to restrict the context menu to a specific type of element. e.g, 
-     * selector: 'node', // to have context menu only for nodes.
-     * selector: 'edge', // to have context menu only for edges. */
     selector: 'node[type="Gene"]',
     commands: [ // an array of commands to list in the menu
         {
@@ -96,17 +94,13 @@ cy.elements('edge').qtip({
          select: function() {
              // Show Item Info Pane.
              openItemInfoPane();
-
              // Display Item Info.
              showItemInfo(this);
             }
         },
-            
         {
          content: 'Delete',
          select: function() {
-             //this.hide(); // hide the selected 'node' or 'edge' element.
-             console.log(this);
             cy.remove(this);
 			 // Refresh network legend.
              updateCyLegend();
@@ -133,9 +127,6 @@ cy.elements('edge').qtip({
                 addPath(this, "HOMOLOG");
             } 
         },
-
-
-
         {
          content: 'Label on/ off',
          select: function() {
@@ -161,46 +152,30 @@ cy.elements('edge').qtip({
     zIndex: 9999 // the z-index of the ui div
  };
 
-
+// Context menu for proteins
  var ctxt_menu_protein= {
     menuRadius: 75, // the radius of the circular menu in pixels
-
-    // Use selector: '*' to set this circular Context Menu on all the elements of the core.
-    /** Note: Specify selector: 'node' or 'edge' to restrict the context menu to a specific type of element. e.g,
-     * selector: 'node', // to have context menu only for nodes.
-     * selector: 'edge', // to have context menu only for edges. */
-    selector: 'node[type="Protein"]',
+    selector: 'node[type="Gene"]',
     commands: [ // an array of commands to list in the menu
         {
          content: 'Show Info',
          select: function() {
              // Show Item Info Pane.
              openItemInfoPane();
-
              // Display Item Info.
              showItemInfo(this);
             }
         },
-
         {
          content: 'Delete',
          select: function() {
-             //this.hide(); // hide the selected 'node' or 'edge' element.
-             console.log(this);
             cy.remove(this);
 			 // Refresh network legend.
              updateCyLegend();
             }
         },
         {
-         content: "Show 5'/3'",
-         select: function()
-            {
-                addPath(this, "53NB");
-            }
-        },
-        {
-         content: "Show protein",
+         content: "Show gene",
          select: function()
             {
                 addPath(this, "CODING");
@@ -213,9 +188,6 @@ cy.elements('edge').qtip({
                 addPath(this, "HOMOLOG");
             }
         },
-
-
-
         {
          content: 'Label on/ off',
          select: function() {
@@ -228,7 +200,7 @@ cy.elements('edge').qtip({
             }
         }
     ],
-    fillColor: 'rgba(239, 0, 0, 0.75)', // the background colour of the menu
+    fillColor: 'rgba(135, 0, 0, 0.75)', // the background colour of the menu
     activeFillColor: 'rgba(92, 194, 237, 0.75)', // the colour used to indicate the selected command
     activePadding: 2, // 20, // additional size in pixels for the active command
     indicatorSize: 15, // 24, // the size in pixels of the pointer to the active command
