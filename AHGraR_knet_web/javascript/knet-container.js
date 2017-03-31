@@ -148,10 +148,10 @@ cy.elements('edge').qtip({
             }
         }
     ], 
-    fillColor: 'rgba(0, 54, 142, 0.75)', // the background colour of the menu
+    fillColor: 'rgba(0, 37, 96, 0.75)', // the background colour of the menu
     activeFillColor: 'rgba(92, 194, 237, 0.75)', // the colour used to indicate the selected command
     activePadding: 2, // 20, // additional size in pixels for the active command
-    indicatorSize: 24, // 15, // the size in pixels of the pointer to the active command
+    indicatorSize: 15, // 24, // the size in pixels of the pointer to the active command
     separatorWidth: 3, // the empty spacing in pixels between successive commands
     spotlightPadding: 3, // extra spacing in pixels between the element and the spotlight
     minSpotlightRadius: 5, // 24, // the minimum radius in pixels of the spotlight
