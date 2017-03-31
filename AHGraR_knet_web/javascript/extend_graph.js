@@ -51,7 +51,7 @@ function addPath(node, rel_type)
         {
             console.log(val.data);
             new_edge = cy.add({group: "edges","data":val.data});
-            new_edge.qtip({
+            /*new_edge.qtip({
           content: function() {
               var qtipMsg= "";
               if(this.data('type')=="HOMOLOG"){
@@ -70,7 +70,7 @@ function addPath(node, rel_type)
               height: 6
             }
           }
-        });
+        });*/
         });
         updateCyLegend();
         changeSensitivity();
