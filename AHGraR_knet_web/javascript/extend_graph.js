@@ -25,16 +25,8 @@ function addPath(node, rel_type)
                 { x: node_x+(50*Math.cos(angle)), y: node_y+(50*Math.sin(angle)) }});
             console.log(new_node);
             new_node.qtip({
-  content: function() {
-      var qtipMsg= "";
-      if(val.data('type')=="HOMOLOG"){
-        qtipMsg= "<b>Identity:</b> "+ val.data('perc_match')+"%";}
-      if(val.data('type')=="CODING"){
-        qtipMsg= "Gene coding for a protein";}
-      if(val.data('type')=="5_NB"){
-        qtipMsg= "Located upstream on contig";}
-      if(val.data('type')=="3_NB"){
-        qtipMsg= "Located downstream on contig";}
+  content: function(new_node) {
+      var qtipMsg= new_node.data("type");
       return qtipMsg;},
   style: {
     classes: 'qtip-bootstrap',
