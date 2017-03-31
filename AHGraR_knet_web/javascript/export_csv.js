@@ -3,8 +3,8 @@
 function export_table(){
 console.log("Export table");
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
-var gene_nodes = cy.elements('node[type="Gene"]:visible');
-var protein_nodes = cy.elements('node[type="Protein":visible]');
+var gene_nodes = cy.elements('node[type="Gene"],:visible');
+var protein_nodes = cy.elements('node[type="Protein",:visible]');
 console.log(gene_nodes);
 console.log(protein_nodes);
 
