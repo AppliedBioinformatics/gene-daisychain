@@ -80,7 +80,7 @@ cy.elements().qtip({
     /** Note: Specify selector: 'node' or 'edge' to restrict the context menu to a specific type of element. e.g, 
      * selector: 'node', // to have context menu only for nodes.
      * selector: 'edge', // to have context menu only for edges. */
-    selector: 'node',
+    selector: 'node[type="Gene"]',
     commands: [ // an array of commands to list in the menu
         {
          content: 'Show Info',
