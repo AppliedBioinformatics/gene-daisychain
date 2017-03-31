@@ -1,5 +1,4 @@
-function load_reload_Network(network_json, network_style/*, runNetLayout*/) {
-
+function load_reload_Network(network_json, network_style) {
 // Initialise a cytoscape container instance on the HTML DOM using JQuery.
 $('#cy').cytoscape({
   container: document.getElementById('cy')/*$('#cy')*/,
@@ -31,11 +30,12 @@ $('#cy').cytoscape({
 // Get the cytoscape instance as a Javascript object from JQuery.
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
 cy.boxSelectionEnabled(true); // enable box selection (highlight & select multiple elements for moving via mouse click and drag).
+
 /** Add a Qtip message to all the nodes & edges using QTip displaying their Concept Type & value when a
  * node/ edge is clicked.
  * Note: Specify 'node' or 'edge' to bind an event to a specific type of element.
  * e.g, cy.elements('node').qtip({ }); or cy.elements('edge').qtip({ }); */
-cy.elements().qtip({
+cy.elements('node[type="Gene"]').qtip({
   content: function() {
       var qtipMsg= "";
      try {
@@ -104,7 +104,7 @@ cy.elements().qtip({
             }
         },
         {
-         content: "Show 5'/3''",
+         content: "Show 5'/3'",
          select: function()
             {
                 addPath(this, "53NB");
