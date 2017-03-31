@@ -35,7 +35,8 @@ cy.boxSelectionEnabled(true); // enable box selection (highlight & select multip
  * node/ edge is clicked.
  * Note: Specify 'node' or 'edge' to bind an event to a specific type of element.
  * e.g, cy.elements('node').qtip({ }); or cy.elements('edge').qtip({ }); */
-cy.elements('node[type="Gene"]').qtip({
+cy.elements().qtip({
+    selector: 'node[type="Gene"]',
   content: function() {
       var qtipMsg= "";
      try {
