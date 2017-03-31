@@ -35,6 +35,8 @@ function addPath(node, rel_type)
         });
         updateCyLegend();
         changeSensitivity();
+        // Update show/hide
+        show_hide_refresh();
 
         cy.elements().qtip({
   content: function() {
@@ -74,6 +76,5 @@ function addPath(node, rel_type)
 });
         
     }
-    // Update show/hide
-    show_hide_refresh();
+
 }
