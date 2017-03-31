@@ -85,7 +85,7 @@
             <input id="keyword" type="text" class="form-control" name="keyword" placeholder="Keyword(s)">
         </div>
         <div>
-        <label class="radio-inline"><input checked type="radio" id="radio_all" name="radio">Match all keywords</label><\br>
+        <label class="radio-inline"><input checked type="radio" id="radio_all" name="radio">Match all keywords</label>
         <label class="radio-inline"><input type="radio" id="radio_any" name="radio">Match at least one keyword</label>
         </div>
         <button type="button" class="btn btn-default" id = "search_kwd_btm" onclick="searchKeyword()">Search by keyword</button>
@@ -93,11 +93,12 @@
     </div>
     <div class="col-sm-8 well" style="background-color:white;">
     <form>
-        <div class="form-group">
+
+        <form class="form-inline">
+            <div class="form-group">
             <label for="tbfasta">Search by sequence:</label>
             <textarea class="form-control" rows="2" id="tbfasta" placeholder="Nucleotide or protein FASTA"></textarea>
         </div>
-        <form class="form-inline">
             <div class="col-sm-6" style="background-color:white;">
             <div class="input-group">
             <span class="input-group-addon">BLAST sensitivity</span>
