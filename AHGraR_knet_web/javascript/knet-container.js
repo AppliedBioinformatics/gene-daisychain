@@ -37,8 +37,28 @@ cy.boxSelectionEnabled(true); // enable box selection (highlight & select multip
  * e.g, cy.elements('node').qtip({ }); or cy.elements('edge').qtip({ }); */
 cy.elements('node').qtip({
   content: function() {
+  var qtipMsg= "";
+  if(this.data('type')=="Gene"){
+    qtipMsg= "<b>Name:</b> "+ this.data('name') + "\n" +", <b>Type:</b> "+ this.data('type') + "\n"
+    +", <b>Species:</b> "+ this.data('species')+ "\n"
+    +", <b>Contig:</b> "+ this.data('contig');}
+  if(this.data('type')=="Protein"){
+    qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
+    +", <b>Species:</b> "+ this.data('species')
+    +", <b>Contig:</b> "+ this.data('contig');}},
+  style: {
+    classes: 'qtip-bootstrap',
+    tip: {
+      width: 12,
+      height: 6
+    }
+  }
+});
+
+cy.elements('edge').qtip({
+  content: function() {
       var qtipMsg= "";
-     try {
+
       if(this.isNode()) {
           if(this.data('type')=="Gene")
           {
@@ -59,9 +79,6 @@ cy.elements('node').qtip({
               qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";
               }
              }
-      }
-      catch(err) { qtipMsg= "Selected element is neither a Concept nor a Relation"; }
-      return qtipMsg;
      },
   style: {
     classes: 'qtip-bootstrap',
@@ -71,6 +88,7 @@ cy.elements('node').qtip({
     }
   }
 });
+
 
  /** Popup (context) menu: a circular Context Menu for each Node (concept) & Edge (relation) using the 'cxtmenu' jQuery plugin. */
  var contextMenu= {
