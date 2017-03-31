@@ -3,8 +3,11 @@
 function export_table(){
 console.log("Export table");
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
-var gene_nodes = cy.filter(function(i,ele){console.log(ele); return false;});
-
+var gene_nodes = cy.filter(function(i,ele){
+            if (ele.isNode() && ele.data('Type') == "Gene" && ele.visible())
+            {return true;}
+            else {return false;}
+            });
 console.log(gene_nodes);
 
 
