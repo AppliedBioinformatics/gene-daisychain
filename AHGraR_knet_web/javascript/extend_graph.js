@@ -24,7 +24,7 @@ function addPath(node, rel_type)
             new_node = cy.add({group: "nodes","data":val.data, position:
                 { x: node_x+(50*Math.cos(angle)), y: node_y+(50*Math.sin(angle)) }});
                 console.log(new_node);
-            new_node.qtip({
+            /*new_node.qtip({
               content: function() {
               var qtipMsg= "";
               if(this.data('type')=="Gene"){
@@ -44,7 +44,7 @@ function addPath(node, rel_type)
                   height: 6
                 }
               }
-            });
+            });*/
             angle += angle_rotation;
         });
         new_edge_data.forEach(function(val)
