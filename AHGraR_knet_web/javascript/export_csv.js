@@ -41,11 +41,11 @@ var protein_nodes_data = {};
 for (i = 0; i < protein_nodes.length; ++i){
 protein_nodes_data[protein_nodes[i].data("id")]=[protein_nodes[i].data("name"),protein_nodes[i].data("species")]
 };
-console.log(gene_nodes_data);
-console.log(protein_nodes_data);
+//console.log(gene_nodes_data);
+//console.log(protein_nodes_data);
 //console.log(coding_edges);
 //console.log(nb5_edges);
 //console.log(nb3_edges);
-//console.log(homolog_edges);
+console.log(homolog_edges);
 
 }
