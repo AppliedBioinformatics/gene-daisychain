@@ -52,7 +52,8 @@ function reset_color_legend()
 // Get reference to div
 var colorLegend_buttons = document.getElementById('colorLegend').children;
 for (var i = 0; i < colorLegend_buttons.length; i++){
-console.log(colorLegend_buttons[i]);
+colorLegend_buttons[i].setAttribute('show', 'True');
+colorLegend_buttons[i].style.background = "#91ffd4";
 }
 
 }
