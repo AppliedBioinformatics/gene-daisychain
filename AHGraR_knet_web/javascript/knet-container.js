@@ -213,6 +213,42 @@ cy.elements('edge').qtip({
     zIndex: 9999 // the z-index of the ui div
  };
 
+ // Context menu for edges
+ var ctxt_menu_protein= {
+    menuRadius: 75, // the radius of the circular menu in pixels
+    selector: 'edge',
+    commands: [ // an array of commands to list in the menu
+        {
+         content: 'Label on/ off',
+         select: function() {
+             if(this.style('text-opacity') === '0') {
+                this.style({'text-opacity': '1'}); // show the concept/ relation Label.
+               }
+               else {
+                this.style({'text-opacity': '0'}); // hide the concept/ relation Label.
+               }
+            }
+        },
+        {
+         content: 'Delete',
+         select: function() {
+            cy.remove(this);
+            }
+        }
+    ],
+    fillColor: 'rgba(188, 249, 57, 0.75)', // the background colour of the menu
+    activeFillColor: 'rgba(133, 204, 130, 0.75)', // the colour used to indicate the selected command
+    activePadding: 2, // 20, // additional size in pixels for the active command
+    indicatorSize: 15, // 24, // the size in pixels of the pointer to the active command
+    separatorWidth: 3, // the empty spacing in pixels between successive commands
+    spotlightPadding: 3, // extra spacing in pixels between the element and the spotlight
+    minSpotlightRadius: 5, // 24, // the minimum radius in pixels of the spotlight
+    maxSpotlightRadius: 10, // 38, // the maximum radius in pixels of the spotlight
+    itemColor: 'black', // the colour of text in the command's content
+    itemTextShadowColor: 'green', // the text shadow colour of the command's content
+    zIndex: 9999 // the z-index of the ui div
+ };
+
 
 cy.cxtmenu(ctxt_menu_gene); // set Context Menu for all the core elements.
 cy.cxtmenu(ctxt_menu_protein); // set Context Menu for all the core elements.
