@@ -74,4 +74,6 @@ function addPath(node, rel_type)
 });
         
     }
+    // Update show/hide
+    show_hide_refresh();
 }

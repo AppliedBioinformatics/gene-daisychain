@@ -17,7 +17,7 @@ for(var i = 0; i < species_list.length; i++)
                  btn.setAttribute('type', 'button');
                  // Default: Show nodes
                  btn.setAttribute('show', 'True')
-                 btn.setAttribute('species', species_list[i])
+                 btn.setAttribute('assembly', species_list[i])
                  btn.setAttribute('id', 'show_hide' + "_"+species_list[i]);
                  btn.innerHTML = species_list[i];
                  btn.value = species_list[i];
@@ -28,7 +28,7 @@ for(var i = 0; i < species_list.length; i++)
                  // If currently showing nodes, hide them now
                  if (this.getAttribute('show')=='True')
                  {
-                 show_hide(this.getAttribute('species'), 'False');
+                 show_hide(this.getAttribute('assembly'), 'False');
                  this.setAttribute('show', 'False');
                  // Give button a red background color
                  this.style.background = "#ff9263";
@@ -37,7 +37,7 @@ for(var i = 0; i < species_list.length; i++)
                  else
                  {
                  this.setAttribute('show', 'True');
-                 show_hide(this.getAttribute('species'), 'True');
+                 show_hide(this.getAttribute('assembly'), 'True');
                  // Remove red background from button
                  this.style.background = "#91ffd4";
                  };});
@@ -49,11 +49,46 @@ for(var i = 0; i < species_list.length; i++)
 // Reset color legend: Show all assemblies
 function reset_color_legend()
 {
-// Get reference to div
+// Get reference to buttons
 var colorLegend_buttons = document.getElementById('colorLegend').children;
 for (var i = 0; i < colorLegend_buttons.length; i++){
 colorLegend_buttons[i].setAttribute('show', 'True');
 colorLegend_buttons[i].style.background = "#91ffd4";
+};
 }
 
+// For each assembly, show/hide nodes according to current button state
+// Used when the graph is extended (e.g. show neighbors, coding etc.)
+function show_hide_refresh()
+{
+// Get reference to buttons
+var colorLegend_buttons = document.getElementById('colorLegend').children;
+// Itterate through buttons, each represents an assembly
+// Call show_hide to set visibility according to current status
+for (var i = 0; i < colorLegend_buttons.length; i++){
+show_hide(colorLegend_buttons[i].attr('assembly'), colorLegend_buttons[i].attr('show'));
+};
+}
+
+function show_hide(assembly, show)
+{
+var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
+if (typeof(cy) == 'undefined')
+{
+return;
+}
+cy.nodes().forEach(function( node )
+    {
+        if (node.data('species')==assembly)
+        {
+         if(show == 'True')
+         {
+         node.show();
+         }
+         else
+         {
+         node.hide();
+         };
+        };
+    });
 }
