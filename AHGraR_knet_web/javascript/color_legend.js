@@ -45,3 +45,14 @@ for(var i = 0; i < species_list.length; i++)
                  colorLegend.appendChild(btn);
              };
 }
+
+// Reset color legend: Show all assemblies
+function reset_color_legend()
+{
+// Get reference to div
+var colorLegend_buttons = document.getElementById('colorLegend').children;
+for (var i = 0; i < colorLegend_buttons.length; i++){
+console.log(colorLegend_buttons[i]);
+}
+
+}

@@ -326,6 +326,8 @@
          updateCyLegend();
          // Set cluster size to currently selected value
          changeSensitivity();
+         // Reset color legend
+         reset_color_legend();
          // Change layout, show graph and status bar, hide result panel
          $('#result-tree').collapse("hide");
          $('#result-button').collapse("hide");
