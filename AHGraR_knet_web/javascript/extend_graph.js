@@ -51,7 +51,27 @@ function addPath(node, rel_type)
         new_edge_data.forEach(function(val)
         {
             console.log(val.data);
-            cy.add({group: "edges","data":val.data});
+            new_edge = cy.add({group: "edges","data":val.data});
+            new_edge.qtip({
+          content: function() {
+              var qtipMsg= "";
+              if(this.data('type')=="HOMOLOG"){
+                qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";}
+              if(this.data('type')=="CODING"){
+                qtipMsg= "Gene coding for a protein";}
+              if(this.data('type')=="5_NB"){
+                qtipMsg= "Located upstream on contig";}
+              if(this.data('type')=="3_NB"){
+                qtipMsg= "Located downstream on contig";}
+              return qtipMsg;},
+          style: {
+            classes: 'qtip-bootstrap',
+            tip: {
+              width: 12,
+              height: 6
+            }
+          }
+        });
         });
         updateCyLegend();
         changeSensitivity();
