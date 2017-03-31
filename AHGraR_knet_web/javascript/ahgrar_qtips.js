@@ -1,6 +1,8 @@
 // Defines the tooltips shown on nodes and edges
 // Based on qtip
 // Function is called when loading search results or manually extending graph
+// qtip may be added to an element that has already a qtip, By default, qtip()
+// overrides existing qtips.
 
 function add_qtips(){
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
