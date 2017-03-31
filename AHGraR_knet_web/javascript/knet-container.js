@@ -215,7 +215,7 @@ cy.elements('edge').qtip({
 
  // Context menu for edges
  var ctxt_menu_edge= {
-    menuRadius: 75, // the radius of the circular menu in pixels
+    menuRadius: 35, // the radius of the circular menu in pixels
     selector: 'edge',
     commands: [ // an array of commands to list in the menu
         {
@@ -245,14 +245,14 @@ cy.elements('edge').qtip({
     minSpotlightRadius: 5, // 24, // the minimum radius in pixels of the spotlight
     maxSpotlightRadius: 10, // 38, // the maximum radius in pixels of the spotlight
     itemColor: 'black', // the colour of text in the command's content
-    itemTextShadowColor: 'green', // the text shadow colour of the command's content
+    itemTextShadowColor: 'none', // the text shadow colour of the command's content
     zIndex: 9999 // the z-index of the ui div
  };
 
 
-cy.cxtmenu(ctxt_menu_gene); // set Context Menu for all the core elements.
-cy.cxtmenu(ctxt_menu_protein); // set Context Menu for all the core elements.
-//cy.cxtmenu(ctxt_menu_edge); // set Context Menu for all the core elements.
+cy.cxtmenu(ctxt_menu_gene); // set Context Menu for gene nodes.
+cy.cxtmenu(ctxt_menu_protein); // set Context Menu for protein nodes.
+cy.cxtmenu(ctxt_menu_edge); // set Context Menu for all the edges.
  // Show the popup Info. dialog box.
  $('#infoDialog').click(function() {
    $('#infoDialog').slideToggle(300);
