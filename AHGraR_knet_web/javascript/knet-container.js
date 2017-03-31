@@ -242,6 +242,13 @@ cy.elements().qtip({
             } 
         },
         {
+         content: "Show 53'",
+         select: function()
+            {
+                addPath(this, "53NB");
+            }
+        },
+        {
          content: "Show CODING",
          select: function()
             {

@@ -43,8 +43,7 @@ for(var i = 0; i < species_list.length; i++)
                  };});
                  // Add button to color legend div
                  colorLegend.appendChild(btn);
-             };
-}
+             };}
 
 // Reset color legend: Show all assemblies
 function reset_color_legend()
@@ -70,25 +69,23 @@ show_hide(colorLegend_buttons[i].getAttribute('assembly'), colorLegend_buttons[i
 };
 }
 
+// Show or hide nodes of one assembly
 function show_hide(assembly, show)
 {
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
+// If cytoscape has not been initialized yet, return
 if (typeof(cy) == 'undefined')
 {
 return;
 }
+
+// Else, run through each node and if node belongs to assembly set state
 cy.nodes().forEach(function( node )
     {
         if (node.data('species')==assembly)
         {
-         if(show == 'True')
-         {
-         node.show();
-         }
-         else
-         {
-         node.hide();
-         };
+         if(show == 'True') {node.show();}
+         else{node.hide();};
         };
     });
 }
