@@ -22,16 +22,18 @@ function addPath(node, rel_type)
         new_node_data.forEach(function(val)
         {
             new_node = cy.add({group: "nodes","data":val.data, position:
-                { x: node_x+(50*Math.cos(angle)), y: node_y+(50*Math.sin(angle)) }}).qtip({
+                { x: node_x+(50*Math.cos(angle)), y: node_y+(50*Math.sin(angle)) }});
+            console.log(new_node);
+            new_node.qtip({
   content: function() {
       var qtipMsg= "";
-      if(this.data('type')=="HOMOLOG"){
-        qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";}
-      if(this.data('type')=="CODING"){
+      if(val.data('type')=="HOMOLOG"){
+        qtipMsg= "<b>Identity:</b> "+ val.data('perc_match')+"%";}
+      if(val.data('type')=="CODING"){
         qtipMsg= "Gene coding for a protein";}
-      if(this.data('type')=="5_NB"){
+      if(val.data('type')=="5_NB"){
         qtipMsg= "Located upstream on contig";}
-      if(this.data('type')=="3_NB"){
+      if(val.data('type')=="3_NB"){
         qtipMsg= "Located downstream on contig";}
       return qtipMsg;},
   style: {
