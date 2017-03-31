@@ -65,7 +65,7 @@ cy.elements('edge').qtip({
         qtipMsg= "Gene coding for a protein";}
       if(this.data('type')=="5_NB"){
         qtipMsg= "Located upstream on contig";}
-      if(this.data('type')=="5_NB"){
+      if(this.data('type')=="3_NB"){
         qtipMsg= "Located downstream on contig";}
       return qtipMsg;},
   style: {

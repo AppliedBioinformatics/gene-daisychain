@@ -11,7 +11,6 @@ function addPath(node, rel_type)
     var wsconn = new WebSocket("ws://146.118.99.190:7687/");
     wsconn.onopen = function () {wsconn.send("PAQURY_RELA_"+project_id+"_WEB_"+node_id+"_"+rel_type);};
     wsconn.onmessage = function (evt){
-        console.log(evt.data);
         new_graph_data = JSON.parse(evt.data);
         new_node_data = new_graph_data.nodes;
         new_edge_data = new_graph_data.edges;
@@ -19,13 +18,12 @@ function addPath(node, rel_type)
         var angle = 0;
         if (new_node_data.length == 0){
         window.alert("No new nodes found.");
-        console.log(new_node_data.length);
         };
         new_node_data.forEach(function(val)
         {
-            console.log(val.data);
-            cy.add({group: "nodes","data":val.data, position: 
+            new_node = cy.add({group: "nodes","data":val.data, position:
                 { x: node_x+(50*Math.cos(angle)), y: node_y+(50*Math.sin(angle)) }});
+                console.log(new_node);
             angle += angle_rotation;
         });
         new_edge_data.forEach(function(val)
