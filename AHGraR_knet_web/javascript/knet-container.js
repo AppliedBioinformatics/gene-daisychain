@@ -30,13 +30,8 @@ $('#cy').cytoscape({
 
 // Get the cytoscape instance as a Javascript object from JQuery.
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
-
 cy.boxSelectionEnabled(true); // enable box selection (highlight & select multiple elements for moving via mouse click and drag).
-//cy.boxSelectionEnabled(false); // to disable box selection & hence allow Panning, i.e., dragging the entire graph.
-
-
-
-/** Add a Qtip message to all the nodes & edges using QTip displaying their Concept Type & value when a 
+/** Add a Qtip message to all the nodes & edges using QTip displaying their Concept Type & value when a
  * node/ edge is clicked.
  * Note: Specify 'node' or 'edge' to bind an event to a specific type of element.
  * e.g, cy.elements('node').qtip({ }); or cy.elements('edge').qtip({ }); */
@@ -76,30 +71,6 @@ cy.elements().qtip({
     }
   }
 });
-
-/** Event handling: mouse 'tap' event on all the elements of the core (i.e., the cytoscape container).
- * Note: Specify 'node' or 'edge' to bind an event to a specific type of element.
- * e.g, cy.on('tap', 'node', function(e){ }); or cy.on('tap', 'edge', function(e){ }); */
- cy.on('tap', function(e) {
-	console.log("mouse tap...");
-    var thisElement= e.cyTarget;
-    var info= "";
-    try {
-    if(thisElement.isNode()) {
-       info= "<b>Concept:</b> "+ thisElement.data('value') +", <b>Type:</b> "+ thisElement.data('conceptType');
-      }
-      else if(thisElement.isEdge()) {
-              info= "<b>Relation:</b> "+ this.data('label');
-              var fromID= this.data('source'); // relation source ('fromConcept')
-              info= info +", <b>From:</b> "+ cy.$('#'+fromID).data('value') +" ("+ cy.$('#'+fromID).data('conceptType').toLowerCase() +"), ";
-              var toID= this.data('target'); // relation source ('toConcept')
-              info= info +"<b>To:</b> "+ cy.$('#'+toID).data('value') +" ("+ cy.$('#'+toID).data('conceptType').toLowerCase() +")";
-             }
-      }
-      catch(err) { info= "Selected element is neither a Concept nor a Relation"; }
-    showItemInfo(thisElement);
-   });
-// cxttap - normalised right click or 2-finger tap event.
 
  /** Popup (context) menu: a circular Context Menu for each Node (concept) & Edge (relation) using the 'cxtmenu' jQuery plugin. */
  var contextMenu= {
