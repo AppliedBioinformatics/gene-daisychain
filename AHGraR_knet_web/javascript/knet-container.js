@@ -39,13 +39,13 @@ cy.elements('node').qtip({
   content: function() {
   var qtipMsg= "";
   if(this.data('type')=="Gene"){
-    qtipMsg= "<b>Name:</b> "+ this.data('name') + "\n" +", <b>Type:</b> "+ this.data('type') + "<br>"
-    +", <b>Species:</b> "+ this.data('species')+ "\n"
+    qtipMsg= "<b>Name:</b> "+ this.data('name')  + " (Gene)<br>"
+    +"<b>Assembly:</b> "+ this.data('species')+ "<br>"
     +", <b>Contig:</b> "+ this.data('contig');}
 
   else if(this.data('type')=="Protein"){
-    qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
-    +", <b>Species:</b> "+ this.data('species')
+    qtipMsg= "<b>Name:</b> "+ this.data('name')  + " (Protein)<br>"
+    +", <b>Assembly:</b> "+ this.data('species')+ "<br>"
     +", <b>Contig:</b> "+ this.data('contig');}
     return qtipMsg;},
 
