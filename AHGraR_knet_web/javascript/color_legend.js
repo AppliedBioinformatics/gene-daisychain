@@ -1,13 +1,13 @@
-function set_color_legend()
-{
-console.log("Retrieve  color legend");
-buttons = document.getElementById('colorLegend').childNodes;
-for (var but in buttons)
-{
-console.log(buttons[but].species);
+//function set_color_legend()
+//{
+//console.log("Retrieve  color legend");
+//buttons = document.getElementById('colorLegend').childNodes;
+//for (var but in buttons)
+//{
+//console.log(buttons[but].species);
 //show_hide(buttons[but].getAttribute('species'), buttons[but].getAttribute('show'));
-}
-}
+//}
+//}
 function update_color_legend(species_list)
 {
 
