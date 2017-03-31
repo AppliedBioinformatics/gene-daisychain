@@ -93,21 +93,16 @@
     </div>
     <div class="col-sm-8 well" style="background-color:white;">
     <form>
-
-
             <div class="form-group">
             <label for="tbfasta">Search by sequence:</label>
             <textarea class="form-control" rows="2" id="tbfasta" placeholder="Nucleotide or protein FASTA"></textarea>
-        </div>
-            <div class="col-sm-6" style="background-color:white;">
-            <div class="input-group">
+                <div class="input-group">
             <span class="input-group-addon">BLAST sensitivity</span>
             <input id="blastsens" type="text" class="form-control" name="blastsens" value="0.95">
+                    <button type="button" class="btn btn-default" id="btn_blast" onclick="searchBLAST()">Search by BLAST</button>
             </div>
             </div>
-            <div class="col-sm-6" style="background-color:white;">
-            <button type="button" class="btn btn-default" id="btn_blast" onclick="searchBLAST()">Search by BLAST</button>
-            </div>
+
 
     </form>
     </div>
