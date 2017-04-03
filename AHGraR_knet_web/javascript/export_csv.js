@@ -41,11 +41,12 @@ var protein_nodes_data = {};
 for (i = 0; i < protein_nodes.length; ++i){
 protein_nodes_data[protein_nodes[i].data("id")]=[protein_nodes[i].data("name"),protein_nodes[i].data("species")]
 };
-// Iterate through gene homologs
+// Iterate through gene homologs. For each id, collect all homologs and the perc. match
 for (i = 0; i < homolog_edges.length; ++i){
 var source = gene_nodes_data[homolog_edges[i].data("source")];
 var target = gene_nodes_data[homolog_edges[i].data("target")];
-if ("undefined" !== typeof source && "undefined" !== typeof target){console.log(source, target);};
+if ("undefined" == typeof source || "undefined" == typeof target){continue;};
+console.log(source);
 };
 //console.log(gene_nodes_data);
 //console.log(protein_nodes_data);
