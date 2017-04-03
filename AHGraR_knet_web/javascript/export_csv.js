@@ -44,9 +44,20 @@ protein_nodes_data[protein_nodes[i].data("id")]=[protein_nodes[i].data("name"),p
 // Iterate through gene homologs. For each id, collect all homologs and the perc. match
 var hmlg_dict = {};
 for (i = 0; i < homolog_edges.length; ++i){
-var source = gene_nodes_data[homolog_edges[i].data("source")][0];
-var target = gene_nodes_data[homolog_edges[i].data("target")][0];
-if ("undefined" == typeof source || "undefined" == typeof target){continue;};
+source_id = homolog_edges[i].data("source");
+target_id = homolog_edges[i].data("target");
+if ("undefined" == typeof source_id || "undefined" == typeof target_id){continue;};
+if (source_id.startsWith("g"))
+{
+var source = gene_nodes_data[source_id][0];
+var target = gene_nodes_data[target_id][0];
+}
+else
+{
+var source = protein_nodes_data[source_id][0];
+var target = protein_nodes_data[target_id][0];
+}
+
 if(source in hmlg_dict)
 {
 hmlg_dict[source].push(target);
