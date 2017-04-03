@@ -55,6 +55,15 @@ else
 {
 hmlg_dict[source] = [target];
 };
+if(target in hmlg_dict)
+{
+hmlg_dict[target].push(source);
+}
+else
+{
+hmlg_dict[target] = [source];
+};
+
 };
 //console.log(gene_nodes_data);
 //console.log(protein_nodes_data);
