@@ -121,7 +121,7 @@ function onHover(thisBtn) {
    try {
      var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
      console.log("changeLabelFontSize>> new_size: "+ new_size);
-     cy.style().selector('node').css({ 'font-size': new_size, 'text-wrap': 'wrap', 'text-max-width':'60px' }).update();
+     cy.style().selector('node').css({ 'font-size': new_size }).update();
      cy.style().selector('edge').css({ 'font-size': new_size }).update();
     }
    catch(err) {
