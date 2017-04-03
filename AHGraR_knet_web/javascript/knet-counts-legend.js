@@ -26,8 +26,7 @@
         };
         
     });
-	var cyLegend= "Showing "+gene_count+" genes ("+gene_hidden_count hidden" )and "+
-	protein_count+" proteins ("+protein_hidden_count+" hidden)";
+	var cyLegend= "Showing "+gene_count+" genes ("+gene_hidden_count hidden" )and "+protein_count+" proteins ("+protein_hidden_count+" hidden)";
 
 
 //	console.log(cyLegend);
