@@ -8,7 +8,7 @@
     var protein_hidden_count = 0;
     cy.nodes().forEach(function( node )
     {
-        if (node.data('type')=="Gene") && node.visible()
+        /*if (node.data('type')=="Gene") && node.visible()
         {
         gene_count +=1;
         };
@@ -23,7 +23,7 @@
         if (node.data('type')=="Protein") && !node.visible()
         {
         protein_hidden_count +=1;
-        };
+        };*/
         
     });
 	var cyLegend= "Showing "+gene_count+" genes ("+gene_hidden_count hidden" )and "+protein_count+" proteins ("+protein_hidden_count+" hidden)";
