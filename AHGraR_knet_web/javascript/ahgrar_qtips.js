@@ -35,7 +35,7 @@ cy.elements('edge').qtip({
       var qtipMsg= "";
       if(this.data('type')=="HOMOLOG"){
         perc_match = this.data('perc_match');
-        if isNaN(perc_match){perc_match = 0;};
+        if (isNaN(perc_match)){perc_match = 0;};
         qtipMsg= "<b>Identity:</b> "+ perc_match+"%";}
       if(this.data('type')=="CODING"){
         qtipMsg= "Gene coding for a protein";}
