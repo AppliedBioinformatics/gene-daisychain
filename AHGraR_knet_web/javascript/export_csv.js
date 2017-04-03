@@ -35,7 +35,7 @@ var homolog_edges = cy.filter(function(i,ele){
             });
 var gene_nodes_data = {};
 for (i = 0; i < gene_nodes.length; ++i){
-gene_nodes_data[gene_nodes[i].data("id")]=[gene_nodes[i].data("name"),gene_nodes[i].data("species"),gene_nodes[i].data("contig"),gene_nodes[i].data("start"), gene_nodes[i].data("stop"), gene_nodes[i].data("description")];
+gene_nodes_data[gene_nodes[i].data("id")]=[gene_nodes[i].data("id"), gene_nodes[i].data("name"),gene_nodes[i].data("species"),gene_nodes[i].data("contig"),gene_nodes[i].data("start"), gene_nodes[i].data("stop"), gene_nodes[i].data("description")];
 };
 var protein_nodes_data = {};
 for (i = 0; i < protein_nodes.length; ++i){
@@ -46,7 +46,7 @@ for (i = 0; i < homolog_edges.length; ++i){
 var source = gene_nodes_data[homolog_edges[i].data("source")];
 var target = gene_nodes_data[homolog_edges[i].data("target")];
 if ("undefined" == typeof source || "undefined" == typeof target){continue;};
-console.log(source);
+console.log(source[0]);
 };
 //console.log(gene_nodes_data);
 //console.log(protein_nodes_data);
