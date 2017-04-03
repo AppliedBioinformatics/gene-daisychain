@@ -71,7 +71,7 @@ function initializeNetworkView() {
           'line-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           perc_match = parseFloat(edge.data('perc_match'));
           if(isNaN(perc_match)){perc_match = 0;};
-          return rgb(((100-perc_match)*255)/100, (perc_match/100)*255, 0);
+          return "rgb("+(((100-perc_match)*255)/100)+","+((perc_match/100)*255)+", 0)";
           }},
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
           'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
