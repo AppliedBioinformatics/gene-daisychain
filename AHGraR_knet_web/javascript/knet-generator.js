@@ -89,7 +89,7 @@ function initializeNetworkView() {
         })
       .selector(':selected')
         .css({ // settings for highlighting nodes in case of single click or Shift+click multi-select event.
-        'background-color': function(node){if (node.data('type') == 'Protein'){return "#f7cb96";} else {return "#fcfc8a";}}
+        'background-color': function(node){if (node.data('type') == 'Protein'){return "#efb269";} else {return "#fcfc8a";}}
         })
       .selector('.BlurNode')
         .css({ // settings for using shadow effect on nodes when they have hidden, connected nodes.
