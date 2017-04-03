@@ -39,7 +39,7 @@ gene_nodes_data[gene_nodes[i].data("id")]=[gene_nodes[i].data("id"), gene_nodes[
 };
 var protein_nodes_data = {};
 for (i = 0; i < protein_nodes.length; ++i){
-protein_nodes_data[protein_nodes[i].data("id")]=[protein_nodes[i].data("name"),protein_nodes[i].data("species")]
+protein_nodes_data[protein_nodes[i].data("id")]=[protein_nodes[i].data("id"),protein_nodes[i].data("name"),protein_nodes[i].data("species")]
 };
 // Iterate through gene homologs. For each id, collect all homologs and the perc. match
 var hmlg_dict = {};
@@ -76,11 +76,7 @@ hmlg_dict[target] = [source];
 };
 
 };
-//console.log(gene_nodes_data);
-//console.log(protein_nodes_data);
-//console.log(coding_edges);
-//console.log(nb5_edges);
-//console.log(nb3_edges);
-//console.log(homolog_edges);
-console.log(hmlg_dict);
+for (i = 0; i < gene_nodes_data.length; ++i){
+console.log(gene_nodes_data[1],gene_nodes_data[2],hmlg_dict[gene_nodes_data[0]]);
+}
 }
