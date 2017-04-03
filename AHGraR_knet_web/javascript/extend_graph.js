@@ -31,10 +31,10 @@ function addPath(node, rel_type)
         });
         // Add qtips
         add_qtips();
-        updateCyLegend();
         changeSensitivity();
         // Update show/hide
         show_hide_refresh();
+        updateCyLegend();
 
 
       /*  cy.elements().qtip({
