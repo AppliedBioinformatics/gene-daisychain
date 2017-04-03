@@ -70,20 +70,14 @@ function initializeNetworkView() {
           'width': function(edge){if (edge.data('type') == 'HOMOLOG'){return "2";} else{return "1";}}, // 'mapData(relationSize, 70, 100, 2, 6)',
           'line-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           perc_match = parseFloat(edge.data('perc_match'));
-          if(isNaN(perc_match)){return 'darkred';};
-          if(perc_match >= 98){return 'darkgreen';};
-          if(perc_match >= 98){return 'darkgreen';};
-          if(perc_match >= 95){return 'green';};
-          if(perc_match >= 90){return 'lightgreen';};
-          if(perc_match >= 80){return 'yellow';};
-          if(perc_match >= 70){return 'orange';};
-          if(perc_match < 70){return 'red';};}},
+          if(isNaN(perc_match)){perc_match = 0;};
+          return rgb(((100-perc_match)*255)/100, (perc_match/100)*255, 0);
+          }},
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
           'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
           'target-arrow-color': 'black',
           'display': 'show', // 'element' (show) or 'none' (hide).
-          'text-opacity': '1', // to make the label visible by default.
-           'text-background-color':'red'
+          'text-opacity': '1' // to make the label visible by default.
         })
       .selector('.highlighted')
         .css({
