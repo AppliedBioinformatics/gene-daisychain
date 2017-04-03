@@ -40,7 +40,7 @@ for(var i = 0; i < species_list.length; i++)
                  show_hide(this.getAttribute('assembly'), 'True');
                  // Remove red background from button
                  this.style.background = "#91ffd4";
-                 };});
+                 };updateCyLegend();});
                  // Add button to color legend div
                  colorLegend.appendChild(btn);
              };}
