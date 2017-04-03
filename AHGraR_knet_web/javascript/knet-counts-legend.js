@@ -10,7 +10,7 @@
         {
         gene_count +=1;
         };
-        if (node.data('type')=="Protein" node.visible())
+        if (node.data('type')=="Protein" && node.visible())
         {
         protein_count +=1;
         };
