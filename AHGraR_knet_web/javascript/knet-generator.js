@@ -42,7 +42,7 @@ function initializeNetworkView() {
           'shape': function(node){if (node.data('type') == 'Protein'){return "diamond";} else{return "ellipse";};}, //'ellipse',
           'width': '60px', // '18px',
           'height': '36px', // '18px',
-          'background-color': function(node){if (node.data('type') == 'Protein'){return "#90ee90";} else {return "#ffffe0";}},
+          'background-color': function(node){if (node.data('type') == 'Protein'){return "#ffe3c1";} else {return "#ffffe0";}},
           /** Using 'data(conceptColor)' leads to a "null" mapping error if that attribute is not defined 
            * in cytoscapeJS. Using 'data[conceptColor]' is hence preferred as it limits the scope of 
            * assigning a property value only if it is defined in cytoscapeJS as well. */
@@ -89,7 +89,7 @@ function initializeNetworkView() {
         })
       .selector(':selected')
         .css({ // settings for highlighting nodes in case of single click or Shift+click multi-select event.
-        'background-color': function(node){if (node.data('type') == 'Protein'){return "#32bc32";} else {return "#fcfc8a";}}
+        'background-color': function(node){if (node.data('type') == 'Protein'){return "#f7cb96";} else {return "#fcfc8a";}}
         })
       .selector('.BlurNode')
         .css({ // settings for using shadow effect on nodes when they have hidden, connected nodes.
