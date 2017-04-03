@@ -3,20 +3,31 @@
   function updateCyLegend() {
 	var cy= $('#cy').cytoscape('get');
     var gene_count = 0;
+    var gene_hidden_count = 0;
     var protein_count = 0;
+    var protein_hidden_count = 0;
     cy.nodes().forEach(function( node )
     {
-        if (node.data('type')=="Gene")
+        if (node.data('type')=="Gene") && node.visible()
         {
         gene_count +=1;
         };
-        if (node.data('type')=="Protein")
+        if (node.data('type')=="Gene") && !node.visible()
+        {
+        gene_hidden_count +=1;
+        };
+        if (node.data('type')=="Protein") && node.visible()
         {
         protein_count +=1;
         };
+        if (node.data('type')=="Protein") && !node.visible()
+        {
+        protein_hidden_count +=1;
+        };
         
     });
-	var cyLegend= "Showing "+gene_count+" genes and "+protein_count+" proteins";
+	var cyLegend= "Showing "+gene_count+" genes ("+gene_hidden_count hidden" )and "+
+	protein_count+" proteins ("+protein_hidden_count+" hidden)";
 
 
 //	console.log(cyLegend);
