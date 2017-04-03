@@ -34,6 +34,7 @@ function initializeNetworkView() {
           'text-background-color': 'black',
           'text-background-opacity': '0', // default: '0' (disabled).
           'text-wrap': 'wrap', // for manual and/or autowrapping the label text.
+          'text-max-width':'60px',
           'border-style': 'solid', // node border, can be 'solid', 'dotted', 'dashed' or 'double'.
           'border-width': '4px',
           'border-color': function(node){return color_node(node.data('species'), node.data('chromosome')); },//function(node){if (node.data('type') == 'Protein'){return "green";} else {return "blue";}},
