@@ -82,7 +82,8 @@ function initializeNetworkView() {
           'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
           'target-arrow-color': 'black',
           'display': 'show', // 'element' (show) or 'none' (hide).
-          'text-opacity': '1' // to make the label visible by default.
+          'text-opacity': '1', // to make the label visible by default.
+           'text-background-color':'red'
         })
       .selector('.highlighted')
         .css({
