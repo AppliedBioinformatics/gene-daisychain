@@ -264,7 +264,7 @@
          // jsTree accepts node data in JSON format
          // Initialize an empty container for node data
          var jsdata = {'core': {'data': [{'id': "$$$all_res", "parent":"#", "text": "Search results"}],
-         'themes': {'variant':'large'}, 'animation':false}, 'plugins':["checkbox", "sort"]};
+         'themes': {'variant':'large', 'icons':false}, 'animation':false}, 'plugins':["checkbox", "sort"]};
          // Retrieve node data from search results (edges are not filtered)
          node_data = search_result["nodes"];
          // Collect assembly ids and contig ids in a separate array
