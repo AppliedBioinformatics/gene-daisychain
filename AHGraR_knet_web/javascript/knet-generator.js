@@ -39,7 +39,7 @@ function initializeNetworkView() {
           'border-width': '4px',
           'border-color': function(node){return color_node(node.data('species'), node.data('chromosome')); },//function(node){if (node.data('type') == 'Protein'){return "green";} else {return "blue";}},
           'font-size': '8px', // '8px',
-          'shape': function(node){if (node.data('type') == 'Protein'){return "roundrectangle";} else{return "ellipse";};}, //'ellipse', 
+          'shape': function(node){if (node.data('type') == 'Protein'){return "diamond";} else{return "ellipse";};}, //'ellipse',
           'width': '60px', // '18px',
           'height': '36px', // '18px',
           'background-color': function(node){if (node.data('type') == 'Protein'){return "#90ee90";} else {return "#ffffe0";}},
