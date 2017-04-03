@@ -6,7 +6,7 @@
     var protein_count = 0;
     cy.nodes().forEach(function( node )
     {
-        if (node.data('type')=="Gene") && node.visible()
+        if (node.data('type')=="Gene")
         {
         gene_count +=1;
         };
