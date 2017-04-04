@@ -46,6 +46,7 @@ var hmlg_dict = {};
 for (i = 0; i < homolog_edges.length; ++i){
 source_id = homolog_edges[i].data("source");
 target_id = homolog_edges[i].data("target");
+console.log(homolog_edges[i].data);
 if ("undefined" == typeof source_id || "undefined" == typeof target_id){continue;};
 if (source_id.startsWith("g"))
 {
@@ -76,7 +77,6 @@ hmlg_dict[target] = [source];
 };
 
 };
-for (i = 0; i < gene_nodes_data.length; ++i){
-console.log(gene_nodes_data[1],gene_nodes_data[2],hmlg_dict[gene_nodes_data[0]]);
+
 }
 }
