@@ -41,6 +41,11 @@
          // or on initial loading of the page
          function changeProjectID()
          {
+            // Hide graph visualization
+            $('#knet-maps-row').collapse("hide");
+            $('#statusbar').collapse("hide");
+            $('#result-tree').collapse("hide");
+            $('#result-button').collapse("hide");
             // Find select menu and retrieve currently selected project
             var select_menu = document.getElementById("select_proj");
             // Change global variable
