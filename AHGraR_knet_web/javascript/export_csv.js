@@ -103,7 +103,7 @@ csv_file = ["id","name","assembly","contig","start","stop","annotation","homolog
 // Convert each gene_node_data into a row
 // First, convert the gene_node_data object into an array
 gene_nodes_data = $.map(gene_nodes_data, function(val, key){return [val]});
-gene_nodes_data.sort(function(a,b){return parseInt(a.id.substr(1))-parseInt(b.id.substr(1))});
+gene_nodes_data.sort(function(a,b){return parseInt((a.id).substr(1))-parseInt((b.id).substr(1))});
 console.log(gene_nodes_data);
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
