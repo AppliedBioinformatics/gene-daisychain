@@ -55,7 +55,7 @@
       /* CytoscapeJS "core" container */
       #cy {
         height: 85%; /*98%;*/ /*750px;*/
-        width: /*98*/95%; /*450px;*/
+        width: /*98*/100%; /*450px;*/
         position: relative;
         background: white;
         border: 1px solid black;
