@@ -104,6 +104,7 @@ for (i = 0; i < gene_nodes_data.length; ++i)
 {
 csv_file += gene_nodes_data.join(",")+"\n";
 };
+console.log(csv_file);
 window.open(encodeURI(csv_file));
 }
 
