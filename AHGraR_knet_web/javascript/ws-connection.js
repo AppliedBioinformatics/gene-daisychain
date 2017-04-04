@@ -4,7 +4,7 @@ function get_wsconn(){
 if (typeof(ws_conn) != "undefined"){
 console.log("Closing old ws connection");
 ws_conn.close()};
-var ws_conn = new WebSocket("ws://146.118.99.190:7687/");
+ws_conn = new WebSocket("ws://146.118.99.190:7687/");
 // Ensure websocket is closed properly upon window reload
 window.onbeforeunload = function() {
 ws_conn.onclose = function(){};
