@@ -11,3 +11,7 @@ ws_conn.onclose = function(){};
 ws_conn.close()};
 return ws_conn;
 }
+
+function close_wsconn(){
+ws_conn.close();
+}
