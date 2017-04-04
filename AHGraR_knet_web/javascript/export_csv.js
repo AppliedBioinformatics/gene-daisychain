@@ -109,7 +109,7 @@ gene_nodes_data = $.map(gene_nodes_data, function(val, key){return [val]});
 gene_nodes_data.sort(function(a,b){return parseInt(a[0].substr(1))-parseInt(b[0].substr(1))});
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
-csv_file += gene_nodes_data[i].join(",")+hmlg_dict[gene_nodes_data[i][0]]+"\n";
+csv_file += gene_nodes_data[i].join(",")+","+hmlg_dict[gene_nodes_data[i][0]]+"\n";
 };
 // Next add genes and their homologs
 // Header for genes
@@ -122,9 +122,8 @@ protein_nodes_data = $.map(protein_nodes_data, function(val, key){return [val]})
 protein_nodes_data.sort(function(a,b){return parseInt(a[0].substr(1))-parseInt(b[0].substr(1))});
 for (i = 0; i < protein_nodes_data.length; ++i)
 {
-csv_file += protein_nodes_data[i].join(",")+hmlg_dict[protein_nodes_data[i][0]]+"\n";
+csv_file += protein_nodes_data[i].join(",")+","+hmlg_dict[protein_nodes_data[i][0]]+"\n";
 };
-console.log(csv_file);
 window.open("data:text/csv;charset=utf-8,"+escape(csv_file));
 }
 
