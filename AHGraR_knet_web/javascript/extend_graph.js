@@ -7,8 +7,7 @@ function addPath(node, rel_type)
     node_id = node.id();
     node_x = node.position("x");
     node_y = node.position("y");
-    console.log(node_id, node_x, node_y);
-    var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+    var wsconn = get_wsconn();
     wsconn.onopen = function () {wsconn.send("PAQURY_RELA_"+project_id+"_WEB_"+node_id+"_"+rel_type);};
     wsconn.onmessage = function (evt){
         new_graph_data = JSON.parse(evt.data);

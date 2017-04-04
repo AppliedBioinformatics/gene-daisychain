@@ -43,7 +43,8 @@ window.onload= function() {
 			        "</span>"+
                     "<input type='image' id='savePNG' src='image/savePNG.png' onclick='exportAsImage();' title='Export the network as a .png image' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>"+
                     "<input type='image' id='saveJSON' src='image/saveJSON.png' onclick='export_table();' title='Export the network in JSON format' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>"+
-                    "<input type='image' id='helpURL' src='image/help.png' onclick='openKnetHelpPage();' title='Go to help documentation' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>";
+                    "<input type='image' id='helpURL' src='image/help.png' onclick='openKnetHelpPage();' title='Go to help documentation' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>"+
+                    "<div id='extend_graph_msg'><p style='color:red;'>I am red</p></div>";
  $('#knetmaps-menu').html(knet_menu);
 
  launchNetwork($('#dataset_dropdown').val());
