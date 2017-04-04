@@ -104,10 +104,7 @@ csv_file = ["id","name","assembly","contig","start","stop","annotation","homolog
 // First, convert the gene_node_data object into an array
 gene_nodes_data = $.map(gene_nodes_data, function(val, key){return [val]});
 gene_nodes_data.sort(function(a,b){
-console.log(a);
-var id_a = a.id;
-var id_b = b.id;
-return parseInt(id_a.substr(1))-parseInt(id_b.substr(1))});
+return parseInt(a[0](1))-parseInt(b[0].substr(1))});
 console.log(gene_nodes_data);
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
