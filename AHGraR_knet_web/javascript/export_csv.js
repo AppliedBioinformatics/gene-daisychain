@@ -43,6 +43,7 @@ gene_nodes_data[gene_nodes[i].data("id")]=[gene_nodes[i].data("id"), gene_nodes[
 gene_nodes[i].data("species"),gene_nodes[i].data("contig"),gene_nodes[i].data("start"),
 gene_nodes[i].data("stop"), gene_nodes[i].data("description")];
 };
+console.log(gene_nodes_data);
 // Extract protein node data from protein nodes
 // Dict-like format of object: "id":["id","name","assembly"]
 var protein_nodes_data = {};
