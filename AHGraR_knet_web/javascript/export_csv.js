@@ -56,7 +56,7 @@ var hmlg_dict = {};
 for (i = 0; i < homolog_edges.length; ++i){
 source_id = homolog_edges[i].data("source");
 target_id = homolog_edges[i].data("target");
-console.log(homolog_edges[i].data);
+console.log(homolog_edges[i]);
 if ("undefined" == typeof source_id || "undefined" == typeof target_id){continue;};
 if (source_id.startsWith("g"))
 {
