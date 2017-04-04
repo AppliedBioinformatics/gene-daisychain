@@ -10,10 +10,6 @@ var colorLegend = document.getElementById('colorLegend');
 // Remove all previous buttons
 while (colorLegend.firstChild) {colorLegend.removeChild(colorLegend.firstChild);}
 // Loop through assembly list, generate a button for each assembly
-for(var i = 0; i < 20; i++)
-{
-species_list.push("abc_"+i);
-};
 for(var i = 0; i < species_list.length; i++)
             {
                  // Create a new button option and set its attributes
