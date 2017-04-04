@@ -56,6 +56,7 @@ var hmlg_dict = {};
 for (i = 0; i < homolog_edges.length; ++i){
 source_id = homolog_edges[i].data("source");
 target_id = homolog_edges[i].data("target");
+perc_match = homolog_edges[i].data("perc_match");
 console.log(homolog_edges[i]);
 if ("undefined" == typeof source_id || "undefined" == typeof target_id){continue;};
 if (source_id.startsWith("g"))
@@ -68,24 +69,23 @@ else
 var source = protein_nodes_data[source_id][0];
 var target = protein_nodes_data[target_id][0];
 };
-
 if(source in hmlg_dict)
 {
-hmlg_dict[source].push(target);
+hmlg_dict[source].push(target+":"+perc_match);
 }
 else
 {
-hmlg_dict[source] = [target];
+hmlg_dict[source] = [target+":"+perc_match];
 };
 if(target in hmlg_dict)
 {
-hmlg_dict[target].push(source);
+hmlg_dict[target].push(source+":"+perc_match);
 }
 else
 {
-hmlg_dict[target] = [source];
+hmlg_dict[target] = [source+":"+perc_match];
 };
-
 };
+console.log(hmlg_dict);
 }
 
