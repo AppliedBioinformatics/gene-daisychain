@@ -110,7 +110,7 @@ gene_nodes_data.sort(function(a,b){return parseInt(a[0].substr(1))-parseInt(b[0]
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
 hmlg_nodes = hmlg_dict[gene_nodes_data[i][0]];
-if (typeof(hmlg_nodes)) == "undefined"{hmlg_nodes="None"};
+if (typeof(hmlg_nodes) == "undefined"){hmlg_nodes="None"};
 csv_file += gene_nodes_data[i].join(",")+","+hmlg_nodes+"\n";
 };
 // Next add genes and their homologs
@@ -125,7 +125,7 @@ protein_nodes_data.sort(function(a,b){return parseInt(a[0].substr(1))-parseInt(b
 for (i = 0; i < protein_nodes_data.length; ++i)
 {
 hmlg_nodes = hmlg_dict[protein_nodes_data[i][0]];
-if (typeof(hmlg_nodes)) == "undefined"{hmlg_nodes="None"};
+if (typeof(hmlg_nodes) == "undefined"){hmlg_nodes="None"};
 csv_file += protein_nodes_data[i].join(",")+","+hmlg_nodes+"\n";
 };
 window.open("data:text/csv;charset=utf-8,"+escape(csv_file));
