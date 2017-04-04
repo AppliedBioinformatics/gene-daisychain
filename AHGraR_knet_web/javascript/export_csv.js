@@ -98,12 +98,12 @@ hmlg_dict[target] = [source+":"+perc_match];
 // Start to build the CSV file
 // Start with genes and their homologs
 // Header for genes
-csv_file = ["id","name","assembly","contig","start","stop","annotation","homologs","\n"].join(",");
+csv_file = ["id","name","assembly","contig","start","stop","annotation","homologs"].join(",");
 // Convert each gene_node_data into a row
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
 console.log(gene_nodes_data[i]);
-csv_file += gene_nodes_data[i].join(",")+"\n";
+csv_file += gene_nodes_data[i].join(",");
 };
 console.log(csv_file);
 
