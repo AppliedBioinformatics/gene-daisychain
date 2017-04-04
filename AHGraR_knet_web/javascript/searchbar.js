@@ -237,7 +237,7 @@
             $('#result-button').collapse("hide");
             // Enable search button
             $('#search_kwd_btm').attr("disabled",false);
-         }
+         };
 
          // BLAST search for genes in the project database
          function searchBLAST()
@@ -284,6 +284,20 @@
                 };
          };
 
+         // Cancel Blast Search
+         function searchBLAST(){
+            // Hide cancel button
+            $('#btn_blast_cancel').hide();
+            // Close websocket connection
+            close_wsconn();
+            // Ensure visualisation,status bar and result panel remain hidden
+            $('#knet-maps-row').collapse("hide");
+            $('#statusbar').collapse("hide");
+            $('#result-tree').collapse("hide");
+            $('#result-button').collapse("hide");
+            // Enable search button
+            $('#btn_blast').attr("disabled",false);
+         };
 
          // Load search result into jstree
          function showSearchResult()
