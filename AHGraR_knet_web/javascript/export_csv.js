@@ -109,12 +109,14 @@ gene_nodes_data = $.map(gene_nodes_data, function(val, key){return [val]});
 gene_nodes_data.sort(function(a,b){return parseInt(a[0].substr(1))-parseInt(b[0].substr(1))});
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
-csv_file += gene_nodes_data[i].join(",")+","+hmlg_dict[gene_nodes_data[i][0]]+"\n";
+hmlg_nodes = hmlg_dict[gene_nodes_data[i][0]];
+if (typeof(hmlg_nodes)) == "undefined"{hmlg_nodes="None"};
+csv_file += gene_nodes_data[i].join(",")+","+hmlg_nodes+"\n";
 };
 // Next add genes and their homologs
 // Header for genes
 csv_file += "### Protein data ###\n"
-csv_file += ["id","name","assembly"].join(",")+"\n";
+csv_file += ["id","name","assembly","homologs"].join(",")+"\n";
 // Convert each protein_nodes_data into a row
 // First, convert the protein_nodes_data object into an array
 protein_nodes_data = $.map(protein_nodes_data, function(val, key){return [val]});
@@ -122,7 +124,9 @@ protein_nodes_data = $.map(protein_nodes_data, function(val, key){return [val]})
 protein_nodes_data.sort(function(a,b){return parseInt(a[0].substr(1))-parseInt(b[0].substr(1))});
 for (i = 0; i < protein_nodes_data.length; ++i)
 {
-csv_file += protein_nodes_data[i].join(",")+","+hmlg_dict[protein_nodes_data[i][0]]+"\n";
+hmlg_nodes = hmlg_dict[protein_nodes_data[i][0]];
+if (typeof(hmlg_nodes)) == "undefined"{hmlg_nodes="None"};
+csv_file += protein_nodes_data[i].join(",")+","+hmlg_nodes+"\n";
 };
 window.open("data:text/csv;charset=utf-8,"+escape(csv_file));
 }
