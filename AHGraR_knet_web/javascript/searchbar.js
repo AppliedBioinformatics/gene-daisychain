@@ -285,7 +285,7 @@
          };
 
          // Cancel Blast Search
-         function searchBLAST(){
+         function cancelSearchBLAST(){
             // Hide cancel button
             $('#btn_blast_cancel').hide();
             // Close websocket connection
