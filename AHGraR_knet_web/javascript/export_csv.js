@@ -56,9 +56,9 @@ var hmlg_dict = {};
 for (i = 0; i < homolog_edges.length; ++i){
 source_id = homolog_edges[i].data("source");
 target_id = homolog_edges[i].data("target");
-perc_match = homolog_edges[i].data("perc_match");
-console.log(homolog_edges[i]);
+perc_match = homolog_edges[i].data("perc_match")+"%";
 if ("undefined" == typeof source_id || "undefined" == typeof target_id){continue;};
+// Distinguish between gene and protein nodes via the first letter of the ID (g or p)
 if (source_id.startsWith("g"))
 {
 var source = gene_nodes_data[source_id][0];
@@ -69,23 +69,41 @@ else
 var source = protein_nodes_data[source_id][0];
 var target = protein_nodes_data[target_id][0];
 };
+// Add this edge to hmlg_dict:
+// Source-ID gets target-ID + perc-match as new homolog
+// Then target-ID gets source-ID + perc-match as new homolog
+// That is because homolog relations are displayed by only one edge although they
+// are in principal bidirectional (cytoscape.js does not support bidirectional edges, yet)
 if(source in hmlg_dict)
 {
+// If source is already in hmlg_dict, add target_id to the array list
 hmlg_dict[source].push(target+":"+perc_match);
 }
 else
 {
+// If source is not in hmlg_dict, create a  new entry with a new array containing target-id
 hmlg_dict[source] = [target+":"+perc_match];
 };
 if(target in hmlg_dict)
 {
+// If target is already in hmlg_dict, add source_id to the array list
 hmlg_dict[target].push(source+":"+perc_match);
 }
 else
 {
+// If target is not in hmlg_dict, create a  new entry with a new array containing source-id
 hmlg_dict[target] = [source+":"+perc_match];
 };
 };
-console.log(hmlg_dict);
+// Start to build the CSV file
+// Start with genes and their homologs
+// Header for genes
+csv_file = ["id","name","assembly","contig","start","stop","annotation","homologs","\n"].join(",").
+// Convert each gene_node_data into a row
+for (i = 0; i < gene_nodes_data.length; ++i)
+{
+csv_file += gene_nodes_data.join(",")+"\n";
+};
+window.open(encodeURI(csv_file));
 }
 
