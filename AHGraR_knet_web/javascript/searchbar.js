@@ -165,7 +165,7 @@
          function searchKeyword()
          {
             // Show cancel button
-            $('#search_kwd_cancel').attr("display","block");
+            $('#search_kwd_cancel').show();
             search_button = $('#search_kwd_btm');
             // Deactivate search button until results are retrieved
             search_button.attr("disabled",true);
