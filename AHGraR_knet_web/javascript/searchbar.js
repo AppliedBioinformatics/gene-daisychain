@@ -275,6 +275,8 @@
             //set_color_legend();
              // Receive and process query result
             wsconn.onmessage = function (evt){
+                // Hide cancel button
+                $('#btn_blast_cancel').hide();
                 // Change layout of website
                 // Hide graph and status bar
                 // Show search result tree
