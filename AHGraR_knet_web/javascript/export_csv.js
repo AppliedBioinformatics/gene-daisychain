@@ -101,6 +101,10 @@ hmlg_dict[target] = [source+":"+perc_match];
 // Header for genes
 csv_file = ["id","name","assembly","contig","start","stop","annotation","homologs"].join(",");
 // Convert each gene_node_data into a row
+// First, convert the gene_node_data object into an array
+gene_nodes_data = $.map(gene_nodes_data, function(key, val){return [val]});
+gene_nodes_data.sort(function(a,b){return a.id-b.id});
+console.log(gene_nodes_data);
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
 console.log(gene_nodes_data[i]);
