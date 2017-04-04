@@ -166,6 +166,11 @@
          {
             // Show cancel button
             $('#search_kwd_cancel').show();
+            // Hide result panel and graph visualisation
+            $('#knet-maps-row').collapse("hide");
+            $('#statusbar').collapse("hide");
+            $('#result-tree').collapse("hide");
+            $('#result-button').collapse("hide");
             search_button = $('#search_kwd_btm');
             // Deactivate search button until results are retrieved
             search_button.attr("disabled",true);
