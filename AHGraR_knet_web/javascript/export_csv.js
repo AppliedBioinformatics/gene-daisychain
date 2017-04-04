@@ -1,7 +1,6 @@
 // Export graph data in csv format
 // First part contains one gene description per row, last column contains ID(s) of homologs
-// Next part is the same for proteins#
-// Last part describes local gene arrangements, i.e. 5' and 3' relations
+// Next part is the same for proteins
 // Function export_Table is called from saveCSV (former saveJSON) button
 function export_table(){
 console.log("Export table");
@@ -18,18 +17,7 @@ var protein_nodes = cy.filter(function(i,ele){
             {return true;}
             else {return false;}
             });
-// Collect all visible 5' edges
-var nb5_edges = cy.filter(function(i,ele){
-            if (ele.isEdge() &&  ele.data('type') == "5_NB" && ele.visible())
-            {return true;}
-            else {return false;}
-            });
-var nb3_edges = cy.filter(function(i,ele){
-            if (ele.isEdge() &&  ele.data('type') == "3_NB" && ele.visible())
-            {return true;}
-            else {return false;}
-            });
-// Collect all visible 3' edges
+// Collect all visible homolog edges
 var homolog_edges = cy.filter(function(i,ele){
             if (ele.isEdge() &&  ele.data('type') == "HOMOLOG" && ele.visible())
             {return true;}
@@ -107,8 +95,11 @@ csv_file += ["id","name","assembly","contig","start","stop","annotation","homolo
 gene_nodes_data = $.map(gene_nodes_data, function(val, key){return [val]});
 // Sort array by gene id
 gene_nodes_data.sort(function(a,b){return parseInt(a[0].substr(1))-parseInt(b[0].substr(1))});
+// Add node data to csv_file_string
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
+// If there are no homologs, hmlg_dict[id] is undefined
+// State "None" in csv output if no homologs
 hmlg_nodes = hmlg_dict[gene_nodes_data[i][0]];
 if (typeof(hmlg_nodes) == "undefined"){hmlg_nodes="None"};
 csv_file += gene_nodes_data[i].join(",")+","+hmlg_nodes+"\n";
@@ -124,10 +115,13 @@ protein_nodes_data = $.map(protein_nodes_data, function(val, key){return [val]})
 protein_nodes_data.sort(function(a,b){return parseInt(a[0].substr(1))-parseInt(b[0].substr(1))});
 for (i = 0; i < protein_nodes_data.length; ++i)
 {
+// If there are no homologs, hmlg_dict[id] is undefined
+// State "None" in csv output if no homologs
 hmlg_nodes = hmlg_dict[protein_nodes_data[i][0]];
 if (typeof(hmlg_nodes) == "undefined"){hmlg_nodes="None"};
 csv_file += protein_nodes_data[i].join(",")+","+hmlg_nodes+"\n";
 };
+// Open csv string as file
 window.open("data:text/csv;charset=utf-8,"+escape(csv_file));
 }
 
