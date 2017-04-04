@@ -231,7 +231,7 @@
             $('#result-tree').collapse("hide");
             $('#result-button').collapse("hide");
             // Enable search button
-            $('#search_kwd_btm').("disabled",false);
+            $('#search_kwd_btm').attr("disabled",false);
          }
 
          // BLAST search for genes in the project database
