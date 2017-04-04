@@ -2,7 +2,7 @@
          function LoadProjectList()
          {
             // Open websocket to retrieve list of projects
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            var wsconn = get_wsconn();
             // Request project list
             wsconn.onopen = function () {wsconn.send("PMINFO");};
             // Receive and process project list
@@ -50,7 +50,6 @@
             var select_menu = document.getElementById("select_proj");
             // Change global variable
             project_id = select_menu.options[select_menu.selectedIndex].value;
-            console.log("New PI: "+project_id);
             // Load project-specific list of species
             LoadSpeciesList();
             //update_color_legend();
@@ -59,7 +58,7 @@
          function LoadSpeciesList()
          {
             // Open websocket to retrieve list of projects
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            var wsconn = get_wsconn();
             // Request species list
             wsconn.onopen = function () {wsconn.send("PAQURY_LIST_"+project_id+"_SPECIES");};
             // Receive and process project list
@@ -72,7 +71,7 @@
          function LoadChromosomeList()
          {
             // Open websocket to retrieve list of projects
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            var wsconn = get_wsconn();
             // Request chromosome list, replace underscores in species name with tabs
             wsconn.onopen = function () {wsconn.send("PAQURY_LIST_"+project_id+"_CONTIG_"+species.split("_").join("\t"));};
             // Receive and process project list
@@ -192,7 +191,7 @@
             var type = "ANY";
             };
             // Open websocket to send query to server
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            var wsconn = get_wsconn();
             // Replace underscores in queries with tabs
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
             contig.split("_").join("\t")+"_"+keyword.split("_").join("\t")+"_"+type);};
@@ -237,7 +236,7 @@
             return;
             }
             // Open websocket to send query to server
-            var wsconn = new WebSocket("ws://146.118.99.190:7687/");
+            var wsconn = get_wsconn();
             // Replace underscores in queries with tabs
             wsconn.onopen = function () {wsconn.send("PAQURY_SEAR_"+project_id+"_WEB_"+species.split("_").join("\t")+"_"+
             contig.split("_").join("\t")+"_"+eval_cutoff+"_"+fasta_seq.split("_").join("\t")+"_"+"BLAST");};
