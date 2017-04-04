@@ -164,7 +164,9 @@
          // Keyword search for genes in the project database
          function searchKeyword()
          {
-            search_button = $('#search_kwd_btm')
+            // Show cancel button
+            $('#search_kwd_cancel').attr("display","block");
+            search_button = $('#search_kwd_btm');
             // Deactivate search button until results are retrieved
             search_button.attr("disabled",true);
             // Project ID and assembly selection are global variables,
