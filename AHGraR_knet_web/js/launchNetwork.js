@@ -44,7 +44,7 @@ window.onload= function() {
                     "<input type='image' id='savePNG' src='image/savePNG.png' onclick='exportAsImage();' title='Export the network as a .png image' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>"+
                     "<input type='image' id='saveJSON' src='image/saveJSON.png' onclick='export_table();' title='Export the network in JSON format' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>"+
                     "<input type='image' id='helpURL' src='image/help.png' onclick='openKnetHelpPage();' title='Go to help documentation' onmouseover='onHover($(this));' onmouseout='offHover($(this));'>"+
-                    "<input type='button' id='cancel_extend_graph' value='Cancel data loading'></input>";
+                    "<input type='button' id='cancel_extend_graph' style='font-size: 16px;'value='Cancel data loading' onclick='cancelGraphExtend()'></input>";
  $('#knetmaps-menu').html(knet_menu);
 
  launchNetwork($('#dataset_dropdown').val());

@@ -3,6 +3,8 @@
 
 function addPath(node, rel_type)
 {
+    // Show cancel button
+    $('#cancel_extend_graph').show();
     var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
     node_id = node.id();
     node_x = node.position("x");
@@ -10,6 +12,8 @@ function addPath(node, rel_type)
     var wsconn = get_wsconn();
     wsconn.onopen = function () {wsconn.send("PAQURY_RELA_"+project_id+"_WEB_"+node_id+"_"+rel_type);};
     wsconn.onmessage = function (evt){
+        // Hide cancel button
+        $('#cancel_extend_graph').hide();
         new_graph_data = JSON.parse(evt.data);
         new_node_data = new_graph_data.nodes;
         new_edge_data = new_graph_data.edges;
@@ -35,44 +39,14 @@ function addPath(node, rel_type)
         show_hide_refresh();
         updateCyLegend();
 
-
-      /*  cy.elements().qtip({
-  content: function() {
-      var qtipMsg= "";
-     try {
-       if(this.isNode()) {
-          if(this.data('type')=="Gene")
-          {
-         qtipMsg= "<b>Name:</b> "+ this.data('name') + "\n" +", <b>Type:</b> "+ this.data('type') + "\n"
-         +", <b>Species:</b> "+ this.data('species')+ "\n"
-         +", <b>Contig:</b> "+ this.data('contig');
-        }
-         else
-         {
-             qtipMsg= "<b>Name:</b> "+ this.data('name') +", <b>Type:</b> "+ this.data('type')
-                    +", <b>Species:</b> "+ this.data('species')
-          +", <b>Contig:</b> "+ this.data('contig');
-        }
-        }
-      else if(this.isEdge()) {
-              if(this.data('type')=="HOMOLOG")
-              {
-              qtipMsg= "<b>Identity:</b> "+ this.data('perc_match')+"%";
-              }
-             }
-      }
-      catch(err) { qtipMsg= "Selected element is neither a Concept nor a Relation"; }
-      return qtipMsg;
-     },
-  style: {
-    classes: 'qtip-bootstrap',
-    tip: {
-      width: 12,
-      height: 6
-    }
-  }
-}); */
-        
     }
 
-}
+};
+
+function cancelGraphExtend(){
+        // Hide cancel button
+        $('#cancel_extend_graph').hide();
+        // Cancel Websocket connection
+        close_wsconn();
+
+};
