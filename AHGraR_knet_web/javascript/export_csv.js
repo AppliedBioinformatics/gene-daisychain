@@ -102,9 +102,10 @@ csv_file = ["id","name","assembly","contig","start","stop","annotation","homolog
 // Convert each gene_node_data into a row
 for (i = 0; i < gene_nodes_data.length; ++i)
 {
+console.log(gene_nodes_data[i]);
 csv_file += gene_nodes_data[i].join(",")+"\n";
 };
 console.log(csv_file);
-window.open(encodeURI(csv_file));
+
 }
 
