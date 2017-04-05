@@ -163,7 +163,7 @@ add_qtips();
                 this.style({'text-opacity': '0'}); // hide the concept/ relation Label.
                }
             }
-        }
+        },
         {
          content: 'Highlight on/off',
          select: function() {
