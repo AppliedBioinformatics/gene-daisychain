@@ -35,7 +35,7 @@ $('#cy').cytoscape({
 
 // Get the cytoscape instance as a Javascript object from JQuery.
 var cy= $('#cy').cytoscape('get'); // now we have a global reference to `cy`
-cy.boxSelectionEnabled(true); // enable box selection (highlight & select multiple elements for moving via mouse click and drag).
+cy.boxSelectionEnabled(false); // disable box selection (highlight & select multiple elements for moving via mouse click and drag).
 // Add tooltips to every node and edge
 add_qtips();
 
@@ -173,7 +173,7 @@ add_qtips();
 
  // Context menu for edges
  var ctxt_menu_edge= {
-    menuRadius: 35, // the radius of the circular menu in pixels
+    menuRadius: 55, // the radius of the circular menu in pixels
     selector: 'edge',
     commands: [ // an array of commands to list in the menu
         {
