@@ -119,7 +119,7 @@ add_qtips();
 
 // Context menu for proteins
  var ctxt_menu_protein= {
-    menuRadius: 75, // the radius of the circular menu in pixels
+    menuRadius: 85, // the radius of the circular menu in pixels
     selector: 'node[type="Protein"]',
     commands: [ // an array of commands to list in the menu
         {
@@ -162,6 +162,13 @@ add_qtips();
                else {
                 this.style({'text-opacity': '0'}); // hide the concept/ relation Label.
                }
+            }
+        }
+        {
+         content: 'Highlight on/off',
+         select: function() {
+             // Highlight node
+             this.toggleClass("highlighted");
             }
         }
     ],
