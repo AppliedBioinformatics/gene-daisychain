@@ -26,7 +26,7 @@ class AHGraRAdmin:
             # Check if a number between 0-5 was entered
             # If so, perform an action
             # If not, show options again
-            if not user_input.isdigit() or int(user_input) not in range(0, 7):
+            if not user_input.isdigit() or int(user_input) not in range(0, 8):
                 self.clear_console()
                 self.print_options()
                 continue
