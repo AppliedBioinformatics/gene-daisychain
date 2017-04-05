@@ -194,7 +194,7 @@ add_qtips();
             }
         }
     ],
-    fillColor: 'rgba(188, 249, 57, 0.75)', // the background colour of the menu
+    fillColor: 'rgba(12, 140, 1, 0.75)', // the background colour of the menu
     activeFillColor: 'rgba(133, 204, 130, 0.75)', // the colour used to indicate the selected command
     activePadding: 2, // 20, // additional size in pixels for the active command
     indicatorSize: 15, // 24, // the size in pixels of the pointer to the active command
@@ -202,8 +202,8 @@ add_qtips();
     spotlightPadding: 3, // extra spacing in pixels between the element and the spotlight
     minSpotlightRadius: 5, // 24, // the minimum radius in pixels of the spotlight
     maxSpotlightRadius: 10, // 38, // the maximum radius in pixels of the spotlight
-    itemColor: 'black', // the colour of text in the command's content
-    itemTextShadowColor: 'none', // the text shadow colour of the command's content
+    itemColor: 'white', // the colour of text in the command's content
+    itemTextShadowColor: 'black', // the text shadow colour of the command's content
     zIndex: 9999 // the z-index of the ui div
  };
 
