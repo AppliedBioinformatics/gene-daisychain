@@ -190,14 +190,12 @@ class FileManagement:
             # Evaluate whether file was found
             # If file is not found, an exception is thrown
             result = remove_file.single()[0]
-            # Store result of remove action in main-db
-            self.task_mngr.add_task_results(proj_id, task_id, "deleted")
         except:
             # If file was not found, set task_status to failed
-            self.task_mngr.set_task_status(proj_id, task_id, "failed")
+            self.task_mngr.set_task_status(proj_id, task_id, "Finished: Failed to delete")
             return
         # Otherwise, set task_status to finished
-        self.task_mngr.set_task_status(proj_id, task_id, "finished")
+        self.task_mngr.set_task_status(proj_id, task_id, "Finished: Deleted file")
 
     # Batch import files from Import directory
     # Import file describes the files:
@@ -206,17 +204,14 @@ class FileManagement:
         # Restore table by replacing "\t" with "_"
         import_csv_table = import_csv_table.replace("\t", "_")
         # Call task_manager to import_csv_table a new task
-        task_id = self.task_mngr.define_task(proj_id, "Import files for proj_ID "+str(proj_id))
+        task_id = self.task_mngr.define_task(proj_id, "Import files for project ID "+str(proj_id))
         # Send task-id to user
         self.send_data("Importing files. Task-ID: "+str(task_id))
         import_csv_table = import_csv_table.split("\n")
         imported_file_counter = 0
         project_file_path = os.path.join("Projects", proj_id, "Files")
-        self.task_mngr.set_task_status(proj_id, task_id, "running")
-        print(import_csv_table)
+        self.task_mngr.set_task_status(proj_id, task_id, "Importing now")
         for line in import_csv_table:
-            print("Importing now")
-            print(line)
             # Remove whitespaces
             line = "".join(line.split(" "))
             new_file_desc = line.strip().split(",")
@@ -239,9 +234,8 @@ class FileManagement:
                 continue
             self.file_manager_add_file(proj_id, new_file_desc[0], new_file_desc[1], file_name, new_file_desc[2])
             imported_file_counter += 1
-        self.task_mngr.set_task_status(proj_id, task_id, "imported " + str(imported_file_counter))
-        self.task_mngr.add_task_results(proj_id, task_id, "imported "+str(imported_file_counter))
-        self.task_mngr.set_task_status(proj_id, task_id, "finished ")
+            self.task_mngr.set_task_status(proj_id, task_id, str(imported_file_counter)+"/"+len(import_csv_table)+" files imported")
+        self.task_mngr.set_task_status(proj_id, task_id, "Finished: imported " + str(imported_file_counter)+ "files")
 
 
 
