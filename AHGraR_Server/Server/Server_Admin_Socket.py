@@ -70,7 +70,7 @@ class AHGraRAdminServer(socketserver.BaseRequestHandler):
         print(user_request)
         # Some queries/user requests are handled by the task_manager.
         # These are: Job status and job deletion queries and retrieval of results
-        if user_request[0] == "TASK" and len(user_request) >= 4:
+        if user_request[0] == "TASK" and len(user_request) >= 3:
             task_manager.evaluate_user_request(user_request[1:])
         elif user_request[0] == "FILE" and 3 <= len(user_request) <= 7:
             # Initialize file manager
