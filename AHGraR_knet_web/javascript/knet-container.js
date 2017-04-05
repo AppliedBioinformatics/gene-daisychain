@@ -95,6 +95,13 @@ add_qtips();
                 this.style({'text-opacity': '0'}); // hide the concept/ relation Label.
                }
             }
+        },
+        {
+         content: 'Highlight',
+         select: function() {
+             // Highlight node
+             console.log(this.classes());
+            }
         }
     ], 
     fillColor: 'rgba(0, 37, 96, 0.75)', // the background colour of the menu
