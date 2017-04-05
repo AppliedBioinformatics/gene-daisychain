@@ -33,18 +33,16 @@ class TaskManagement:
         else:
             self.send_data("-1")
 
-    # Get the status of one or multiple tasks
-    # Input format: proj_id, taskID1_taskID2_taskID3...
-    # Return format: statusID1\tstatusID2\tstatusID3...
-    # Returns "Unknown" for every status that could not be determined
+    # Return a list of all tasks for a project
     def get_task_list(self, project_id):
-        task_list = self.main_db_conn.run(
+        tasks_list = []
+        task_record = self.main_db_conn.run(
             "MATCH(proj:Project)-[:has_tasks]->(taskMngr:Task_Manager)-[:has_tasks]->(task:Task) WHERE ID(proj)={proj_id} "
             "RETURN ID(task) AS ID, task.desc AS desc, task.status AS stat",
             {"proj_id": int(project_id)})
-        for record in task_list:
-            print(record["ID"],record["desc"], record["stat"] )
-        return ("Task List")
+        for record in task_record:
+            tasks_list.append("_".join([record["ID"],record["desc"], record["stat"]]))
+        return("\n".join(tasks_list))
 
 
     # Get the status of one or multiple tasks
