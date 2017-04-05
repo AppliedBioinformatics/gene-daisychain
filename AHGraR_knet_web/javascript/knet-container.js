@@ -100,7 +100,7 @@ add_qtips();
          content: 'Highlight',
          select: function() {
              // Highlight node
-             console.log(this);
+             console.log(this.classes);
             }
         }
     ], 
