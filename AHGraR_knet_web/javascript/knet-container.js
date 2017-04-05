@@ -173,7 +173,7 @@ add_qtips();
 
  // Context menu for edges
  var ctxt_menu_edge= {
-    menuRadius: 55, // the radius of the circular menu in pixels
+    menuRadius: 65, // the radius of the circular menu in pixels
     selector: 'edge',
     commands: [ // an array of commands to list in the menu
         {
