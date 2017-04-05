@@ -29,7 +29,7 @@ access project "project_id"
         related  Gene/Protein ID  5_NB,3_NB,53NB, CODING,HOMOLOG,SYNTENY               PAQURY_RELA_ProjectID_CMD/WEB_NodeID_Relationship
         list    species                 PAQURY_LIST_ProjectID_SPECIES
         list chromosomes  species       PAQURY_LIST_ProjectID_CONTIG_Species
-    job list                            PATASK_STAT_ProjectID_TaskID1_TaskID2
+    job list                            PATASK_LIST_ProjectID
         status                          PATASK_STAT_ProjectID_TaskID
         result                          PATASK_RESU_ProjectID_TaskID
         clear                           PATASK_DELE_ProjectID_TaskID

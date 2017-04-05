@@ -22,6 +22,8 @@ class TaskManagement:
     # User_request is a list of the "_" split command
     # e.g. [STAT, ProjectID, TaskID1, TaskID2]
     def evaluate_user_request(self, user_request):
+        if user_request[0]=="LIST":
+            self.send_data(self.get_task_list(user_request[1]))
         if user_request[0]=="STAT":
             self.send_data(self.get_task_status(user_request[1], user_request[2:]))
         if user_request[0]=="RESU" and len(user_request)==3:
@@ -30,6 +32,24 @@ class TaskManagement:
             self.send_data(self.delete_task(user_request[1], user_request[2]))
         else:
             self.send_data("-1")
+
+    # Get the status of one or multiple tasks
+    # Input format: proj_id, taskID1_taskID2_taskID3...
+    # Return format: statusID1\tstatusID2\tstatusID3...
+    # Returns "Unknown" for every status that could not be determined
+    def get_task_list(self, project_id):
+        tasks_status = []
+        try:
+            task_list = self.main_db_conn.run(
+                "MATCH(proj:Project)-[:has_tasks]->(taskMngr:Task_Manager)-[:has_tasks]->(task:Task) WHERE ID(proj)={proj_id} AND ID(task)={task_id} "
+                "RETURN task.status",
+                {"proj_id": int(project_id)})
+            for record in task_list:
+                print(task_list)
+        except:
+            return("Not available")
+        return ("Task List")
+
 
     # Get the status of one or multiple tasks
     # Input format: proj_id, taskID1_taskID2_taskID3...
