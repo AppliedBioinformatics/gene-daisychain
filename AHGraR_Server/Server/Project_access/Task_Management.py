@@ -41,7 +41,7 @@ class TaskManagement:
         tasks_status = []
 
         task_list = self.main_db_conn.run(
-            "MATCH(proj:Project)-[:has_tasks]->(taskMngr:Task_Manager)-[:has_tasks]->(task:Task) WHERE ID(proj)={proj_id} AND ID(task)={task_id} "
+            "MATCH(proj:Project)-[:has_tasks]->(taskMngr:Task_Manager)-[:has_tasks]->(task:Task) WHERE ID(proj)={proj_id} "
             "RETURN task.status",
             {"proj_id": int(project_id)})
         for record in task_list:
