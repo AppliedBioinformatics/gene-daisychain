@@ -41,7 +41,7 @@ class TaskManagement:
             "RETURN ID(task) AS ID, task.desc AS desc, task.status AS stat",
             {"proj_id": int(project_id)})
         for record in task_record:
-            tasks_list.append("_".join([record["ID"],record["desc"], record["stat"]]))
+            tasks_list.append("_".join([str(record["ID"]),record["desc"], record["stat"]]))
         return("\n".join(tasks_list))
 
 
