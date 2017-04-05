@@ -38,7 +38,8 @@ class AHGraRAdmin:
                        "3": self.change_project_files,
                        "4": self.build_project_db,
                        "5": self.delete_project,
-                       "6": self.query}
+                       "6": self.query,
+                       "7": self.show_tasks}
             self.clear_console()
             actions[user_input]()
 
@@ -50,6 +51,7 @@ class AHGraRAdmin:
         print("(4) to build a projects database")
         print("(5) to delete a project")
         print("(6) to test queries")
+        print("(7) to show active tasks")
         print("(0) to exit")
 
     def query(self):
@@ -517,17 +519,6 @@ class AHGraRAdmin:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     def delete_project(self):
         self.clear_console()
         self.list_projects()
@@ -551,6 +542,30 @@ class AHGraRAdmin:
 
     def clear_console(self):
         os.system('cls' if os.name == 'nt' else 'clear')
+
+    def show_tasks(self):
+        self.clear_console()
+        self.list_projects()
+        print("Enter ID of project to show tasks it")
+        print("Enter '0' to cancel")
+        proj_id = input("[Tasks]>: ").strip()
+        if proj_id == "0" or not proj_id.isdigit():
+            return
+        tasks = self.send_data("PATASK_LIST_" + proj_id)
+        task_list = tasks.split("\n")
+        task_list = [item.split("_") for item in task_list]
+        for task in task_list:
+            print("\t".join(task))
+        print("Enter 'clear' to remove finished tasks")
+        user_entry = input("[Tasks]>: ").strip()
+        if user_entry != "clear":
+            return
+        for task in task_list:
+            if "finished" in task[2].lower():
+                self.send_data("PATASK_DELE_"+proj_id+"_"+task[0])
+
+
+
 
 if __name__ == '__main__':
     # Load config file
