@@ -44,7 +44,7 @@ add_qtips();
 
  // Context menu for genes
  var ctxt_menu_gene= {
-    menuRadius: 75, // the radius of the circular menu in pixels
+    menuRadius: 85, // the radius of the circular menu in pixels
     selector: 'node[type="Gene"]',
     commands: [ // an array of commands to list in the menu
         {
@@ -97,11 +97,10 @@ add_qtips();
             }
         },
         {
-         content: 'Highlight',
+         content: 'Highlight on/off',
          select: function() {
              // Highlight node
-             console.log(this.hasClass("highlighted"));
-             this.addClass("highlighted");
+             this.toggleClass("highlighted");
             }
         }
     ], 
