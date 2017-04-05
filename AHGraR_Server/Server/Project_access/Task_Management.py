@@ -38,15 +38,12 @@ class TaskManagement:
     # Return format: statusID1\tstatusID2\tstatusID3...
     # Returns "Unknown" for every status that could not be determined
     def get_task_list(self, project_id):
-        tasks_status = []
-
         task_list = self.main_db_conn.run(
             "MATCH(proj:Project)-[:has_tasks]->(taskMngr:Task_Manager)-[:has_tasks]->(task:Task) WHERE ID(proj)={proj_id} "
-            "RETURN ID(task), task.desc, task.status",
+            "RETURN ID(task) AS ID, task.desc AS desc, task.status AS stat",
             {"proj_id": int(project_id)})
         for record in task_list:
-            print(record)
-
+            print(record["ID"],record["desc"], record["stat"] )
         return ("Task List")
 
 
