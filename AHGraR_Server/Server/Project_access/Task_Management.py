@@ -39,15 +39,14 @@ class TaskManagement:
     # Returns "Unknown" for every status that could not be determined
     def get_task_list(self, project_id):
         tasks_status = []
-        try:
-            task_list = self.main_db_conn.run(
-                "MATCH(proj:Project)-[:has_tasks]->(taskMngr:Task_Manager)-[:has_tasks]->(task:Task) WHERE ID(proj)={proj_id} AND ID(task)={task_id} "
-                "RETURN task.status",
-                {"proj_id": int(project_id)})
-            for record in task_list:
-                print(task_list)
-        except:
-            return("Not available")
+
+        task_list = self.main_db_conn.run(
+            "MATCH(proj:Project)-[:has_tasks]->(taskMngr:Task_Manager)-[:has_tasks]->(task:Task) WHERE ID(proj)={proj_id} AND ID(task)={task_id} "
+            "RETURN task.status",
+            {"proj_id": int(project_id)})
+        for record in task_list:
+            print(record)
+
         return ("Task List")
 
 
