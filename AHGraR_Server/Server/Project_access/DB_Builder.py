@@ -96,8 +96,6 @@ class DBBuilder:
                 # annotation < genome the annotation file is nr. 0, the genome file nr. 1
                 anno_file = sorted(file_dict[species], key=lambda x: x[1])[0]
                 genome_file = sorted(file_dict[species], key=lambda x: x[1])[1]
-                print(anno_file)
-                print(genome_file)
                 anno_to_csv_parser.create_csv(os.path.join("Projects", proj_id, "Files", anno_file[0]),
                                               os.path.join("Projects", proj_id, "Files", genome_file[0]),
                                               anno_file[2], anno_file[3],anno_file[4],anno_file[5])
@@ -266,14 +264,13 @@ class DBBuilder:
                             "start"], check=True, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
             # Wait for database to startup
             while True:
-                print("Check db status")
                 time.sleep(60)
                 status = subprocess.run([os.path.join("Projects", str(proj_id), "proj_graph_db", "bin", "neo4j"),
                                 "status"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if status.returncode == 0:
                     break
                 else:
-                    print("Wait for DB")
+                    continue
             # Change project status to DB_RUNNING
             self.main_db_conn.run(
                 "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
@@ -283,12 +280,9 @@ class DBBuilder:
             self.main_db_conn.run(
                 "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
                 , {"proj_id": int(proj_id), "new_status": "DB_START_FAILED"})
-            print(err.stdout)
-            print(err.stderr)
         # Build indices on node properties
         # First connect to the newly build database
         # Retrieve the bolt port number
-        print("5. Create Indices")
         self.task_mngr.set_task_status(proj_id, task_id, "Start building indices on project db")
         bolt_port = self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj)={proj_id} "
                                           "RETURN proj.bolt_port", {"proj_id": int(proj_id)}).single()[0]
@@ -306,7 +300,7 @@ class DBBuilder:
         project_db_conn.run("CREATE INDEX ON :Protein(proteinId)")
         project_db_conn.close()
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
-        print("Finished")
+
 
 
 

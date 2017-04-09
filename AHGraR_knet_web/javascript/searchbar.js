@@ -364,7 +364,7 @@
          // Node data is stored as attribute "node_data" in attribute "original"
          for (var i = 0, len = selected_gene_data.length; i < len; i++){
          var selected_node_data = selected_gene_data[i]['original']['node_data'];
-         // Artificial assembly and contig nodes do not habe node_data, collect
+         // Artificial assembly and contig nodes do not have node_data, collect
          // only actual gene nodes
          if (selected_node_data){selected_genes.push(selected_node_data)};
          };
