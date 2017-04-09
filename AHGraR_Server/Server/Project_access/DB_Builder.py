@@ -37,6 +37,9 @@ class DBBuilder:
         # Build the neo4j-based project database from the previously added files
         elif user_request[0] == "DB" and len(user_request) == 2 and user_request[1].isdigit():
             self.build_db(user_request[1])
+        # Calculate local synteny
+        elif user_request[0] == "LS" and len(user_request) == 2 and user_request[1].isdigit():
+            self.calculate_synteny(user_request[1])
         else:
             self.send_data("-3")
 
@@ -286,7 +289,7 @@ class DBBuilder:
         self.task_mngr.set_task_status(proj_id, task_id, "Start building indices on project db")
         bolt_port = self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj)={proj_id} "
                                           "RETURN proj.bolt_port", {"proj_id": int(proj_id)}).single()[0]
-        print(bolt_port)
+
         # Connect to the project DB
         project_db_driver = GraphDatabase.driver("bolt://localhost:" + str(bolt_port),
                                                  auth=basic_auth("neo4j", neo4j_pw), encrypted=False)
@@ -300,6 +303,32 @@ class DBBuilder:
         project_db_conn.run("CREATE INDEX ON :Protein(proteinId)")
         project_db_conn.close()
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")
+
+
+    # For every homolog relation, calculate the local synteny
+    # Determine how many homolog relations between gene neighbors of the homologs exist
+    # Calculate a score from it
+    def calculate_synteny(self, proj_id):
+        bolt_port = self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj)={proj_id} "
+                                          "RETURN proj.bolt_port", {"proj_id": int(proj_id)}).single()[0]
+        # Read password from project folder
+        with open(os.path.join("Projects", str(proj_id), "access"), "r") as file:
+            neo4j_pw = file.read(file)
+        # Connect to the project DB
+        project_db_driver = GraphDatabase.driver("bolt://localhost:" + str(bolt_port),
+                                                 auth=basic_auth("neo4j", neo4j_pw), encrypted=False)
+        project_db_conn = project_db_driver.session()
+        relations_14 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens = '1.4' "
+                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
+        relations_50 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens = '5.0' "
+                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
+        relations_100 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens='10.0' "
+                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
+        print(len(relations_14))
+        print(len(relations_50))
+        print(len(relations_100))
+
+
 
 
 
