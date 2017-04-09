@@ -313,15 +313,18 @@ class DBBuilder:
                                           "RETURN proj.bolt_port", {"proj_id": int(proj_id)}).single()[0]
         # Read password from project folder
         with open(os.path.join("Projects", str(proj_id), "access"), "r") as file:
-            neo4j_pw = file.read(file)
+            neo4j_pw = file.read()
         # Connect to the project DB
         project_db_driver = GraphDatabase.driver("bolt://localhost:" + str(bolt_port),
                                                  auth=basic_auth("neo4j", neo4j_pw), encrypted=False)
         project_db_conn = project_db_driver.session()
+        print("1.4")
         relations_14 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens = '1.4' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
+        print("5.0")
         relations_50 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens = '5.0' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
+        print("10.0")
         relations_100 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens='10.0' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
         print(len(relations_14))
