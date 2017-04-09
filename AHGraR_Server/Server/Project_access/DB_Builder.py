@@ -309,6 +309,7 @@ class DBBuilder:
     # Determine how many homolog relations between gene neighbors of the homologs exist
     # Calculate a score from it
     def calculate_synteny(self, proj_id):
+        self.send_data("Calculating local synteny")
         bolt_port = self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj)={proj_id} "
                                           "RETURN proj.bolt_port", {"proj_id": int(proj_id)}).single()[0]
         # Read password from project folder
@@ -327,9 +328,8 @@ class DBBuilder:
         print("10.0")
         relations_100 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens='10.0' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
-        print(len(relations_14))
-        print(len(relations_50))
-        print(len(relations_100))
+        for rel in relations_14:
+            print(rel)
 
 
 
