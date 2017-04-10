@@ -412,7 +412,7 @@ class DBBuilder:
             for pot_hmlg_rel in potential_hmlg_relations:
                 if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
                     score += 1
-            if score > 0 :
+            if score > 10 :
                 print(score)
         print("Finished")
 
