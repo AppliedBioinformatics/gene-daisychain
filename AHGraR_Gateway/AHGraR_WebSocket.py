@@ -21,19 +21,16 @@ class AHGraRClient(threading.Thread):
             connection = socket.create_connection((self.ahgrar_server_ip, self.ahgrar_server_query_port))
             message = str(len(web_request)) + "|" + web_request
             connection.sendall(message.encode())
-            server_reply =  await self.receive_data(connection)
-            server_reply =  asyncio.run_coroutine_threadsafe(server_reply, asyncio.get_event_loop())
+            server_reply =  self.receive_data(connection)
             connection.close()
-            for x in as_completed(server_reply):
-                print(x)
-                await websocket.send(x)
+            await websocket.send(server_reply)
         except websockets.exceptions.ConnectionClosed:
             pass
         finally:
             websocket.close()
 
     # Receive data coming in from server
-    async def receive_data(self, connection):
+    def receive_data(self, connection):
         # First, determine the length of the message
         # The message has a header containing the length
         # of the actual message:
