@@ -331,14 +331,7 @@ class DBBuilder:
         print("10.0")
         relations_100 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens='10.0' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
-        # Try to fetch result as a list:
-        print("One list")
-        gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*1..5]->(gene5NB:Gene) WHERE gene.geneId = 'g10'"
-                                      " RETURN COLLECT(gene5NB.geneId) as IDs").single()["IDs"]
-        gene3nb = project_db_conn.run("MATCH(gene:Gene)-[:`3_NB`*1..5]->(gene3NB:Gene) WHERE gene.geneId = 'g10'"
-                                      " RETURN COLLECT(gene3NB.geneId) as IDs").single()["IDs"]
-        print(gene5nb)
-        print(gene3nb)
+
         # Get a list of all gene-Ids:
         gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN gene.geneId")
         # Convert result object into a python list
@@ -373,7 +366,16 @@ class DBBuilder:
             # Do not calculate synteny score for self/self-loops
             if start_node == end_node: continue
             rel_100_dict[rel["start"]].append(rel["end"])
+        for gene_id in gene_id_list:
+            # Get gene neighbors
+            print(gene_id)
+            gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*1..5]->(gene5NB:Gene) WHERE gene.geneId = {geneID}"
+                                          " RETURN COLLECT(gene5NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
+            gene3nb = project_db_conn.run("MATCH(gene:Gene)-[:`3_NB`*1..5]->(gene3NB:Gene) WHERE gene.geneId = {geneID}"
+                                          " RETURN COLLECT(gene3NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
         print("Finished")
+
+
 
 
 
