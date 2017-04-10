@@ -331,6 +331,12 @@ class DBBuilder:
         print("10.0")
         relations_100 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens='10.0' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
+        # Try to fetch result as a list:
+        print("One list")
+        gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*..5]->(gene5NB:Gene) WHERE gene.geneId = 'g2'"
+                                      " RETURN COLLECT(gene5NB.geneId)")
+        for res in gene5nb:
+            print(res)
         # Get a list of all gene-Ids:
         gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN gene.geneId")
         # Convert result object into a python list
