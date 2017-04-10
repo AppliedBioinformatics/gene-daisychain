@@ -385,7 +385,10 @@ class DBBuilder:
         # For each start and end node, retrieve the neighboring genes
         # Then test for homology relations between the two sets of neighboring genes
         nr_of_rel = len(rel_14_list)
+        finished_rel_counter = 0
         for rel in rel_14_list:
+            if finished_rel_counter % 100 == 0:
+                print(str(finished_rel_counter)+"/"+str(nr_of_rel))
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -412,8 +415,7 @@ class DBBuilder:
             for pot_hmlg_rel in potential_hmlg_relations:
                 if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
                     score += 1
-            if score > 10 :
-                print(score)
+
         print("Finished")
 
 
