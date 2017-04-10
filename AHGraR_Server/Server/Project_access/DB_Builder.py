@@ -373,6 +373,8 @@ class DBBuilder:
                                           " RETURN COLLECT(gene5NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
             gene3nb = project_db_conn.run("MATCH(gene:Gene)-[:`3_NB`*1..5]->(gene3NB:Gene) WHERE gene.geneId = {geneID}"
                                           " RETURN COLLECT(gene3NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
+            print(gene5nb)
+            print(gene3nb)
         print("Finished")
 
 
@@ -484,6 +486,7 @@ class DBBuilder:
             self.task_mngr.add_task_results(proj_id, task_id, "Success")
         else:
             self.task_mngr.add_task_results(proj_id, task_id, "Failed")
+
 
 
 
