@@ -332,7 +332,7 @@ class DBBuilder:
         relations_100 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens='10.0' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
         # Get a list of all gene-Ids:
-        gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN(gene.geneId)")
+        gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN gene.geneId")
         # Convert result object into a python list
         # Also initialize dicts used to store homology relations
         gene_id_list = []
