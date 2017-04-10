@@ -22,6 +22,7 @@ class AHGraRClient(threading.Thread):
             connection.sendall(message.encode())
             server_reply = self.receive_data(connection)
             connection.close()
+            print(server_reply)
             await websocket.send(server_reply)
         except websockets.exceptions.ConnectionClosed:
             pass
