@@ -29,7 +29,7 @@ class AHGraRClient(threading.Thread):
             websocket.close()
 
     # Receive data coming in from server
-    def receive_data(self, connection):
+    async def receive_data(self, connection):
         # First, determine the length of the message
         # The message has a header containing the length
         # of the actual message:
