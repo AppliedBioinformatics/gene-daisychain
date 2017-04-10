@@ -385,7 +385,7 @@ class DBBuilder:
         for rel in rel_14_list:
             if finished_rel_counter % 5000 == 0:
                 self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
-                                               str(round(100*finished_rel_counter/nr_of_rel),2)+"% completed")
+                                               str(round(100*finished_rel_counter/nr_of_rel, 2))+"% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -428,7 +428,7 @@ class DBBuilder:
         for rel in rel_50_list:
             if finished_rel_counter % 5000 == 0:
                 self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
-                                               str(round(100*finished_rel_counter/nr_of_rel),2)+"% completed")
+                                               str(round(100*finished_rel_counter/nr_of_rel, 2))+"% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -471,7 +471,7 @@ class DBBuilder:
         for rel in rel_100_list:
             if finished_rel_counter % 5000 == 0:
                 self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
-                                               str(round(100*finished_rel_counter/nr_of_rel),2)+"% completed")
+                                               str(round(100*finished_rel_counter/nr_of_rel, 2))+"% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
