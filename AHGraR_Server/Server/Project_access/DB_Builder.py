@@ -385,11 +385,11 @@ class DBBuilder:
         # For each start and end node, retrieve the neighboring genes
         # Then test for homology relations between the two sets of neighboring genes
         # Start with homoogy relations where inflation value = 1.4 (large cluster)
-        nr_of_rel = len(rel_14_list)
+        nr_of_rel = len(rel_14_list)+len(rel_50_list)+len(rel_100_list)
         finished_rel_counter = 0
         for rel in rel_14_list:
-            if finished_rel_counter % 100 == 0:
-                print(str(finished_rel_counter)+"/[1.4]/"+str(nr_of_rel))
+            if finished_rel_counter % 1000 == 0:
+                print(str(100*finished_rel_counter/nr_of_rel)+"% finished")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -413,9 +413,18 @@ class DBBuilder:
             # Check for hmlg relations
             # Keep count of found hmlg relations
             score = 0
+            # Also keep track of the starting and end nodes of found hmlg relations
+            # Each node of the start_node_nb or end_node_nb set can only be involved in one hmlg relation
+            # This is done to prevent misleading high score counts in case a gene has multiple homology relations
+            # with neighboring genes
+            hmlg_rel_start_nodes = []
             for pot_hmlg_rel in potential_hmlg_relations:
+                if pot_hmlg_rel[0] in hmlg_rel_start_nodes or pot_hmlg_rel[1] in hmlg_rel_start_nodes:
+                    continue
                 if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
                     score += 1
+                    hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
+                    hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
             finished_rel_counter+=1
 
         nr_of_rel = len(rel_50_list)
@@ -446,9 +455,18 @@ class DBBuilder:
             # Check for hmlg relations
             # Keep count of found hmlg relations
             score = 0
+            # Also keep track of the starting and end nodes of found hmlg relations
+            # Each node of the start_node_nb or end_node_nb set can only be involved in one hmlg relation
+            # This is done to prevent misleading high score counts in case a gene has multiple homology relations
+            # with neighboring genes
+            hmlg_rel_start_nodes = []
             for pot_hmlg_rel in potential_hmlg_relations:
-                if pot_hmlg_rel[1] in rel_50_dict[pot_hmlg_rel[0]]:
+                if pot_hmlg_rel[0] in hmlg_rel_start_nodes or pot_hmlg_rel[1] in hmlg_rel_start_nodes:
+                    continue
+                if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
                     score += 1
+                    hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
+                    hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
             finished_rel_counter += 1
 
         nr_of_rel = len(rel_100_list)
@@ -479,9 +497,18 @@ class DBBuilder:
             # Check for hmlg relations
             # Keep count of found hmlg relations
             score = 0
+            # Also keep track of the starting and end nodes of found hmlg relations
+            # Each node of the start_node_nb or end_node_nb set can only be involved in one hmlg relation
+            # This is done to prevent misleading high score counts in case a gene has multiple homology relations
+            # with neighboring genes
+            hmlg_rel_start_nodes = []
             for pot_hmlg_rel in potential_hmlg_relations:
-                if pot_hmlg_rel[1] in rel_100_dict[pot_hmlg_rel[0]]:
+                if pot_hmlg_rel[0] in hmlg_rel_start_nodes or pot_hmlg_rel[1] in hmlg_rel_start_nodes:
+                    continue
+                if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
                     score += 1
+                    hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
+                    hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
             finished_rel_counter += 1
 
         print("Finished")
