@@ -333,9 +333,12 @@ class DBBuilder:
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
         # Try to fetch result as a list:
         print("One list")
-        gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*..5]->(gene5NB:Gene) WHERE gene.geneId = 'ga2'"
+        gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*1..5]->(gene5NB:Gene) WHERE gene.geneId = 'g10'"
                                       " RETURN COLLECT(gene5NB.geneId) as IDs").single()["IDs"]
+        gene3nb = project_db_conn.run("MATCH(gene:Gene)-[:`3_NB`*1..5]->(gene3NB:Gene) WHERE gene.geneId = 'g10'"
+                                      " RETURN COLLECT(gene3NB.geneId) as IDs").single()["IDs"]
         print(gene5nb)
+        print(gene3nb)
         # Get a list of all gene-Ids:
         gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN gene.geneId")
         # Convert result object into a python list
