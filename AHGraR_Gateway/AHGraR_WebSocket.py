@@ -21,7 +21,7 @@ class AHGraRClient(threading.Thread):
             message = str(len(web_request)) + "|" + web_request
             connection.sendall(message.encode())
             server_reply = self.receive_data(connection)
-            server_reply = asyncio.run_coroutine_threadsafe(server_reply, asyncio.get_event_loop())
+            server_reply = await asyncio.run_coroutine_threadsafe(server_reply, asyncio.get_event_loop())
             connection.close()
             print(server_reply)
             await websocket.send(server_reply)
