@@ -308,6 +308,9 @@ class DBBuilder:
     # For every homolog relation, calculate the local synteny
     # Determine how many homolog relations between gene neighbors of the homologs exist
     # Calculate a score from it
+    # Approach: Retrieve every homolog relation, separated by cluster size
+    # Also retrieve a list of every gene-ID
+    # For every gene-ID, retrieve its neighbours
     def calculate_synteny(self, proj_id):
         self.send_data("Calculating local synteny")
         bolt_port = self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj)={proj_id} "
@@ -321,15 +324,51 @@ class DBBuilder:
         project_db_conn = project_db_driver.session()
         print("1.4")
         relations_14 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens = '1.4' "
-                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
+                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
         print("5.0")
         relations_50 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens = '5.0' "
-                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
+                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
         print("10.0")
         relations_100 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens='10.0' "
-                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end;")
+                                           "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
+        # Get a list of all gene-Ids:
+        gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN(gene.geneId)")
+        # Convert result object into a python list
+        # Also initialize dicts used to store homology relations
+        gene_id_list = []
+        rel_14_dict = {}
+        rel_50_dict = {}
+        rel_100_dict = {}
+        for res in gene_ids:
+            id = res["gene.geneId"]
+            gene_id_list.append(id)
+            rel_14_dict[id] = []
+            rel_50_dict[id] = []
+            rel_100_dict[id] = []
+
+        # Convert each relation edge into a dict. Key is start ID, value is a list of end IDs
         for rel in relations_14:
-            print(rel)
+            start_node = rel["start"]
+            end_node = rel["end"]
+            # Do not calculate synteny score for self/self-loops
+            if start_node == end_node: continue
+            rel_14_dict[rel["start"]].append(rel["end"])
+        for rel in relations_50:
+            start_node = rel["start"]
+            end_node = rel["end"]
+            # Do not calculate synteny score for self/self-loops
+            if start_node == end_node: continue
+            rel_50_dict[rel["start"]].append(rel["end"])
+        for rel in relations_100:
+            start_node = rel["start"]
+            end_node = rel["end"]
+            # Do not calculate synteny score for self/self-loops
+            if start_node == end_node: continue
+            rel_100_dict[rel["start"]].append(rel["end"])
+        print("Finished")
+
+
+
 
 
 
