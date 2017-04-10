@@ -424,10 +424,12 @@ class DBBuilder:
                         hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
                 except KeyError:
                     continue
+            project_db_conn.run("MATCH(geneStart:Gene)-[rel:HOMOLOG]->(geneEnd:Gene) "
+                                "WHERE geneStart.geneId = {startID} AND geneEnd.geneId = {endID} "
+                                "AND rel.clstr_send = '1.4' SET rel.ls_score = {score}",
+                                {"startID":start_node,"endID":end_node, "score": score})
             finished_rel_counter+=1
 
-        nr_of_rel = len(rel_50_list)
-        finished_rel_counter = 0
         for rel in rel_50_list:
             if finished_rel_counter % 5000 == 0:
                 self.task_mngr.set_task_status(proj_id, task_id, str(round(100 * finished_rel_counter / nr_of_rel, 2)) +
@@ -470,10 +472,12 @@ class DBBuilder:
                         hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
                 except KeyError:
                     continue
+            project_db_conn.run("MATCH(geneStart:Gene)-[rel:HOMOLOG]->(geneEnd:Gene) "
+                                "WHERE geneStart.geneId = {startID} AND geneEnd.geneId = {endID} "
+                                "AND rel.clstr_send = '5.0' SET rel.ls_score = {score}",
+                                {"startID": start_node, "endID": end_node, "score": score})
             finished_rel_counter += 1
 
-        nr_of_rel = len(rel_100_list)
-        finished_rel_counter = 0
         for rel in rel_100_list:
             if finished_rel_counter % 5000 == 0:
                 self.task_mngr.set_task_status(proj_id, task_id, str(round(100*finished_rel_counter/nr_of_rel, 2))+
@@ -516,8 +520,12 @@ class DBBuilder:
                         hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
                 except KeyError:
                     continue
+            project_db_conn.run("MATCH(geneStart:Gene)-[rel:HOMOLOG]->(geneEnd:Gene) "
+                                "WHERE geneStart.geneId = {startID} AND geneEnd.geneId = {endID} "
+                                "AND rel.clstr_send = '10.0' SET rel.ls_score = {score}",
+                                {"startID": start_node, "endID": end_node, "score": score})
             finished_rel_counter += 1
-        self.task_mngr.set_task_status(proj_id, task_id, "Finished calculating local synteny ")
+        self.task_mngr.set_task_status(proj_id, task_id, "Finished")
 
 
 
