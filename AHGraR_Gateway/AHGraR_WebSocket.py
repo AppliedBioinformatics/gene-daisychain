@@ -21,9 +21,28 @@ class AHGraRClient(threading.Thread):
             connection = socket.create_connection((self.ahgrar_server_ip, self.ahgrar_server_query_port))
             message = str(len(web_request)) + "|" + web_request
             connection.sendall(message.encode())
-            server_reply =  self.receive_data(connection)
+            msg_header = ""
+            while True:
+                incoming_data = connection.recv(1).decode()
+                if incoming_data == "|":
+                    break
+                else:
+                    msg_header += incoming_data
+            # Store length of the actual message
+            msg_length = int(msg_header)
+            # Start to build up the actual message
+            msg = ""
+            # Receive chunks of data until the length of the received message equals the expected length
+            while msg_length > 0:
+                # Receive a max. of 1024 bytes
+                rcv_length = 1024 if msg_length >= 1024 else msg_length
+                msg_chunk = connection.recv(rcv_length).decode()
+                # Subtract the actual length of the received message from the overall message length
+                msg_length -= len(msg_chunk)
+                msg += msg_chunk
+            #server_reply =  self.receive_data(connection)
             connection.close()
-            await websocket.send(server_reply)
+            await websocket.send(msg)
         except websockets.exceptions.ConnectionClosed:
             pass
         finally:
