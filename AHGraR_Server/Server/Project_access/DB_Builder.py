@@ -3,7 +3,7 @@
 # Functions directly accessible by user query always return a string via socket connection
 import os
 import subprocess
-from itertools import islice
+from itertools import islice, product
 from CSV_creator.annotation_to_csv import AnnoToCSV
 from CSV_creator.cluster_to_csv import ClusterToCSV
 from Parser.GFF3_parser_gffutils_v2 import GFF3Parser_v2
@@ -336,45 +336,77 @@ class DBBuilder:
         gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN gene.geneId")
         # Convert result object into a python list
         # Also initialize dicts used to store homology relations
-        gene_id_list = []
+        #gene_id_list = []
         rel_14_dict = {}
         rel_50_dict = {}
         rel_100_dict = {}
         for res in gene_ids:
             id = res["gene.geneId"]
-            gene_id_list.append(id)
+            #gene_id_list.append(id)
             rel_14_dict[id] = []
             rel_50_dict[id] = []
             rel_100_dict[id] = []
 
         # Convert each relation edge into a dict. Key is start ID, value is a list of end IDs
+        rel_14_list = []
         for rel in relations_14:
             start_node = rel["start"]
             end_node = rel["end"]
             # Do not calculate synteny score for self/self-loops
             if start_node == end_node: continue
             rel_14_dict[rel["start"]].append(rel["end"])
+            rel_14_list.append((rel["start"], rel["end"]))
+        rel_50_list = []
         for rel in relations_50:
             start_node = rel["start"]
             end_node = rel["end"]
             # Do not calculate synteny score for self/self-loops
             if start_node == end_node: continue
             rel_50_dict[rel["start"]].append(rel["end"])
+            rel_50_list.append((rel["start"], rel["end"]))
+        rel_100_list = []
         for rel in relations_100:
             start_node = rel["start"]
             end_node = rel["end"]
             # Do not calculate synteny score for self/self-loops
             if start_node == end_node: continue
             rel_100_dict[rel["start"]].append(rel["end"])
-        for gene_id in gene_id_list:
-            # Get gene neighbors
-            print(gene_id)
+            rel_100_list.append((rel["start"], rel["end"]))
+        # for gene_id in gene_id_list:
+        #     # Get gene neighbors
+        #     print(gene_id)
+        #     gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*1..5]->(gene5NB:Gene) WHERE gene.geneId = {geneID}"
+        #                                   " RETURN COLLECT(gene5NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
+        #     gene3nb = project_db_conn.run("MATCH(gene:Gene)-[:`3_NB`*1..5]->(gene3NB:Gene) WHERE gene.geneId = {geneID}"
+        #                                   " RETURN COLLECT(gene3NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
+        #     print(gene5nb)
+        #     print(gene3nb)
+        # Loop through every relation
+        # For each start and end node, retrieve the neighboring genes
+        # Then test for homology relations between the two sets of neighboring genes
+        for rel in rel_14_list:
+            start_node = rel[0]
+            end_node = rel[1]
+            # First get all gene neighbors for start node
             gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*1..5]->(gene5NB:Gene) WHERE gene.geneId = {geneID}"
-                                          " RETURN COLLECT(gene5NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
+                                          " RETURN COLLECT(gene5NB.geneId) as IDs",
+                                          {"geneID":start_node}).single()["IDs"]
             gene3nb = project_db_conn.run("MATCH(gene:Gene)-[:`3_NB`*1..5]->(gene3NB:Gene) WHERE gene.geneId = {geneID}"
-                                          " RETURN COLLECT(gene3NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
-            print(gene5nb)
-            print(gene3nb)
+                                          " RETURN COLLECT(gene3NB.geneId) as IDs",
+                                          {"geneID":start_node}).single()["IDs"]
+            start_node_nb = gene5nb+gene3nb
+            # Then get all gene neighbors for end node
+            gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*1..5]->(gene5NB:Gene) WHERE gene.geneId = {geneID}"
+                                          " RETURN COLLECT(gene5NB.geneId) as IDs", {"geneID": end_node}).single()[
+                "IDs"]
+            gene3nb = project_db_conn.run("MATCH(gene:Gene)-[:`3_NB`*1..5]->(gene3NB:Gene) WHERE gene.geneId = {geneID}"
+                                          " RETURN COLLECT(gene3NB.geneId) as IDs", {"geneID": end_node}).single()[
+                "IDs"]
+            end_node_nb = gene5nb + gene3nb
+            # Create all possible combinations between the two sets of gene neighbor nodes
+            potential_hmlg_rel = list(product(start_node_nb, end_node_nb))
+            print(potential_hmlg_rel)
+
         print("Finished")
 
 
