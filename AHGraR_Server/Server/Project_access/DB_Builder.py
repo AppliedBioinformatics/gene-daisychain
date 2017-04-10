@@ -347,7 +347,7 @@ class DBBuilder:
             try:
                 rel_14_dict[start_node].append(end_node)
             except KeyError:
-                rel_14_dict[start_node]=end_node
+                rel_14_dict[start_node]= [end_node]
             rel_14_list.append((start_node, end_node))
         rel_50_dict = {}
         rel_50_list = []
@@ -359,7 +359,7 @@ class DBBuilder:
             try:
                 rel_50_dict[start_node].append(end_node)
             except KeyError:
-                rel_50_dict[start_node] = end_node
+                rel_50_dict[start_node] = [end_node]
             rel_50_list.append((start_node, end_node))
         rel_100_dict = {}
         rel_100_list = []
@@ -371,7 +371,7 @@ class DBBuilder:
             try:
                 rel_100_dict[start_node].append(end_node)
             except KeyError:
-                rel_100_dict[start_node] = end_node
+                rel_100_dict[start_node] = [end_node]
             rel_100_list.append((start_node, end_node))
 
 
