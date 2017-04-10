@@ -384,8 +384,8 @@ class DBBuilder:
         finished_rel_counter = 0
         for rel in rel_14_list:
             if finished_rel_counter % 5000 == 0:
-                self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
-                                               str(round(100*finished_rel_counter/nr_of_rel, 2))+"% completed")
+                self.task_mngr.set_task_status(proj_id, task_id, str(round(100 * finished_rel_counter / nr_of_rel, 2)) +
+                                               "% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -417,18 +417,21 @@ class DBBuilder:
             for pot_hmlg_rel in potential_hmlg_relations:
                 if pot_hmlg_rel[0] in hmlg_rel_start_nodes or pot_hmlg_rel[1] in hmlg_rel_start_nodes:
                     continue
-                if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
-                    score += 1
-                    hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
-                    hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
+                try:
+                    if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
+                        score += 1
+                        hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
+                        hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
+                except KeyError:
+                    continue
             finished_rel_counter+=1
 
         nr_of_rel = len(rel_50_list)
         finished_rel_counter = 0
         for rel in rel_50_list:
             if finished_rel_counter % 5000 == 0:
-                self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
-                                               str(round(100*finished_rel_counter/nr_of_rel, 2))+"% completed")
+                self.task_mngr.set_task_status(proj_id, task_id, str(round(100 * finished_rel_counter / nr_of_rel, 2)) +
+                                               "% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -460,18 +463,21 @@ class DBBuilder:
             for pot_hmlg_rel in potential_hmlg_relations:
                 if pot_hmlg_rel[0] in hmlg_rel_start_nodes or pot_hmlg_rel[1] in hmlg_rel_start_nodes:
                     continue
-                if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
-                    score += 1
-                    hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
-                    hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
+                try:
+                    if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
+                        score += 1
+                        hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
+                        hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
+                except KeyError:
+                    continue
             finished_rel_counter += 1
 
         nr_of_rel = len(rel_100_list)
         finished_rel_counter = 0
         for rel in rel_100_list:
             if finished_rel_counter % 5000 == 0:
-                self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
-                                               str(round(100*finished_rel_counter/nr_of_rel, 2))+"% completed")
+                self.task_mngr.set_task_status(proj_id, task_id, str(round(100*finished_rel_counter/nr_of_rel, 2))+
+                                               "% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -503,10 +509,13 @@ class DBBuilder:
             for pot_hmlg_rel in potential_hmlg_relations:
                 if pot_hmlg_rel[0] in hmlg_rel_start_nodes or pot_hmlg_rel[1] in hmlg_rel_start_nodes:
                     continue
-                if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
-                    score += 1
-                    hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
-                    hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
+                try:
+                    if pot_hmlg_rel[1] in rel_14_dict[pot_hmlg_rel[0]]:
+                        score += 1
+                        hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
+                        hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
+                except KeyError:
+                    continue
             finished_rel_counter += 1
         self.task_mngr.set_task_status(proj_id, task_id, "Finished calculating local synteny ")
 
