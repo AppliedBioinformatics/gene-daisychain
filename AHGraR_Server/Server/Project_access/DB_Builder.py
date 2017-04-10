@@ -311,8 +311,10 @@ class DBBuilder:
     # Approach: Retrieve every homolog relation, separated by cluster size
     # Also retrieve a list of every gene-ID
     # For every gene-ID, retrieve its neighbours
+
     def calculate_synteny(self, proj_id):
         self.send_data("Calculating local synteny")
+        task_id = self.task_mngr.define_task(proj_id, "Calculating local synteny")
         bolt_port = self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj)={proj_id} "
                                           "RETURN proj.bolt_port", {"proj_id": int(proj_id)}).single()[0]
         # Read password from project folder
@@ -322,74 +324,68 @@ class DBBuilder:
         project_db_driver = GraphDatabase.driver("bolt://localhost:" + str(bolt_port),
                                                  auth=basic_auth("neo4j", neo4j_pw), encrypted=False)
         project_db_conn = project_db_driver.session()
-        print("1.4")
+        self.task_mngr.set_task_status(proj_id, task_id, "Retrieving all homology relations for large clusters")
         relations_14 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens = '1.4' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
-        print("5.0")
+        self.task_mngr.set_task_status(proj_id, task_id, "Retrieving all homology relations for medium clusters")
         relations_50 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens = '5.0' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
-        print("10.0")
+        self.task_mngr.set_task_status(proj_id, task_id, "Retrieving all homology relations for small clusters")
         relations_100 = project_db_conn.run("MATCH(geneA:Gene)-[rel:HOMOLOG]->(geneB:Gene) WHERE rel.clstr_sens='10.0' "
                                            "RETURN startNode(rel).geneId AS start, endNode(rel).geneId AS end")
 
-        # Get a list of all gene-Ids:
-        gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN gene.geneId")
-        # Convert result object into a python list
-        # Also initialize dicts used to store homology relations
-        #gene_id_list = []
-        rel_14_dict = {}
-        rel_50_dict = {}
-        rel_100_dict = {}
-        for res in gene_ids:
-            id = res["gene.geneId"]
-            #gene_id_list.append(id)
-            rel_14_dict[id] = []
-            rel_50_dict[id] = []
-            rel_100_dict[id] = []
-
+        self.task_mngr.set_task_status(proj_id, task_id, "Converting homology edges")
         # Convert each relation edge into a dict. Key is start ID, value is a list of end IDs
+        # Also store every hmlg edge as a list of (start, end) tuples
+        rel_14_dict = {}
         rel_14_list = []
         for rel in relations_14:
             start_node = rel["start"]
             end_node = rel["end"]
             # Do not calculate synteny score for self/self-loops
             if start_node == end_node: continue
-            rel_14_dict[rel["start"]].append(rel["end"])
-            rel_14_list.append((rel["start"], rel["end"]))
+            try:
+                rel_14_dict[start_node].append(end_node)
+            except KeyError:
+                rel_14_dict[start_node]=end_node
+            rel_14_list.append((start_node, end_node))
+        rel_50_dict = {}
         rel_50_list = []
         for rel in relations_50:
             start_node = rel["start"]
             end_node = rel["end"]
             # Do not calculate synteny score for self/self-loops
             if start_node == end_node: continue
-            rel_50_dict[rel["start"]].append(rel["end"])
-            rel_50_list.append((rel["start"], rel["end"]))
+            try:
+                rel_50_dict[start_node].append(end_node)
+            except KeyError:
+                rel_50_dict[start_node] = end_node
+            rel_50_list.append((start_node, end_node))
+        rel_100_dict = {}
         rel_100_list = []
         for rel in relations_100:
             start_node = rel["start"]
             end_node = rel["end"]
             # Do not calculate synteny score for self/self-loops
             if start_node == end_node: continue
-            rel_100_dict[rel["start"]].append(rel["end"])
-            rel_100_list.append((rel["start"], rel["end"]))
-        # for gene_id in gene_id_list:
-        #     # Get gene neighbors
-        #     print(gene_id)
-        #     gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*1..5]->(gene5NB:Gene) WHERE gene.geneId = {geneID}"
-        #                                   " RETURN COLLECT(gene5NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
-        #     gene3nb = project_db_conn.run("MATCH(gene:Gene)-[:`3_NB`*1..5]->(gene3NB:Gene) WHERE gene.geneId = {geneID}"
-        #                                   " RETURN COLLECT(gene3NB.geneId) as IDs", {"geneID":gene_id}).single()["IDs"]
-        #     print(gene5nb)
-        #     print(gene3nb)
+            try:
+                rel_100_dict[start_node].append(end_node)
+            except KeyError:
+                rel_100_dict[start_node] = end_node
+            rel_100_list.append((start_node, end_node))
+
+
         # Loop through every relation
         # For each start and end node, retrieve the neighboring genes
         # Then test for homology relations between the two sets of neighboring genes
         # Start with homoogy relations where inflation value = 1.4 (large cluster)
         nr_of_rel = len(rel_14_list)+len(rel_50_list)+len(rel_100_list)
+        self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny 0% completed")
         finished_rel_counter = 0
         for rel in rel_14_list:
-            if finished_rel_counter % 1000 == 0:
-                print(str(100*finished_rel_counter/nr_of_rel)+"% finished")
+            if finished_rel_counter % 5000 == 0:
+                self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
+                                               str(round(100*finished_rel_counter/nr_of_rel),2)+"% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -430,8 +426,9 @@ class DBBuilder:
         nr_of_rel = len(rel_50_list)
         finished_rel_counter = 0
         for rel in rel_50_list:
-            if finished_rel_counter % 100 == 0:
-                print(str(finished_rel_counter) + "/[5.0]/" + str(nr_of_rel))
+            if finished_rel_counter % 5000 == 0:
+                self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
+                                               str(round(100*finished_rel_counter/nr_of_rel),2)+"% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -472,8 +469,9 @@ class DBBuilder:
         nr_of_rel = len(rel_100_list)
         finished_rel_counter = 0
         for rel in rel_100_list:
-            if finished_rel_counter % 100 == 0:
-                print(str(finished_rel_counter) + "/[100.0]/" + str(nr_of_rel))
+            if finished_rel_counter % 5000 == 0:
+                self.task_mngr.set_task_status(proj_id, task_id, "Calculating local synteny "+
+                                               str(round(100*finished_rel_counter/nr_of_rel),2)+"% completed")
             start_node = rel[0]
             end_node = rel[1]
             # First get all gene neighbors for start node
@@ -510,8 +508,7 @@ class DBBuilder:
                     hmlg_rel_start_nodes.append(pot_hmlg_rel[0])
                     hmlg_rel_start_nodes.append(pot_hmlg_rel[1])
             finished_rel_counter += 1
-
-        print("Finished")
+        self.task_mngr.set_task_status(proj_id, task_id, "Finished calculating local synteny ")
 
 
 
