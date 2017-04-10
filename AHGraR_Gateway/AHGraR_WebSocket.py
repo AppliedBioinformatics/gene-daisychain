@@ -21,8 +21,7 @@ class AHGraRClient(threading.Thread):
             connection = socket.create_connection((self.ahgrar_server_ip, self.ahgrar_server_query_port))
             message = str(len(web_request)) + "|" + web_request
             connection.sendall(message.encode())
-            #server_reply =  self.receive_data(connection)
-            server_reply = "777"
+            server_reply =  self.receive_data(connection)
             connection.close()
             await websocket.send(server_reply)
         except websockets.exceptions.ConnectionClosed:
