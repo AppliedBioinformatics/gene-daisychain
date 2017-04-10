@@ -6,6 +6,7 @@ import websockets
 import configparser
 import socket
 import threading
+from concurrent.futures import as_completed
 
 
 class AHGraRClient(threading.Thread):
@@ -23,8 +24,9 @@ class AHGraRClient(threading.Thread):
             server_reply =  self.receive_data(connection)
             server_reply =  asyncio.run_coroutine_threadsafe(server_reply, asyncio.get_event_loop())
             connection.close()
-            print(server_reply)
-            await websocket.send(server_reply)
+            for x in as_completed(server_reply):
+                print(x)
+                await websocket.send(x)
         except websockets.exceptions.ConnectionClosed:
             pass
         finally:
