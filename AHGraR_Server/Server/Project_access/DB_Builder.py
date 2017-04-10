@@ -334,7 +334,7 @@ class DBBuilder:
         # Try to fetch result as a list:
         print("One list")
         gene5nb = project_db_conn.run("MATCH(gene:Gene)-[:`5_NB`*..5]->(gene5NB:Gene) WHERE gene.geneId = 'g2'"
-                                      " RETURN COLLECT(gene5NB.geneId) as IDs")["IDs"]
+                                      " RETURN COLLECT(gene5NB.geneId) as IDs").single()
         print(gene5nb)
         # Get a list of all gene-Ids:
         gene_ids = project_db_conn.run("MATCH(gene:Gene) RETURN gene.geneId")
