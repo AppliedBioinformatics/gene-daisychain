@@ -552,17 +552,22 @@ class AHGraRAdmin:
         if proj_id == "0" or not proj_id.isdigit():
             return
         while True:
+            self.clear_console()
             tasks = self.send_data("PATASK_LIST_" + proj_id)
             task_list = tasks.split("\n")
             task_list = [item.split("_") for item in task_list]
             for task in task_list:
-                print("\t".join(task))
-            print("Enter 'clear' to remove finished tasks")
+                print("\t".join(task[1:]))
+            print("Enter 'clear' to remove finished tasks\n"
+                  "Enter 'update' to update list")
             user_entry = input("[Tasks]>: ").strip()
             if user_entry == "clear":
-                for task in task_list:
-                    if "finished" in task[2].lower():
-                        self.send_data("PATASK_DELE_"+proj_id+"_"+task[0])
+                try:
+                    for task in task_list:
+                        if "finished" in task[2].lower():
+                            self.send_data("PATASK_DELE_"+proj_id+"_"+task[0])
+                except IndexError:
+                    pass
                 continue
             elif user_entry == "update":
                 continue
