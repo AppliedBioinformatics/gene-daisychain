@@ -171,14 +171,15 @@ class AHGraRAdmin:
             if user_input == "0":
                 return
             if user_input == "1":
-                print("File import requires a CSV file describing each file")
+                self.clear_console()
+                print("File import requires a CSV file describing each file\n")
                 print("The columns are:")
-                print("Species_name, Variant, filetype, file_path")
+                print("Species_name, Variant, filetype, file_path\n")
                 print("Filetypes are either 'genome' for genomic sequences in FASTA format")
-                print("or 'annotation' for GFF3 annotation files")
+                print("or 'annotation' for GFF3 annotation files\n")
                 print("Example:")
                 print("E.coli,K12,genome,/path/to/genome.fa")
-                print("E.coli,K12,annotation,/path/to/annotation.gff3")
+                print("E.coli,K12,annotation,/path/to/annotation.gff3\n\n\n")
                 user_input = input("[File]>: ").strip()
                 if os.path.isfile(user_input):
                     print("File found")
