@@ -22,6 +22,9 @@ function addPath(node, rel_type)
         if (new_node_data.length == 0){
         window.alert("No new nodes found.");
         };
+        if (new_node_data.length >= 100){
+        window.alert("Number of nodes exceeds limit(100).");
+        };
         new_node_data.forEach(function(val)
         {
             new_node = cy.add({group: "nodes","data":val.data, position:
