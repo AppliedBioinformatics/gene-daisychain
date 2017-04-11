@@ -426,7 +426,7 @@ class DBBuilder:
                     continue
             project_db_conn.run("MATCH(geneStart:Gene)-[rel:HOMOLOG]->(geneEnd:Gene) "
                                 "WHERE geneStart.geneId = {startID} AND geneEnd.geneId = {endID} "
-                                "AND rel.clstr_send = '1.4' SET rel.ls_score = {score}",
+                                "AND rel.clstr_sens = '1.4' SET rel.ls_score = {score}",
                                 {"startID":start_node,"endID":end_node, "score": score})
             finished_rel_counter+=1
 
@@ -474,7 +474,7 @@ class DBBuilder:
                     continue
             project_db_conn.run("MATCH(geneStart:Gene)-[rel:HOMOLOG]->(geneEnd:Gene) "
                                 "WHERE geneStart.geneId = {startID} AND geneEnd.geneId = {endID} "
-                                "AND rel.clstr_send = '5.0' SET rel.ls_score = {score}",
+                                "AND rel.clstr_sens = '5.0' SET rel.ls_score = {score}",
                                 {"startID": start_node, "endID": end_node, "score": score})
             finished_rel_counter += 1
 
@@ -522,7 +522,7 @@ class DBBuilder:
                     continue
             project_db_conn.run("MATCH(geneStart:Gene)-[rel:HOMOLOG]->(geneEnd:Gene) "
                                 "WHERE geneStart.geneId = {startID} AND geneEnd.geneId = {endID} "
-                                "AND rel.clstr_send = '10.0' SET rel.ls_score = {score}",
+                                "AND rel.clstr_sens = '10.0' SET rel.ls_score = {score}",
                                 {"startID": start_node, "endID": end_node, "score": score})
             finished_rel_counter += 1
         self.task_mngr.set_task_status(proj_id, task_id, "Finished")

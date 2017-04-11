@@ -321,7 +321,7 @@
          node_data = search_result["nodes"];
          if (node_data.length >= 100)
          {alert("Warning: Reached maximum number of node hits (100).\n"+
-         " Not all nodes may be shown. Consider a more restrictive search.")};
+         "Not all nodes may be shown. Consider a more restrictive search.")};
          // Collect assembly ids and contig ids in a separate array
          // Make ids unique, they serve as parent nodes to gene nodes
          // Assembly->Contig-> Gene
