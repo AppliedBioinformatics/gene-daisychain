@@ -172,8 +172,10 @@ class AHGraRAdmin:
                 return
             if proj_id in valid_proj_ids:
                 break
-        file_list = self.send_data("PAFILE_LIST_"+proj_id)
-        print(file_list)
+        file_list = self.send_data("PAFILE_LIST_"+proj_id).split("\n")
+        for line in file_list:
+            line = line.split("\t")
+            print("\t".join(line[:2]))
         while True:
             # Wait for cmdline input
             print("(1) to batch import files")
