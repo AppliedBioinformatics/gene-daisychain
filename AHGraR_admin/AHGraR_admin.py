@@ -107,7 +107,7 @@ class AHGraRAdmin:
         return(msg)
 
 
-    def list_projects(self, wait):
+    def list_projects(self):
         proj_list = self.send_data("PMINFO")
         proj_list_rows = proj_list.split("\n")
         proj_list_rows = [item.split("\t") for item in proj_list_rows]
