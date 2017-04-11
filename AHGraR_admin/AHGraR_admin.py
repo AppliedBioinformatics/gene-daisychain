@@ -160,13 +160,10 @@ class AHGraRAdmin:
         proj_id = input("[Project-ID]>: ").strip()
         if proj_id == "0":
             return
-        self.clear_console()
         file_list = self.send_data("PAFILE_LIST_"+proj_id)
-        self.clear_console()
         print(file_list)
         while True:
             # Wait for cmdline input
-            print(5*"\n")
             print("(1) to batch import files")
             print("(2) to delete a file")
             print("(0) to return")
@@ -184,15 +181,16 @@ class AHGraRAdmin:
                 print("E.coli,K12,annotation,/path/to/annotation.gff3")
                 user_input = input("[File]>: ").strip()
                 if os.path.isfile(user_input):
-                    print("valid file")
+                    print("File found")
                     with open(user_input, "r") as file:
                         file_content = file.read()
                     # Replace any underscores by "\t"
                     file_content = file_content.replace("_","\t")
-                    print(self.send_data("PAFILE_IMPO_"+str(proj_id)+"_"+file_content))
-                    time.sleep(20)
+                    self.send_data("PAFILE_IMPO_"+str(proj_id)+"_"+file_content)
+                    print("File import started")
+                    return
                 else:
-                    print("try again")
+                    print("File not found")
 
 
 
