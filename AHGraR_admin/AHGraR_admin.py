@@ -18,8 +18,8 @@ class AHGraRAdmin:
 
     def cmdline_menu(self):
         while True:
-            print("Welcome to AHGraR")
             self.clear_console()
+            print("Welcome to AHGraR")
             # Print options
             self.print_options()
             # Wait for cmdline input
@@ -113,6 +113,9 @@ class AHGraRAdmin:
         print("\t".join(["Name", "ID", "Status"]))
         print(20 * "-")
         print(proj_list)
+        # Wait for cmdline input
+        print("Press enter to continue")
+        user_input = input(">: ").strip()
 
 
     def create_project(self):
