@@ -110,6 +110,9 @@ class AHGraRAdmin:
         proj_list_rows = [item.split("\t") for item in proj_list_rows]
         proj_names = ["Name"]+[item[0] for item in proj_list_rows]
         max_name_length = len(max(proj_names))
+        print(proj_names)
+        print(max_name_length)
+        return
         proj_names = [item.ljust(max_name_length) for item in proj_names]
         proj_ids = ["ID"]+[item[1] for item in proj_list_rows]
         max_id_length = len(max(proj_ids))
