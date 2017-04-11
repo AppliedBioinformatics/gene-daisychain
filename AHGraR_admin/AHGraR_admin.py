@@ -160,22 +160,27 @@ class AHGraRAdmin:
             print("Invalid project name")
 
 
-
+    # Add files to a project or delete files from a project folder
     def change_project_files(self):
+        # Retrieve list of projects with active file manager (no failed projects)
         valid_proj_ids = self.list_projects(False)
         print("\n\nEnter ID of project to access files")
         print("Enter '0' to cancel")
-        print(valid_proj_ids)
+        # Loop until a valid project ID was entered or exit with 0
         while True:
             proj_id = input("[Project-ID]>: ").strip()
             if proj_id == "0":
                 return
             if proj_id in valid_proj_ids:
                 break
-        file_list = self.send_data("PAFILE_LIST_"+proj_id).split("\n")
+        # Retrieve list with current files in the project
+        # List has three columns: assembly, file type and GFF3 parser data
+        # Show only first two columns
+        file_list = [item.split("\t")[:2] for item in self.send_data("PAFILE_LIST_"+proj_id).split("\n")]
+        assembly_names = [item[0] for item in file_list]
+        max_assembly_name_len = len(max(assembly_names, key=len))+3
         for line in file_list:
-            line = line.split("\t")
-            print("\t".join(line[:2]))
+            print(line[0].ljust(max_assembly_name_len)+line[1])
         while True:
             # Wait for cmdline input
             print("(1) to batch import files")
