@@ -119,12 +119,15 @@ class AHGraRAdmin:
         proj_status = [('{:<' + str(max_status_length) + '}').format(item) for item in proj_status]
         proj_list_formated =  zip(proj_names, proj_ids, proj_status)
         proj_list_formated = [" ".join(item) for item in proj_list_formated]
-        print(20*"-")
+        row_length = max_name_length+max_id_length+max_status_length+2
+        print(row_length*"-")
+        print(row_length * "-")
         print("Available projects: ")
-        print(20 * "-")
-        print(proj_list_formated[0])
-        print(20 * "-")
-        print("\n".join(proj_list_formated[1:]))
+        print(row_length * "-")
+        print(row_length * "-")
+        for row in proj_list_formated:
+            print(row)
+            print(row_length * "-")
         # Wait for cmdline input
         print("Press enter to continue")
         user_input = input(">: ").strip()
