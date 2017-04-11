@@ -636,9 +636,11 @@ class QueryManagement:
                       gene_prot_coding_rel):
         # Transfer gene node and protein node dicts into list structures
         # Sort gene node list by species,chromosome, contig, start
-        gene_node_hits = [[item[0]] + item[1] for item in gene_node_hits.items()]
+        # Limit the number of gene and protein nodes to 100 each
+        # Make the cutoff before sorting
+        gene_node_hits = [[item[0]] + item[1] for item in gene_node_hits.items()][:100]
         gene_node_hits.sort(key=lambda x: (x[1], x[2], x[3]))
-        protein_node_hits = [[item[0]] + item[1] for item in protein_node_hits.items()]
+        protein_node_hits = [[item[0]] + item[1] for item in protein_node_hits.items()][:100]
         # Reformat data into json format:
         gene_node_json = ['{"data": {"id":"' + str(gene_node[0])
                           + '", "type":"Gene", "species":"' + str(gene_node[1])
@@ -770,7 +772,6 @@ class QueryManagement:
                                              "AND LOWER(gene.contig) CONTAINS {query_contig} "
                                              "AND (ALL(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
                                              "ALL(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
-                                             "LIMIT(200) "
                                              "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb ",
                                              {"query_species": query_species, "query_keyword": query_keyword,
                                               "query_contig": query_contig})
@@ -780,7 +781,6 @@ class QueryManagement:
                                              "AND LOWER(gene.contig) CONTAINS {query_contig} "
                                              "AND (ANY(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
                                              "ANY(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
-                                             "LIMIT(200) "
                                              "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb ",
                                              {"query_species": query_species, "query_keyword": query_keyword,
                                               "query_contig": query_contig})
