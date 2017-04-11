@@ -138,7 +138,7 @@ class AHGraRAdmin:
             return proj_ids[1:]
         # Or a list of all project IDs without INIT_FAILED
         else:
-            return [item[0] for item in zip(proj_ids, proj_status) if "INIT_FAILED" != item[1]]
+            return [item[0] for item in zip(proj_ids[1:], proj_status[1:]) if "INIT_FAILED" in item[1]]
 
 
 
