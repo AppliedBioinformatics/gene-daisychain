@@ -108,23 +108,23 @@ class AHGraRAdmin:
         proj_list = self.send_data("PMINFO")
         proj_list_rows = proj_list.split("\n")
         proj_list_rows = [item.split("\t") for item in proj_list_rows]
-        proj_names = [item[0] for item in proj_list_rows]
+        proj_names = ["Name"]+[item[0] for item in proj_list_rows]
         max_name_length = len(max(proj_names))
         proj_names = [('{:<'+str(max_name_length)+'}').format(item) for item in proj_names]
-        proj_ids = [item[1] for item in proj_list_rows]
+        proj_ids = ["ID"]+[item[1] for item in proj_list_rows]
         max_id_length = len(max(proj_ids))
         proj_ids = [('{:<' + str(max_id_length) + '}').format(item) for item in proj_ids ]
-        proj_status = [item[2] for item in proj_list_rows]
+        proj_status = ["Status"]+[item[2] for item in proj_list_rows]
         max_status_length = len(max(proj_status))
         proj_status = [('{:<' + str(max_status_length) + '}').format(item) for item in proj_status]
         proj_list_formated =  zip(proj_names, proj_ids, proj_status)
-        proj_list_formated = "\n".join([" ".join(item) for item in proj_list_formated])
+        proj_list_formated = [" ".join(item) for item in proj_list_formated]
         print(20*"-")
         print("Available projects: ")
         print(20 * "-")
-        print("\t".join(["Name", "ID", "Status"]))
+        print(proj_list_formated[0])
         print(20 * "-")
-        print(proj_list_formated)
+        print("\n".join(proj_list_formated[1:]))
         # Wait for cmdline input
         print("Press enter to continue")
         user_input = input(">: ").strip()
