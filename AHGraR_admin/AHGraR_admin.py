@@ -107,7 +107,7 @@ class AHGraRAdmin:
         return(msg)
 
 
-    def list_projects(self):
+    def list_projects(self, show_failed):
         proj_list = self.send_data("PMINFO")
         proj_list_rows = proj_list.split("\n")
         proj_list_rows = [item.split("\t") for item in proj_list_rows]
@@ -129,6 +129,8 @@ class AHGraRAdmin:
         print(row_length * "-")
         print(row_length * "-")
         for row in proj_list_formated:
+            if not show_failed and "INIT_FAILED" in row:
+                continue
             print(row)
             print(row_length * "-")
 
@@ -154,7 +156,7 @@ class AHGraRAdmin:
 
 
     def change_project_files(self):
-        self.list_projects()
+        self.list_projects(False)
         print("\n\nEnter ID of project to access files")
         print("Enter '0' to cancel")
         proj_id = input("[Project-ID]>: ").strip()
@@ -205,7 +207,7 @@ class AHGraRAdmin:
     # This can be done in a semi-automatic mode or more manually
     def build_project_db(self):
         # First, let user select a project
-        self.list_projects()
+        self.list_projects(False)
         print(3*"\n")
         print("Enter ID of project")
         print("\n")
@@ -547,7 +549,7 @@ class AHGraRAdmin:
 
     def delete_project(self):
         self.clear_console()
-        self.list_projects()
+        self.list_projects(True)
         print("Enter ID of project to delete it")
         print("Enter '0' to cancel")
         proj_id = input("[Delete]>: ").strip()
@@ -571,7 +573,7 @@ class AHGraRAdmin:
 
     def show_tasks(self):
         self.clear_console()
-        self.list_projects()
+        self.list_projects(False)
         print("Enter ID of project to show tasks it")
         print("Enter '0' to cancel")
         proj_id = input("[Tasks]>: ").strip()
