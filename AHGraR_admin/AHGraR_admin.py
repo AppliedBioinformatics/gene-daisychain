@@ -133,6 +133,12 @@ class AHGraRAdmin:
                 continue
             print(row)
             print(row_length * "-")
+        # Return a list with all project IDs (if show_failed = True)
+        if show_failed:
+            return proj_ids[1:]
+        # Or a list of all project IDs without INIT_FAILED
+        else:
+            return [item[1] for item in proj_list_formated if "INIT_FAILED" != item[2]]
 
 
 
@@ -156,12 +162,16 @@ class AHGraRAdmin:
 
 
     def change_project_files(self):
-        self.list_projects(False)
+        valid_proj_ids = self.list_projects(False)
         print("\n\nEnter ID of project to access files")
         print("Enter '0' to cancel")
-        proj_id = input("[Project-ID]>: ").strip()
-        if proj_id == "0":
-            return
+        print(valid_proj_ids)
+        while True:
+            proj_id = input("[Project-ID]>: ").strip()
+            if proj_id == "0":
+                return
+            if proj_id in valid_proj_ids:
+                break
         file_list = self.send_data("PAFILE_LIST_"+proj_id)
         print(file_list)
         while True:
