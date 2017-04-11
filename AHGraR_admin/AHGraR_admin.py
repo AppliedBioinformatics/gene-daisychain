@@ -110,9 +110,6 @@ class AHGraRAdmin:
         proj_list_rows = [item.split("\t") for item in proj_list_rows]
         proj_names = ["Name"]+[item[0] for item in proj_list_rows]
         max_name_length = len(max(proj_names, key=len))
-        print(proj_names)
-        print(max_name_length)
-        user_input = input(">: ").strip()
         proj_names = [item.ljust(max_name_length) for item in proj_names]
         proj_ids = ["ID"]+[item[1] for item in proj_list_rows]
         max_id_length = len(max(proj_ids, key=len))
@@ -131,12 +128,15 @@ class AHGraRAdmin:
         for row in proj_list_formated:
             print(row)
             print(row_length * "-")
-        # Wait for cmdline input
+        # Wait for user to hit return
         print("Press enter to continue")
-        user_input = input(">: ").strip()
+        user_input = input("").strip()
 
 
     def create_project(self):
+        print(20*"-")
+        print("Create a new project")
+        print(20 * "-")
         print("Enter name for new project")
         print("Enter '0' to cancel")
         proj_name = input("[Create]>: ").strip()
@@ -149,6 +149,9 @@ class AHGraRAdmin:
             print("Created new project "+proj_name+ " with ID "+new_proj_id)
         else:
             print("Invalid project name")
+        # Wait for user to hit return
+        print("Press enter to continue")
+        user_input = input("").strip()
 
 
     def change_project_files(self):
