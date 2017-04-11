@@ -182,7 +182,6 @@ class AHGraRAdmin:
         max_assembly_name_len = len(max(assembly_names, key=len))+3
         # Show formatted file list
         counter = 0
-        print(file_list)
         for line in file_list:
             try:
                 print(str(counter).ljust(3)+line[0].ljust(max_assembly_name_len)+line[1])
@@ -193,7 +192,7 @@ class AHGraRAdmin:
         print("(2) to delete a file")
         print("(0) to return")
         while True:
-            user_input = input("[File]>: ").strip()
+            user_input = input("[File task]>: ").strip()
             if user_input in [0,1,2]:
                 break
         if user_input == "0":
@@ -209,7 +208,7 @@ class AHGraRAdmin:
                 print("Example:")
                 print("E.coli,K12,genome,/path/to/genome.fa")
                 print("E.coli,K12,annotation,/path/to/annotation.gff3\n\n\n")
-                user_input = input("[File]>: ").strip()
+                user_input = input("[Filepath]>: ").strip()
                 if os.path.isfile(user_input):
                     print("File found")
                     with open(user_input, "r") as file:
