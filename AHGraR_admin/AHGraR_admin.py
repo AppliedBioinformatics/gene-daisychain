@@ -184,7 +184,10 @@ class AHGraRAdmin:
         counter = 0
         print(file_list)
         for line in file_list:
-            print(str(counter).ljust(3)+line[0].ljust(max_assembly_name_len)+line[1])
+            try:
+                print(str(counter).ljust(3)+line[0].ljust(max_assembly_name_len)+line[1])
+            except IndexError:
+                continue
         # Wait for cmdline input
         print("(1) to batch import files")
         print("(2) to delete a file")
