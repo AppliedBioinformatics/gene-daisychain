@@ -17,18 +17,6 @@ class DeleteProject:
     # 3. Delete files
     # 4. Set project status to deleted
     def run(self):
-        # First, check if project-ID is valid by retrieving the projects graph-db port
-        try:
-            proj_bolt_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
-                                           "RETURN del_proj.bolt_port",
-                                           {"proj_id": int(self.proj_id)}).single()[0])
-            proj_http_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
-                                                          "RETURN del_proj.http_port",
-                                                          {"proj_id": int(self.proj_id)}).single()[0])
-        except:
-            # If project or project port cannot be found, signal failure by sending -1 back to user
-            self.send_data("-1")
-            return
         try:
             project_path = os.path.join("Projects", str(self.proj_id))
             shutdown_returncode = subprocess.run([os.path.join(project_path, "proj_graph_db", "bin", "neo4j"), "stop"]).returncode
@@ -63,14 +51,26 @@ class DeleteProject:
                 "DETACH DELETE (edit) "
                 "DETACH DELETE (editMngr)", {"proj_id": self.proj_id})
 
-            # Set ports used for project graph db as inactive
-            self.main_db_conn.run("MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
-                        "REMOVE projPort.project "
-                        "SET projPort.status='inactive'", {"proj_port": proj_bolt_port_nr})
+            try:
+                proj_bolt_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
+                                                              "RETURN del_proj.bolt_port",
+                                                              {"proj_id": int(self.proj_id)}).single()[0])
+                proj_http_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
+                                                              "RETURN del_proj.http_port",
+                                                              {"proj_id": int(self.proj_id)}).single()[0])
+                # Set ports used for project graph db as inactive
+                self.main_db_conn.run(
+                    "MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
+                    "REMOVE projPort.project "
+                    "SET projPort.status='inactive'", {"proj_port": proj_bolt_port_nr})
 
-            self.main_db_conn.run("MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
-                                  "REMOVE projPort.project "
-                                  "SET projPort.status='inactive'", {"proj_port": proj_http_port_nr})
+                self.main_db_conn.run(
+                    "MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
+                    "REMOVE projPort.project "
+                    "SET projPort.status='inactive'", {"proj_port": proj_http_port_nr})
+            except:
+                # If project or project port cannot be found, signal failure by sending -1 back to user
+                pass
 
             # Delete project main db entry
             self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "

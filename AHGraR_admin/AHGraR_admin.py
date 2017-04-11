@@ -184,11 +184,12 @@ class AHGraRAdmin:
         assembly_names = [item[0] for item in file_list]
         max_assembly_name_len = len(max(assembly_names, key=len))+3
         # Show formatted file list
-        counter = 0
+        counter = -1
         print(20*"-")
         print("Current file list")
         print(20 * "-")
         for line in file_list:
+            counter += 1
             try:
                 print(str(counter).ljust(3)+line[0].ljust(max_assembly_name_len)+line[1])
             except IndexError:
