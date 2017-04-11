@@ -770,8 +770,8 @@ class QueryManagement:
                                              "AND LOWER(gene.contig) CONTAINS {query_contig} "
                                              "AND (ALL(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
                                              "ALL(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
-                                             "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb "
-                                             "LIMIT(200)",
+                                             "LIMIT(200) "
+                                             "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb ",
                                              {"query_species": query_species, "query_keyword": query_keyword,
                                               "query_contig": query_contig})
         # One term in keyword has to match in either description or name
@@ -780,8 +780,8 @@ class QueryManagement:
                                              "AND LOWER(gene.contig) CONTAINS {query_contig} "
                                              "AND (ANY(term in {query_keyword} WHERE LOWER(gene.name) CONTAINS term) OR "
                                              "ANY(term in {query_keyword} WHERE LOWER(gene.descr) CONTAINS term)) "
-                                             "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb "
-                                             "LIMIT(200)",
+                                             "LIMIT(200) "
+                                             "OPTIONAL MATCH (gene)-[rel]->(gene_nb:Gene) RETURN gene,rel,gene_nb ",
                                              {"query_species": query_species, "query_keyword": query_keyword,
                                               "query_contig": query_contig})
         else:
