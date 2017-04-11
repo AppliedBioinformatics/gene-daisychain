@@ -193,6 +193,10 @@ class AHGraRAdmin:
                         return
                     else:
                         print("File not found")
+                        print("Press 0 to exit, enter to retry")
+                        user_input = input("[File]>: ").strip()
+                        if user_input == "0":
+                            return
 
 
 
