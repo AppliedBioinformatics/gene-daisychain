@@ -185,11 +185,13 @@ class AHGraRAdmin:
         max_assembly_name_len = len(max(assembly_names, key=len))+3
         # Show formatted file list
         counter = 0
+        print(3*"\n")
         for line in file_list:
             try:
                 print(str(counter).ljust(3)+line[0].ljust(max_assembly_name_len)+line[1])
             except IndexError:
                 continue
+        print(3 * "\n")
         # Wait for cmdline input
         print("(1) to batch import files")
         print("(2) to delete a file")
