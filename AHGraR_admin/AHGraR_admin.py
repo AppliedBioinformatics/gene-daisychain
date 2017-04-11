@@ -41,6 +41,9 @@ class AHGraRAdmin:
                        "7": self.show_tasks}
             self.clear_console()
             actions[user_input]()
+            # Wait for user to hit return
+            print("Press enter to continue")
+            user_input = input("").strip()
 
 
     def print_options(self):
@@ -104,7 +107,7 @@ class AHGraRAdmin:
         return(msg)
 
 
-    def list_projects(self):
+    def list_projects(self, wait):
         proj_list = self.send_data("PMINFO")
         proj_list_rows = proj_list.split("\n")
         proj_list_rows = [item.split("\t") for item in proj_list_rows]
@@ -128,9 +131,7 @@ class AHGraRAdmin:
         for row in proj_list_formated:
             print(row)
             print(row_length * "-")
-        # Wait for user to hit return
-        print("Press enter to continue")
-        user_input = input("").strip()
+
 
 
     def create_project(self):
@@ -149,9 +150,7 @@ class AHGraRAdmin:
             print("Created new project "+proj_name+ " with ID "+new_proj_id)
         else:
             print("Invalid project name")
-        # Wait for user to hit return
-        print("Press enter to continue")
-        user_input = input("").strip()
+
 
 
     def change_project_files(self):
