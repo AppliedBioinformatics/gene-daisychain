@@ -182,6 +182,7 @@ class AHGraRAdmin:
         max_assembly_name_len = len(max(assembly_names, key=len))+3
         # Show formatted file list
         counter = 0
+        print(file_list)
         for line in file_list:
             print(str(counter).ljust(3)+line[0].ljust(max_assembly_name_len)+line[1])
         # Wait for cmdline input
