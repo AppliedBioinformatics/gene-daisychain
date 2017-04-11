@@ -171,27 +171,28 @@ class AHGraRAdmin:
             if user_input == "0":
                 return
             if user_input == "1":
-                self.clear_console()
-                print("File import requires a CSV file describing each file\n")
-                print("The columns are:")
-                print("Species_name, Variant, filetype, file_path\n")
-                print("Filetypes are either 'genome' for genomic sequences in FASTA format")
-                print("or 'annotation' for GFF3 annotation files\n")
-                print("Example:")
-                print("E.coli,K12,genome,/path/to/genome.fa")
-                print("E.coli,K12,annotation,/path/to/annotation.gff3\n\n\n")
-                user_input = input("[File]>: ").strip()
-                if os.path.isfile(user_input):
-                    print("File found")
-                    with open(user_input, "r") as file:
-                        file_content = file.read()
-                    # Replace any underscores by "\t"
-                    file_content = file_content.replace("_","\t")
-                    self.send_data("PAFILE_IMPO_"+str(proj_id)+"_"+file_content)
-                    print("File import started")
-                    return
-                else:
-                    print("File not found")
+                while True:
+                    self.clear_console()
+                    print("File import requires a CSV file describing each file\n")
+                    print("The columns are:")
+                    print("Species_name, Variant, filetype, file_path\n")
+                    print("Filetypes are either 'genome' for genomic sequences in FASTA format")
+                    print("or 'annotation' for GFF3 annotation files\n")
+                    print("Example:")
+                    print("E.coli,K12,genome,/path/to/genome.fa")
+                    print("E.coli,K12,annotation,/path/to/annotation.gff3\n\n\n")
+                    user_input = input("[File]>: ").strip()
+                    if os.path.isfile(user_input):
+                        print("File found")
+                        with open(user_input, "r") as file:
+                            file_content = file.read()
+                        # Replace any underscores by "\t"
+                        file_content = file_content.replace("_","\t")
+                        self.send_data("PAFILE_IMPO_"+str(proj_id)+"_"+file_content)
+                        print("File import started")
+                        return
+                    else:
+                        print("File not found")
 
 
 
