@@ -234,7 +234,7 @@ class FileManagement:
                 continue
             self.file_manager_add_file(proj_id, new_file_desc[0], new_file_desc[1], file_name, new_file_desc[2])
             imported_file_counter += 1
-            self.task_mngr.set_task_status(proj_id, task_id, str(imported_file_counter)+"/"+len(import_csv_table)+" files imported")
+            self.task_mngr.set_task_status(proj_id, task_id, str(imported_file_counter)+"/"+str(len(import_csv_table))+" files imported")
         self.task_mngr.set_task_status(proj_id, task_id, "Finished: imported " + str(imported_file_counter)+ "files")
 
 
