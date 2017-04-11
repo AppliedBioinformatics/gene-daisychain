@@ -193,7 +193,7 @@ class AHGraRAdmin:
         print("(0) to return")
         while True:
             user_input = input("[File task]>: ").strip()
-            if user_input in [0,1,2]:
+            if user_input in ["0","1","2"]:
                 break
         if user_input == "0":
             return
