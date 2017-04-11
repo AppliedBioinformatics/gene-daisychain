@@ -177,45 +177,66 @@ class AHGraRAdmin:
         # List has three columns: assembly, file type and GFF3 parser data
         # Show only first two columns
         file_list = [item.split("\t")[:2] for item in self.send_data("PAFILE_LIST_"+proj_id).split("\n")]
+        # Format two columns, make first column names all equal size by filling up with blank spaces to the right
         assembly_names = [item[0] for item in file_list]
         max_assembly_name_len = len(max(assembly_names, key=len))+3
+        # Show formatted file list
+        counter = 0
         for line in file_list:
-            print(line[0].ljust(max_assembly_name_len)+line[1])
+            print(str(counter).ljust(3)+line[0].ljust(max_assembly_name_len)+line[1])
+        # Wait for cmdline input
+        print("(1) to batch import files")
+        print("(2) to delete a file")
+        print("(0) to return")
         while True:
-            # Wait for cmdline input
-            print("(1) to batch import files")
-            print("(2) to delete a file")
-            print("(0) to return")
             user_input = input("[File]>: ").strip()
-            if user_input == "0":
-                return
-            if user_input == "1":
-                while True:
-                    self.clear_console()
-                    print("File import requires a CSV file describing each file\n")
-                    print("The columns are:")
-                    print("Species_name, Variant, filetype, file_path\n")
-                    print("Filetypes are either 'genome' for genomic sequences in FASTA format")
-                    print("or 'annotation' for GFF3 annotation files\n")
-                    print("Example:")
-                    print("E.coli,K12,genome,/path/to/genome.fa")
-                    print("E.coli,K12,annotation,/path/to/annotation.gff3\n\n\n")
+            if user_input in [0,1,2]:
+                break
+        if user_input == "0":
+            return
+        if user_input == "1":
+            while True:
+                self.clear_console()
+                print("File import requires a CSV file describing each file\n")
+                print("The columns are:")
+                print("Species_name, Variant, filetype, file_path\n")
+                print("Filetypes are either 'genome' for genomic sequences in FASTA format")
+                print("or 'annotation' for GFF3 annotation files\n")
+                print("Example:")
+                print("E.coli,K12,genome,/path/to/genome.fa")
+                print("E.coli,K12,annotation,/path/to/annotation.gff3\n\n\n")
+                user_input = input("[File]>: ").strip()
+                if os.path.isfile(user_input):
+                    print("File found")
+                    with open(user_input, "r") as file:
+                        file_content = file.read()
+                    # Replace any underscores by "\t"
+                    file_content = file_content.replace("_","\t")
+                    self.send_data("PAFILE_IMPO_"+str(proj_id)+"_"+file_content)
+                    print("File import started")
+                    return
+                else:
+                    print("File not found")
+                    print("Press 0 to exit, enter to retry")
                     user_input = input("[File]>: ").strip()
-                    if os.path.isfile(user_input):
-                        print("File found")
-                        with open(user_input, "r") as file:
-                            file_content = file.read()
-                        # Replace any underscores by "\t"
-                        file_content = file_content.replace("_","\t")
-                        self.send_data("PAFILE_IMPO_"+str(proj_id)+"_"+file_content)
-                        print("File import started")
+                    if user_input == "0":
                         return
-                    else:
-                        print("File not found")
-                        print("Press 0 to exit, enter to retry")
-                        user_input = input("[File]>: ").strip()
-                        if user_input == "0":
-                            return
+            if user_input == "2":
+                while True:
+                    print("Enter number to delete file:")
+                    user_input = input("[File]>: ").strip()
+                    if user_input.isdigit and 0 <= int(user_input)<=len(file_list):
+                        break
+                    # Retrieve file name belonging to number from file_list
+                    del_file = file_list[int(user_input)]
+                    del_filename = del_file[0]
+                    del_file_end = ".faa" if del_file[1] == "genome" else ".gff3"
+                    print("Enter delete to delete file:")
+                    user_input = input("[File]>: ").strip()
+                    if user_input != "delete":
+                        return
+                    self.send_data("PAFILE_DELF_"+ str(proj_id) + "_" + del_filename+del_file_end)
+
 
 
 
