@@ -235,15 +235,15 @@ class AHGraRAdmin:
                 user_input = input("[File]>: ").strip()
                 if user_input.isdigit and 0 <= int(user_input)<=len(file_list):
                     break
-                # Retrieve file name belonging to number from file_list
-                del_file = file_list[int(user_input)]
-                del_filename = del_file[0]
-                del_file_end = ".faa" if del_file[1] == "genome" else ".gff3"
-                print("Enter delete to delete file:")
-                user_input = input("[File]>: ").strip()
-                if user_input != "delete":
-                    return
-                self.send_data("PAFILE_DELF_"+ str(proj_id) + "_" + del_filename+del_file_end)
+            # Retrieve file name belonging to number from file_list
+            del_file = file_list[int(user_input)]
+            del_filename = del_file[0]
+            del_file_end = ".faa" if del_file[1] == "genome" else ".gff3"
+            print("Enter delete to delete file:")
+            user_input = input("[File]>: ").strip()
+            if user_input != "delete":
+                return
+            self.send_data("PAFILE_DELF_"+ str(proj_id) + "_" + del_filename+del_file_end)
 
 
 
