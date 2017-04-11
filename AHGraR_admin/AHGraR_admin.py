@@ -40,7 +40,10 @@ class AHGraRAdmin:
                        "6": self.query,
                        "7": self.show_tasks}
             self.clear_console()
-            actions[user_input]()
+            if user_input == "1":
+                actions[user_input](True)
+            else:
+                actions[user_input]()
             # Wait for user to hit return
             print("Press enter to continue")
             user_input = input("").strip()
