@@ -17,18 +17,17 @@ class AHGraRAdmin:
         self.server_app_port = server_app_port
 
     def cmdline_menu(self):
-        print("Welcome to AHGraR")
-        # Print options
-        self.print_options()
         while True:
+            print("Welcome to AHGraR")
+            self.clear_console()
+            # Print options
+            self.print_options()
             # Wait for cmdline input
             user_input = input(">: ").strip()
             # Check if a number between 0-5 was entered
             # If so, perform an action
             # If not, show options again
             if not user_input.isdigit() or int(user_input) not in range(0, 8):
-                self.clear_console()
-                self.print_options()
                 continue
             # Else, perform an action
             if user_input == "0":
