@@ -106,13 +106,12 @@ class AHGraRAdmin:
 
     def list_projects(self):
         proj_list = self.send_data("PMINFO")
-        print(5*"\n")
-        print(20*"#")
+        print(20*"-")
         print("Available projects: ")
-        print(20 * "#")
-        print("\t".join(["Name", "ID", "Status"]))
         print(20 * "-")
-        print(proj_list)
+        print("\t\t".join(["Name", "ID", "Status"]))
+        print(20 * "-")
+        print(proj_list.replace("\t","\t\t"))
         # Wait for cmdline input
         print("Press enter to continue")
         user_input = input(">: ").strip()
