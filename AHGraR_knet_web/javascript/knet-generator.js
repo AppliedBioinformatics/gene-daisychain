@@ -76,7 +76,7 @@ function initializeNetworkView() {
           else{return "2";};
           }
           else{return "1";}}, // 'mapData(relationSize, 70, 100, 2, 6)',
-          'line-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
+          'line-color': function(edge){if (edge.data('type') != 'HOMOLOG' ){return 'black';}else{
           perc_match = parseFloat(edge.data('perc_match'));
           if(isNaN(perc_match)){perc_match = 0;};
           return "rgb("+(((100-perc_match)*255)/100)+","+((perc_match/100)*255)+", 0)";
@@ -84,7 +84,8 @@ function initializeNetworkView() {
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
           'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
           'target-arrow-color': 'black',
-          'mid-source-arrow-shape': function(edge){if (edge.data('type') != 'HOMOLOG'){return "none";} else {return "circle";}},
+          'mid-source-arrow-shape': function(edge){if (edge.data('type') != 'HOMOLOG' || typeof edge.data('ls_score') == 'undefined')
+          {return "none";} else {return "circle";}},
           'mid-source-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           var ls_score = parseInt(edge.data('ls_score'));
           console.log("ls_score"+edge.data('ls_score'));
