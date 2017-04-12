@@ -67,7 +67,15 @@ function initializeNetworkView() {
           'control-point-step-size': '10px', // specifies the distance between successive bezier edges.
           'control-point-distance': '20px', /* overrides control-point-step-size to curves single edges as well, in addition to parallele edges */
           'control-point-weight': '50', // '0': curve towards source node, '1': curve towards target node.
-          'width': function(edge){if (edge.data('type') == 'HOMOLOG'){return "5";} else{return "1";}}, // 'mapData(relationSize, 70, 100, 2, 6)',
+          'width': function(edge)
+          {if (edge.data('type') == 'HOMOLOG')
+          {var ls_score = parseInt(edge.data('ls_score'));
+          if(ls_score >= 8){return "4";}
+          else if((5 <= ls_score) && (ls_score < 8)){return "3";}
+          else if((2 <= ls_score) && (ls_score < 5)){return "2";}
+          else{return "2";};
+          }
+          else{return "1";}}, // 'mapData(relationSize, 70, 100, 2, 6)',
           'line-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           perc_match = parseFloat(edge.data('perc_match'));
           if(isNaN(perc_match)){perc_match = 0;};
