@@ -428,6 +428,7 @@ class DBBuilder:
                                 "WHERE geneStart.geneId = {startID} AND geneEnd.geneId = {endID} "
                                 "AND rel.clstr_sens = '1.4' SET rel.ls_score = {score}",
                                 {"startID":start_node,"endID":end_node, "score": score})
+            print(start_node, end_node, score)
             finished_rel_counter+=1
 
         for rel in rel_50_list:
