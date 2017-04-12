@@ -287,14 +287,14 @@ class QueryManagement:
                                                "HOMOLOG",
                                                record["gen_Rel"]["clstr_sens"],
                                                record["gen_Rel"]["perc_match"],
-                                               record["gen_Rel"]["ls_score"],
-                                               record["geneRel.geneId"]))
+                                               record["geneRel.geneId"],
+                                               record["gen_Rel"]["ls_score"]))
                     gene_node_hmlg_rel.append((record["geneRel.geneId"],
                                                "HOMOLOG",
                                                record["gen_Rel"]["clstr_sens"],
                                                record["gen_Rel"]["perc_match"],
-                                               record["gen_Rel"]["ls_score"],
-                                               record["coding_gene"]["geneId"]))
+                                               record["coding_gene"]["geneId"],
+                                               record["gen_Rel"]["ls_score"]))
 
         # Retrieve protein coded by gene
         if relationship_type == "CODING" and node_type == "Gene":
@@ -363,14 +363,14 @@ class QueryManagement:
                                                "HOMOLOG",
                                                record["targetGene_rel"]["clstr_sens"],
                                                record["targetGene_rel"]["perc_match"],
-                                               record["targetGene_rel"]["ls_score"],
-                                               record["secondary_node.geneId"]))
+                                               record["secondary_node.geneId"],
+                                               record["targetGene_rel"]["ls_score"]))
                     gene_node_hmlg_rel.append((record["secondary_node.geneId"],
                                                "HOMOLOG",
                                                record["targetGene_rel"]["clstr_sens"],
                                                record["targetGene_rel"]["perc_match"],
-                                               record["targetGene_rel"]["ls_score"],
-                                               record["targetGene"]["geneId"]))
+                                               record["targetGene"]["geneId"],
+                                               record["targetGene_rel"]["ls_score"]))
                 if target_gene_rel_type == "CODING":
                     gene_protein_coding_rel.append((record["targetGene"]["geneId"],
                                                     "CODING",
@@ -412,14 +412,14 @@ class QueryManagement:
                                                "HOMOLOG",
                                                record["targetGene_rel"]["clstr_sens"],
                                                record["targetGene_rel"]["perc_match"],
-                                               record["targetGene_rel"]["ls_score"],
-                                               record["secondary_node.geneId"]))
+                                               record["secondary_node.geneId"],
+                                               record["targetGene_rel"]["ls_score"]))
                     gene_node_hmlg_rel.append((record["secondary_node.geneId"],
                                                "HOMOLOG",
                                                record["targetGene_rel"]["clstr_sens"],
                                                record["targetGene_rel"]["perc_match"],
-                                               record["targetGene_rel"]["ls_score"],
-                                               record["targetGene"]["geneId"]))
+                                               record["targetGene"]["geneId"],
+                                               record["targetGene_rel"]["ls_score"]))
                 if target_gene_rel_type == "CODING":
                     gene_protein_coding_rel.append((record["targetGene"]["geneId"],
                                                     "CODING",
@@ -457,14 +457,14 @@ class QueryManagement:
                                                "HOMOLOG",
                                                record["targetGene_rel"]["clstr_sens"],
                                                record["targetGene_rel"]["perc_match"],
-                                               record["targetGene_rel"]["ls_score"],
-                                               record["secondary_node.geneId"]))
+                                               record["secondary_node.geneId"],
+                                               record["targetGene_rel"]["ls_score"]))
                     gene_node_hmlg_rel.append((record["secondary_node.geneId"],
                                                "HOMOLOG",
                                                record["targetGene_rel"]["clstr_sens"],
                                                record["targetGene_rel"]["perc_match"],
-                                               record["targetGene_rel"]["ls_score"],
-                                               record["targetGene"]["geneId"]))
+                                               record["targetGene"]["geneId"],
+                                               record["targetGene_rel"]["ls_score"]))
                 if target_gene_rel_type == "CODING":
                     gene_protein_coding_rel.append((record["targetGene"]["geneId"],
                                                     "CODING",
@@ -541,7 +541,7 @@ class QueryManagement:
                                                                "start", "stop", "name", "descr", "nt_seq"]]
                     gene_node_hmlg_rel.append(
                         (node_id, rel_type, record["rel"]["clstr_sens"],
-                         record["rel"]["perc_match"],record["rel"]["ls_score"], record["relNode"]["geneId"]))
+                         record["rel"]["perc_match"], record["relNode"]["geneId"],record["rel"]["ls_score"]))
                 # Retrieve 5' and 3' edges starting from this gene
                 if rel_type == "5_NB":
                     gene_node_nb_rel.append((node_id, "5_NB", record["relNode"]["geneId"]))
@@ -565,14 +565,14 @@ class QueryManagement:
                                                "HOMOLOG",
                                                record["relNode_rel"]["clstr_sens"],
                                                record["relNode_rel"]["perc_match"],
-                                               record["relNode_rel"]["ls_score"],
-                                               record["relrelNode.geneId"]))
+                                               record["relrelNode.geneId"],
+                                               record["relNode_rel"]["ls_score"]))
                     gene_node_hmlg_rel.append((record["relrelNode.geneId"],
                                                "HOMOLOG",
                                                record["relNode_rel"]["clstr_sens"],
                                                record["relNode_rel"]["perc_match"],
-                                               record["relNode_rel"]["ls_score"],
-                                               record["relNode"]["geneId"]))
+                                               record["relNode"]["geneId"],
+                                               record["relNode_rel"]["ls_score"]))
                 if relNode_rel_type == "CODING":
                     gene_protein_coding_rel.append((record["relNode"]["geneId"],
                                                     "CODING",
