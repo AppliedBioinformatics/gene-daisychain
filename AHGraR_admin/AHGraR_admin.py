@@ -270,6 +270,9 @@ class AHGraRAdmin:
         anno_files  = [item for item in files if item[1]=="annotation"]
         print("Found "+ str(len(genome_files))+" genome files")
         print("Found " + str(len(anno_files)) + " annotation files")
+        # Wait for user to hit return
+        print("Press enter to continue")
+        user_input = input("").strip()
         # Check if each annotation file has a matching genome file
         # If not, ignore that annotation file for the database build
         genome_file_species_names = [item[0][:item[0].rfind(".")] for item in genome_files]
