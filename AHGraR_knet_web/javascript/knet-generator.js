@@ -84,7 +84,7 @@ function initializeNetworkView() {
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
           'mid-source-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG')
           {var ls_score = parseInt(edge.data('ls_score'));
-          if(ls_score >= 8){return "diamond;";}
+          if(ls_score >= 8){return "diamond";}
           else if((5 <= ls_score) && (ls_score < 8)){return "circle";}
           else if((2 <= ls_score) && (ls_score < 5)){return "square";}
           else{return "none";};
