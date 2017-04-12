@@ -659,7 +659,7 @@ class QueryManagement:
                                    '", "ls_score":"' + str(gene_gene_rel[4]) +
                                    '", "target":"' + str(gene_gene_rel[
                                         5]) + '"}}'
-                                    for gene_gene_rel in gene_node_hmlg_rel_unidirectional]
+                                    for gene_gene_rel in gene_node_hmlg_rel]
         # Do the same for protein-protein hmlg relations
         # Remove self-Homology loops
         protein_node_hmlg_rel = [prot_prot_rel for prot_prot_rel in protein_node_hmlg_rel if
