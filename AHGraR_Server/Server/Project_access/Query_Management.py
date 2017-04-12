@@ -644,21 +644,20 @@ class QueryManagement:
                               '", "target":"' + str(rel[2]) + '"}}' for rel in gene_prot_coding_rel]
         # Remove self-Homology loops
         gene_node_hmlg_rel = [gene_gene_rel for gene_gene_rel in gene_node_hmlg_rel if gene_gene_rel[0] != gene_gene_rel[4]]
-
-        # Reduce gene-gene relations to one edge per pairwise relation
+        #protein_node_rel = [prot_prot_rel for prot_prot_rel in protein_node_rel if prot_prot_rel[0] != prot_prot_rel[3]]
+        # Reduce protein-protein relations to one edge per pairwise relation
         # Always keep the relation from the lexico. smaller node to the lexico. bigger node
         # e.g., always keep p123 to p456 and always remove p456 to p123
         gene_node_hmlg_rel_unidirectional = []
         for rel in gene_node_hmlg_rel:
-            if int(rel[0][1:]) < int(rel[5][1:]):
+            if int(rel[0][1:]) < int(rel[4][1:]):
                 gene_node_hmlg_rel_unidirectional.append(rel)
         gene_gene_hmlg_rel_json = ['{"data": {"id":"'+str(gene_gene_rel[0])+'_'+str(gene_gene_rel[1])+str(gene_gene_rel[2])+'_'+str(gene_gene_rel[4])+'", "source":"' +
                                    str(gene_gene_rel[0]) + '", "type":"' + str(gene_gene_rel[1]) +
                                     '", "sensitivity":"' + str(gene_gene_rel[2]) +
                                    '", "perc_match":"' + str(gene_gene_rel[3]) +
-                                   '", "ls_score":"' + str(gene_gene_rel[4]) +
                                    '", "target":"' + str(gene_gene_rel[
-                                        5]) + '"}}'
+                                        4]) + '"}}'
                                     for gene_gene_rel in gene_node_hmlg_rel_unidirectional]
         # Do the same for protein-protein hmlg relations
         # Remove self-Homology loops
@@ -677,9 +676,21 @@ class QueryManagement:
                                                              4]) + '"}}'
                                    for prot_prot_rel in protein_node_hmlg_rel_unidirectional]
 
+
+
+        # protein_protein_rel_json = [
+        #     '{"data": {"id":"p' + prot_prot_rel[0] + '_' + prot_prot_rel[1] + prot_prot_rel[2] + '_p' + prot_prot_rel[
+        #         3] + '", "source":"p' +
+        #     prot_prot_rel[0] + '", "type":"' + prot_prot_rel[1] +
+        #     '", "sensitivity":"' + prot_prot_rel[2] + '", "target":"p' + prot_prot_rel[
+        #         3] + '"}}'
+        #     for prot_prot_rel in protein_node_rel]
+        # gene_protein_rel_json = ['{"data": {"id":"g'+prot_gene_rel[0]+'_p'+prot_gene_rel[2]+'", "source":"g' + prot_gene_rel[0] + '", "type":"CODING", "target":"p' +
+        #                          prot_gene_rel[2] + '"}}' for prot_gene_rel in protein_gene_node_rel]
         edges_json = '"edges": [' + ', '.join(
             gene_gene_nb_json + gene_gene_hmlg_rel_json+gene_protein_coding_json+prot_prot_hmlg_rel_json) + ']'
         self.send_data('{' + nodes_json + ',' + edges_json + '}')
+
 
 
     #Find node(s) based on search terms
