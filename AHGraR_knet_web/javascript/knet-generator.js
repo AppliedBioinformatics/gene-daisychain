@@ -82,7 +82,15 @@ function initializeNetworkView() {
           return "rgb("+(((100-perc_match)*255)/100)+","+((perc_match/100)*255)+", 0)";
           }},
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
-          'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "circle";} else {return "triangle";}},
+          'mid-source-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG')
+          {var ls_score = parseInt(edge.data('ls_score'));
+          if(ls_score >= 8){return "diamond;";}
+          else if((5 <= ls_score) && (ls_score < 8)){return "circle";}
+          else if((2 <= ls_score) && (ls_score < 5)){return "square";}
+          else{return "none";};
+          }
+          else {return "none";}},
+          'target-arrow-shape': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'triangle'}},
           'target-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           perc_match = parseFloat(edge.data('perc_match'));
           if(isNaN(perc_match)){perc_match = 0;};
