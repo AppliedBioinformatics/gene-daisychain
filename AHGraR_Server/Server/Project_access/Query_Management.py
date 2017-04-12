@@ -172,7 +172,7 @@ class QueryManagement:
                 elif record["rel"].type == "HOMOLOG":
                     gene_node_hmlg_rel.append(
                         (record["gene"]["geneId"], record["rel"].type, record["rel"]["clstr_sens"],
-                         record["rel"]["perc_match"], record["gene_nb"]["geneId"]))
+                         record["rel"]["perc_match"], record["gene_nb"]["geneId"], record["rel"]["ls_score"]))
         print("Gene nodes: " + str(len(gene_node_hits)))
         print("Gene-gene NB relations: " + str(len(gene_node_nb_rel)))
         print("Gene-gene hmlg relations: " + str(len(gene_node_hmlg_rel)))
