@@ -645,12 +645,12 @@ class QueryManagement:
         # Remove self-Homology loops
         gene_node_hmlg_rel = [gene_gene_rel for gene_gene_rel in gene_node_hmlg_rel if gene_gene_rel[0] != gene_gene_rel[4]]
 
-        # Reduce protein-protein relations to one edge per pairwise relation
+        # Reduce gene-gene relations to one edge per pairwise relation
         # Always keep the relation from the lexico. smaller node to the lexico. bigger node
         # e.g., always keep p123 to p456 and always remove p456 to p123
         gene_node_hmlg_rel_unidirectional = []
         for rel in gene_node_hmlg_rel:
-            if int(rel[0][1:]) < int(rel[4][1:]):
+            if int(rel[0][1:]) < int(rel[5][1:]):
                 gene_node_hmlg_rel_unidirectional.append(rel)
         gene_gene_hmlg_rel_json = ['{"data": {"id":"'+str(gene_gene_rel[0])+'_'+str(gene_gene_rel[1])+str(gene_gene_rel[2])+'_'+str(gene_gene_rel[4])+'", "source":"' +
                                    str(gene_gene_rel[0]) + '", "type":"' + str(gene_gene_rel[1]) +
@@ -658,7 +658,7 @@ class QueryManagement:
                                    '", "perc_match":"' + str(gene_gene_rel[3]) +
                                    '", "ls_score":"' + str(gene_gene_rel[4]) +
                                    '", "target":"' + str(gene_gene_rel[
-                                        4]) + '"}}'
+                                        5]) + '"}}'
                                     for gene_gene_rel in gene_node_hmlg_rel_unidirectional]
         # Do the same for protein-protein hmlg relations
         # Remove self-Homology loops
