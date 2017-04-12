@@ -82,7 +82,7 @@ function initializeNetworkView() {
           return "rgb("+(((100-perc_match)*255)/100)+","+((perc_match/100)*255)+", 0)";
           }},
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
-          'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "diamond";} else {return "triangle";}},
+          'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "circle";} else {return "triangle";}},
           'target-arrow-color': 'black',
           'display': 'show', // 'element' (show) or 'none' (hide).
           'text-opacity': '1' // to make the label visible by default.
