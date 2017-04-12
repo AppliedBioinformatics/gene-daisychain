@@ -656,6 +656,7 @@ class QueryManagement:
                                    str(gene_gene_rel[0]) + '", "type":"' + str(gene_gene_rel[1]) +
                                     '", "sensitivity":"' + str(gene_gene_rel[2]) +
                                    '", "perc_match":"' + str(gene_gene_rel[3]) +
+                                   '", "ls_score":"' + str(gene_gene_rel[5]) +
                                    '", "target":"' + str(gene_gene_rel[
                                         4]) + '"}}'
                                     for gene_gene_rel in gene_node_hmlg_rel_unidirectional]
