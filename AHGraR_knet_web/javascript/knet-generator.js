@@ -85,8 +85,9 @@ function initializeNetworkView() {
           'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
           'target-arrow-color': 'black',
           'mid-source-arrow-shape': function(edge){if (edge.data('type') != 'HOMOLOG'){return "none";} else {return "circle";}},
-          'mid-source-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{var ls_score = parseInt(edge.data('ls_score'));
-          if(ls_score >= 8){return "purple";}
+          'mid-source-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
+          var ls_score = parseInt(edge.data('ls_score'));
+          if(ls_score >= 8){return "black";}
           else if((5 <= ls_score) && (ls_score < 8)){return "green";}
           else if((2 <= ls_score) && (ls_score < 5)){return "yellow";}
           else{return "red";};
