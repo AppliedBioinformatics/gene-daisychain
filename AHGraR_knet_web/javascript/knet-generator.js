@@ -84,11 +84,12 @@ function initializeNetworkView() {
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
           'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
           'target-arrow-color': 'black',
-          'mid-source-arrow-shape': function(edge){if (edge.data('type') != 'HOMOLOG'){return "none";} else {return "triangle";}},
-          'mid-source-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
-          perc_match = parseFloat(edge.data('perc_match'));
-          if(isNaN(perc_match)){perc_match = 0;};
-          return "rgb("+(((100-perc_match)*255)/100)+","+((perc_match/100)*255)+", 0)";
+          'mid-source-arrow-shape': function(edge){if (edge.data('type') != 'HOMOLOG'){return "none";} else {return "circle";}},
+          'mid-source-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{var ls_score = parseInt(edge.data('ls_score'));
+          if(ls_score >= 8){return "purple";}
+          else if((5 <= ls_score) && (ls_score < 8)){return "green";}
+          else if((2 <= ls_score) && (ls_score < 5)){return "yellow";}
+          else{return "red";};
           }},
           'display': 'show', // 'element' (show) or 'none' (hide).
           'text-opacity': '1' // to make the label visible by default.
