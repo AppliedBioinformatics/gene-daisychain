@@ -84,6 +84,8 @@ function initializeNetworkView() {
           'line-style': 'solid', // 'solid' or 'dotted' or 'dashed'
           'target-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
           'target-arrow-color': 'black',
+          'mid-source-arrow-shape': function(edge){if (edge.data('type') == 'HOMOLOG'){return "none";} else {return "triangle";}},
+          'mid-source-arrow-color': 'black',
           'display': 'show', // 'element' (show) or 'none' (hide).
           'text-opacity': '1' // to make the label visible by default.
         })
