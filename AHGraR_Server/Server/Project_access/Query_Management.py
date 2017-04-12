@@ -783,8 +783,9 @@ class QueryManagement:
                     gene_node_nb_rel.append((record["gene"]["geneId"], record["rel"].type, record["gene_nb"]["geneId"]))
                 elif record["rel"].type == "HOMOLOG":
                     gene_node_hmlg_rel.append((record["gene"]["geneId"], record["rel"].type, record["rel"]["clstr_sens"],
-                                               record["rel"]["perc_match"], record["rel"]["ls_score"],
-                                               record["gene_nb"]["geneId"]))
+                                               record["rel"]["perc_match"],
+                                               record["gene_nb"]["geneId"]),
+                                              record["rel"]["ls_score"])
 
 
         # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
