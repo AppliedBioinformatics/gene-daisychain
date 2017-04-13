@@ -81,7 +81,6 @@ function initializeNetworkView() {
           'target-arrow-color': 'black',
           'mid-source-arrow-shape': function(edge){if (edge.data('type') != 'HOMOLOG' || typeof edge.data('ls_score') == 'undefined')
           {return "none";} else {return "circle";}},
-          'mid-source-arrow-fill':function(edge){if (edge.data('type') != 'HOMOLOG'){return 'filled'};else{return 'hollow';}},
           'mid-source-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           var ls_score = parseInt(edge.data('ls_score'));
           console.log("ls_score"+edge.data('ls_score'));
