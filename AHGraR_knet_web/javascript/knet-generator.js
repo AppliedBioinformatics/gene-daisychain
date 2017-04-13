@@ -69,12 +69,7 @@ function initializeNetworkView() {
           'control-point-weight': '50', // '0': curve towards source node, '1': curve towards target node.
           'width': function(edge)
           {if (edge.data('type') == 'HOMOLOG')
-          {var ls_score = parseInt(edge.data('ls_score'));
-          if(ls_score >= 8){return "4";}
-          else if((5 <= ls_score) && (ls_score < 8)){return "3";}
-          else if((2 <= ls_score) && (ls_score < 5)){return "2";}
-          else{return "2";};
-          }
+          {return "2";}
           else{return "1";}}, // 'mapData(relationSize, 70, 100, 2, 6)',
           'line-color': function(edge){if (edge.data('type') != 'HOMOLOG' ){return 'black';}else{
           perc_match = parseFloat(edge.data('perc_match'));
@@ -89,9 +84,10 @@ function initializeNetworkView() {
           'mid-source-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           var ls_score = parseInt(edge.data('ls_score'));
           console.log("ls_score"+edge.data('ls_score'));
-          if(ls_score >= 8){return "purple";}
-          else if((5 <= ls_score) && (ls_score < 8)){return "green";}
-          else if((2 <= ls_score) && (ls_score < 5)){return "yellow";}
+          'mid-source-arrow-fill':function(edge){if (edge.data('type') != 'HOMOLOG'){return 'filled';}else{return'hollow';}},
+          if(ls_score >= 8){return "darkgreen";}
+          else if((5 <= ls_score) && (ls_score < 8)){return "yellow";}
+          else if((2 <= ls_score) && (ls_score < 5)){return "orange";}
           else{return "red";};
           }},
           'display': 'show', // 'element' (show) or 'none' (hide).
