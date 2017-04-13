@@ -84,9 +84,9 @@ function initializeNetworkView() {
           'mid-source-arrow-color': function(edge){if (edge.data('type') != 'HOMOLOG'){return 'black';}else{
           var ls_score = parseInt(edge.data('ls_score'));
           console.log("ls_score"+edge.data('ls_score'));
-          if(ls_score >= 8){return "purple";}
-          else if((5 <= ls_score) && (ls_score < 8)){return "green";}
-          else if((2 <= ls_score) && (ls_score < 5)){return "yellow";}
+          if(ls_score >= 8){return "darkgreen";}
+          else if((5 <= ls_score) && (ls_score < 8)){return "yellow";}
+          else if((2 <= ls_score) && (ls_score < 5)){return "orange";}
           else{return "red";};
           }},
           'display': 'show', // 'element' (show) or 'none' (hide).
