@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-      <title>AHGraR-web with KnetMaps.js, Bootstrap and jsTree</title>
+      <title>Daisychain with KnetMaps.js, Bootstrap and jsTree</title>
       <meta charset="utf-8">
       <!-- Load jquery required by Bootstrap and KnetMaps.js -->
       <script src="libs/jquery-1.11.2.min.js"></script>
@@ -48,6 +48,8 @@
       <script src="javascript/ahgrar_qtips.js"></script>
       <script src="javascript/export_csv.js"></script>
       <script src="javascript/ws-connection.js"></script>
+      <!-- Other min stuff -->
+      <script src="javascript/add_tips.js"></script>
       <!-- Launch viewer -->
       <script src="js/launchNetwork.js"></script>
 
@@ -56,16 +58,25 @@
 
   </head>
   <body>
-    <div class="container-fluid" style="background-color:white;">
+    <div id='loading'>
+      <center>
+      <h4>Loading.....</h4>
+      <div class='loader'>
+      </center>
+      </div>
+    </div>
+    <div class="container-fluid" style="background-color:white;" id='main_form'>
     <div class="row">
     <div class="col-sm-12" style="background-color:transparent;background-image: linear-gradient(to right, rgb(155, 226, 255) 0%, rgb(73, 209, 71) 100%);">
-      <h1>AHGraR</h1>
+      <h1>Daisychain</h1>
+      <p>Linking different annotations for similar or identical species or cultivars</p>
     </div>
     </div>
     <div class="row" style = "padding:5px">
     <div class="col-sm-8 well" style="background-color:white;border-radius:10px;">
     <form class="form-inline">
         <div class="form-group">
+            <p>Please select a project. Each project is a collection of interlinked annotations.</p>
             <label for="select_proj">Project:</label>
             <select class="form-control" id="select_proj" onChange="javascript:changeProjectID();">
             </select>
@@ -79,6 +90,7 @@
     </form>
     </div>
     </div>
+    <p>You can search the project either by keyword or by FASTA sequence, please see the examples below.</p>
     <div class="row" style="padding:5px">
     <div class="col-sm-4 well" style="background-color:white;border-radius:10px;">
     <form class="form">
@@ -90,7 +102,8 @@
         <label class="radio-inline"><input checked type="radio" id="radio_all" name="radio">Match all keywords</label>
         <label class="radio-inline"><input type="radio" id="radio_any" name="radio">Match at least one keyword</label>
         </div>
-        <button type="button" class="btn btn-default" id = "search_kwd_btm" onclick="searchKeyword()">Search by keyword</button>
+        <button type="button" class="btn btn-default" id ="search_kwd_btm" onclick="searchKeyword()">Search by keyword</button>
+        <button type='button' class='btn btn-default' id='example_button' onclick="addExampleQuery()">Add example data</button>
         <button type="button" class="btn btn-default" style="display:none;" id = "search_kwd_cancel" onclick="cancelSearchKeyword()">Cancel search</button>
         </form>
     </div>
@@ -108,7 +121,8 @@
             <input id="blastsens" type="text" class="form-control" name="blastsens" value="0.95">
 
             </div>
-        <button type="button" class="btn btn-default" id="btn_blast" onclick="searchBLAST()">Search by BLAST</button>
+            <button type="button" class="btn btn-default" id="btn_blast" onclick="searchBLAST()">Search by BLAST</button>
+            <button type='button' class='btn btn-default' id='example_blast' onclick="addExampleBlast()">Add example data</button>
             <button type="button" class="btn btn-default" style="display:none;" id = "btn_blast_cancel" onclick="cancelSearchBLAST()">Cancel search</button>
         </div>
     </form>
@@ -116,10 +130,12 @@
     </div>
     <div class="row">
     <div class="col-sm-4 collapse" id="result-tree" style="background-color:white;">
+         <p>Please select the part of the results you would like to see displayed, then click 'Show graph'</p>
          <div style="box-sizing: border-box;" id="jstree_div"></div><br/>
 
     </div>
         <div class="col-sm-4 collapse" id="result-button" style="background-color:white;">
+            <button type="button" class="btn btn-default" id="render_tree_btn" data="" onclick="renderTree()">Toggle results</button>
             <button type="button" class="btn btn-default" id="render_data_btn" data="" onclick="renderJSON()">Show graph</button>
             </div>
     </div>
@@ -147,7 +163,10 @@
             <div id="colorLegend" ></div>
     </div>
     </div>
-    </div>
+  <footer class='page-footer' style="background-color:white;border-radius:10px;">
+    A project from the <a href='http://appliedbioinformatics.com.au/'>Applied Bioinformatics group</a>. Code for the graphical miner from <a href='https://github.com/Rothamsted/knetminer'>KnetMiner</a> under GNU Lesser General Public License v3.0.
+  </footer>
+  </div>
   <script>
 
       // Define global variables
@@ -160,6 +179,6 @@
       LoadProjectList();
 
 
-            </script>
+  </script>
   </body>
 </html>
