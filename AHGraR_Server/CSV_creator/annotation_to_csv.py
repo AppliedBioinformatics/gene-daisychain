@@ -76,9 +76,10 @@ class AnnoToCSV:
                                 # In all cases: create an entry in the CSV to create a Gene node
                                 # Format:geneId:ID(Gene),species,contig_name,start:INT,stop:INT,strand_orientation,
                                 # name, descr, nt_seq
-                                gene_node_output.write(
-                                    ",".join(["g"+str(cur_id), gene[1], cur_contig, str(gene[3]), str(gene[4]), gene[5],
-                                              gene[6], gene[7],gene[8] + "\n"]))
+                                # also get rid of commas everywhere
+                                this_line = 'XXXXXX'.join(["g"+str(cur_id), gene[1], cur_contig, str(gene[3]), str(gene[4]), gene[5],
+                                              gene[6], gene[7],gene[8] + "\n"]).replace(',',';').replace('XXXXXX',',')
+                                gene_node_output.write(this_line)
                                 # If there is a protein sequence, create a protein node and a gene->prot CODING relation
                                 if gene[9]:
                                     protein_node_output.write(
