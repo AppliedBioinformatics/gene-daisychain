@@ -5,24 +5,24 @@
 import os
 import shutil
 
-
 class CreateProject:
-    def __init__(self, project_name, neo4j_path, main_db_connection, send_data):
+    def __init__(self, project_name, neo4j_path, main_db_driver, send_data):
         self.proj_name = project_name
         self.neo4j_path = neo4j_path
-        self.main_db_conn = main_db_connection
+        self.main_db_driver = main_db_driver
         self.send_data = send_data
 
 
     def run(self):
         # Create a new entry in the main-db for the new project and retrieve the project ID
         # Also add three subnodes to project node: Files, Tasks and Edits
-        proj_id = self.main_db_conn.run("CREATE (new_proj:Project {name: {name}, status:{status}}) "
-                                        "CREATE (new_proj)-[:has_tasks]->(:Task_Manager) "
-                                        "CREATE (new_proj)-[:has_files]->(:File_Manager) "
-                                        "CREATE (new_proj)-[:has_edits]->(:Edit_Manager) "
-                                        "RETURN(ID(new_proj))",
-                                 {"name": self.proj_name, "status": "INIT"}).single()[0]
+        with self.main_db_driver.session() as session_a:
+            proj_id = session_a.run("CREATE (new_proj:Project {name: {name}, status:{status}}) "
+                                            "CREATE (new_proj)-[:has_tasks]->(:Task_Manager) "
+                                            "CREATE (new_proj)-[:has_files]->(:File_Manager) "
+                                            "CREATE (new_proj)-[:has_edits]->(:Edit_Manager) "
+                                            "RETURN(ID(new_proj))",
+                                            {"name": self.proj_name, "status": "INIT"}).single()[0]
         # Return project ID to gateway -> user-app
         self.send_data(proj_id)
         # Extract project port nr. from server reply
@@ -30,50 +30,55 @@ class CreateProject:
         # extracting the port nr. will fail
         # In the latter case the project will not be assigned a port nr.
         # and initialization of the project fails
-        try:
-            # Retrieve a BOLT port to access the project graph db (only accessible from localhost)
-            request_bolt_port_nr = self.main_db_conn.run(
+        #try:
+        # Retrieve a BOLT port to access the project graph db (only accessible from localhost)
+        with self.main_db_driver.session() as session_a:
+            request_bolt_port_nr = session_a.run(
+            "MATCH(:Port_Manager)-[:has_port]->(port:Port {status:'inactive'}) RETURN (port.nr) LIMIT(1)")
+        project_bolt_port = request_bolt_port_nr.single()[0]
+        # Mark BOLT port-nr in AHGRaR main DB as active
+        with self.main_db_driver.session() as session_b:
+            session_b.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
+                              {"props": {"status": "active", "project": proj_id, "nr": project_bolt_port},
+                               "port_nr": project_bolt_port})
+        # Add project BOLT port nr to project in AHGRaR main DB
+        with self.main_db_driver.session() as session_c:
+            session_c.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.bolt_port = {port_nr}",
+                              {"project_id": proj_id, "port_nr": project_bolt_port})
+        # Retrieve a HTTP port to access the project graph db (only accessible from localhost)
+        with self.main_db_driver.session() as session_d:
+            request_http_port_nr = session_d.run(
                 "MATCH(:Port_Manager)-[:has_port]->(port:Port {status:'inactive'}) RETURN (port.nr) LIMIT(1)")
-            project_bolt_port = request_bolt_port_nr.single()[0]
-            # Mark BOLT port-nr in AHGRaR main DB as active
-            self.main_db_conn.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
-                                  {"props": {"status": "active", "project": proj_id, "nr": project_bolt_port},
-                                   "port_nr": project_bolt_port})
-            # Add project BOLT port nr to project in AHGRaR main DB
-            self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.bolt_port = {port_nr}",
-                                  {"project_id": proj_id, "port_nr": project_bolt_port})
-            # Retrieve a HTTP port to access the project graph db (only accessible from localhost)
-            request_http_port_nr = self.main_db_conn.run(
-                "MATCH(:Port_Manager)-[:has_port]->(port:Port {status:'inactive'}) RETURN (port.nr) LIMIT(1)")
-            project_http_port = request_http_port_nr.single()[0]
-            # Mark HTTP port-nr in AHGRaR main DB as active
-            self.main_db_conn.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
-                                  {"props": {"status": "active", "project": proj_id, "nr": project_http_port},
-                                   "port_nr": project_http_port})
-            # Add project HTTP port nr to project in AHGRaR main DB
-            self.main_db_conn.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.http_port = {port_nr}",
-                                  {"project_id": proj_id, "port_nr": project_http_port})
-            project_path = os.path.join("Projects", str(proj_id))
-            os.makedirs(project_path)
-            os.makedirs(os.path.join(project_path, "Files"))
-            os.makedirs(os.path.join(project_path, "CSV"))
-            os.makedirs(os.path.join(project_path, "BlastDB"))
-            shutil.copytree(self.neo4j_path, os.path.join(project_path, "proj_graph_db"))
-            # Edit project neo4j graph database config file
-            self.edit_neo4j_config(project_path, project_bolt_port, project_http_port)
-            # Mark project in DB as successfully initialized INIT_SUCCESS
-            self.main_db_conn.run(
+        project_http_port = request_http_port_nr.single()[0]
+        # Mark HTTP port-nr in AHGRaR main DB as active
+        with self.main_db_driver.session() as session_e:
+            session_e.run("MATCH(:Port_Manager)-[:has_port]->(port:Port {nr: {port_nr}}) SET port = $props",
+                              {"props": {"status": "active", "project": proj_id, "nr": project_http_port},
+                               "port_nr": project_http_port})
+        # Add project HTTP port nr to project in AHGRaR main DB
+        with self.main_db_driver.session() as session_f:
+            session_f.run("MATCH(proj:Project) WHERE ID(proj) = {project_id} SET proj.http_port = {port_nr}",
+                              {"project_id": proj_id, "port_nr": project_http_port})
+        project_path = os.path.join("Projects", str(proj_id))
+        os.makedirs(project_path)
+        os.makedirs(os.path.join(project_path, "Files"))
+        os.makedirs(os.path.join(project_path, "CSV"))
+        os.makedirs(os.path.join(project_path, "BlastDB"))
+        shutil.copytree(self.neo4j_path, os.path.join(project_path, "proj_graph_db"))
+        # Edit project neo4j graph database config file
+        self.edit_neo4j_config(project_path, project_bolt_port, project_http_port)
+        # Mark project in DB as successfully initialized INIT_SUCCESS
+        with self.main_db_driver.session() as session_g:
+            session_g.run(
                 "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
                 , {"proj_id": proj_id, "new_status": "INIT_SUCCESS"})
-        except:
+        #except:
             # In case of an error, set project status to INIT_FAILED
-            self.main_db_conn.run(
-                "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
-                , {"proj_id": proj_id, "new_status": "INIT_FAILED"})
+        #    with self.main_db_driver.session() as session_h:
+        #        session_h.run(
+        #           "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
+        #            , {"proj_id": proj_id, "new_status": "INIT_FAILED"})
             # TODO Delete any remainings of the project in case INIT_FAILED
-        # Always close connection to AHGRaR DB before finishing
-        finally:
-            self.main_db_conn.close()
 
     # Edit project neo4j graph database
     # Set BOLT port and HTTP port to ports assigned by main-db
@@ -92,7 +97,3 @@ class CreateProject:
         with open(os.path.join(project_path,  "proj_graph_db", "conf", "neo4j.conf"), "w") as conf_file:
             for line in neo4j_conf_content:
                 conf_file.write(line)
-
-
-
-

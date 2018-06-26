@@ -8,14 +8,14 @@ import gffutils
 
 class FileManagement:
 
-    def __init__(self, main_db_connection, task_manager, send_data):
-        self.main_db_conn = main_db_connection
+    def __init__(self, main_db_driver, task_manager, send_data):
+        self.main_db_driver = main_db_driver
         self.task_mngr = task_manager
         self.send_data = send_data
 
     # Close connection to main-DB
     def close_connection(self):
-        self.main_db_conn.close()
+        self.main_db_driver.close()
 
     # Reply to request send from a user app
     # User_request is a list produced by the "_" split command
@@ -94,7 +94,8 @@ class FileManagement:
             anno_feat_attr = self.get_annotation_features_attributes(os.path.join("Projects", proj_id, "Files", file_name))
         else:
             anno_feat_attr = ""
-        self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
+        with self.main_db_driver.session() as session_a:
+            session_a.run("MATCH(proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
                               "MERGE (fileMngr)-[:file]->(newFile:File{species:{species},"
                               "variant:{variant},"
                               "filetype:{filetype},"
@@ -109,7 +110,8 @@ class FileManagement:
     # Return a list of all files associated with a project
     # Function requires only the project ID as parameter
     def file_list(self, proj_id):
-        files_list = list(self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
+        with self.main_db_driver.session() as session_a:
+            files_list = list(session_a.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
                           "WHERE ID(proj)={proj_id} RETURN file.filename, "
                           "file.filetype, file.feat_attr ORDER BY file.filename",
                           {"proj_id":int(proj_id)}))
@@ -127,10 +129,11 @@ class FileManagement:
         # Restore file_name by replacing "\t" with "_"
         file_name = file_name.replace("\t", "_")
         try:
-            hide_file = self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
-                          "WHERE ID(proj)={proj_id} AND file.filename={file_name} "
-                                  "SET file.hidden='True' "
-                                              "RETURN(file)", {"proj_id":int(proj_id), "file_name":file_name})
+            with self.main_db_driver.session() as session_a:
+                hide_file = session_a.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
+                              "WHERE ID(proj)={proj_id} AND file.filename={file_name} "
+                              "SET file.hidden='True' "
+                              "RETURN(file)", {"proj_id":int(proj_id), "file_name":file_name})
             # Evaluate whether file was found
             # If file is not found, an exception is thrown
             result = hide_file.single()[0]
@@ -155,7 +158,8 @@ class FileManagement:
         # Restore file_name by replacing "\t" with "_"
         file_name = file_name.replace("\t", "_")
         try:
-            unhide_file = self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
+            with self.main_db_driver.session() as session_a:
+                unhide_file = session_a.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
                                               "WHERE ID(proj)={proj_id} AND file.filename={file_name} "
                                               "SET file.hidden='False' "
                                               "RETURN(file)", {"proj_id": int(proj_id), "file_name": file_name})
@@ -183,19 +187,22 @@ class FileManagement:
         file_path = os.path.join("Projects", proj_id, "Files", file_name)
         try:
             os.remove(file_path)
-            remove_file = self.main_db_conn.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
-                                              "WHERE ID(proj)={proj_id} AND file.filename={file_name} "
-                                              "DETACH DELETE (file) "
-                                              "RETURN(file)", {"proj_id": int(proj_id), "file_name": file_name})
+            with self.main_db_driver.session() as session_a:
+                remove_file = session_a.run("MATCH(proj:Project)-[:has_files]->(:File_Manager)-[:file]->(file:File) "
+                                                  "WHERE ID(proj)={proj_id} AND file.filename={file_name} "
+                                                  "DETACH DELETE (file) "
+                                                  "RETURN(file)", {"proj_id": int(proj_id), "file_name": file_name})
             # Evaluate whether file was found
             # If file is not found, an exception is thrown
             result = remove_file.single()[0]
+            # Store result of remove action in main-db
+            self.task_mngr.add_task_results(proj_id, task_id, "deleted")
         except:
             # If file was not found, set task_status to failed
-            self.task_mngr.set_task_status(proj_id, task_id, "Finished: Failed to delete")
+            self.task_mngr.set_task_status(proj_id, task_id, "failed")
             return
         # Otherwise, set task_status to finished
-        self.task_mngr.set_task_status(proj_id, task_id, "Finished: Deleted file")
+        self.task_mngr.set_task_status(proj_id, task_id, "finished")
 
     # Batch import files from Import directory
     # Import file describes the files:
@@ -204,14 +211,17 @@ class FileManagement:
         # Restore table by replacing "\t" with "_"
         import_csv_table = import_csv_table.replace("\t", "_")
         # Call task_manager to import_csv_table a new task
-        task_id = self.task_mngr.define_task(proj_id, "Import files for project ID "+str(proj_id))
+        task_id = self.task_mngr.define_task(proj_id, "Import files for proj_ID "+str(proj_id))
         # Send task-id to user
         self.send_data("Importing files. Task-ID: "+str(task_id))
         import_csv_table = import_csv_table.split("\n")
         imported_file_counter = 0
         project_file_path = os.path.join("Projects", proj_id, "Files")
-        self.task_mngr.set_task_status(proj_id, task_id, "Importing now")
+        self.task_mngr.set_task_status(proj_id, task_id, "running")
+        print(import_csv_table)
         for line in import_csv_table:
+            print("Importing now")
+            print(line)
             # Remove whitespaces
             line = "".join(line.split(" "))
             new_file_desc = line.strip().split(",")
@@ -234,8 +244,10 @@ class FileManagement:
                 continue
             self.file_manager_add_file(proj_id, new_file_desc[0], new_file_desc[1], file_name, new_file_desc[2])
             imported_file_counter += 1
-            self.task_mngr.set_task_status(proj_id, task_id, str(imported_file_counter)+"/"+str(len(import_csv_table))+" files imported")
-        self.task_mngr.set_task_status(proj_id, task_id, "Finished: imported " + str(imported_file_counter)+ "files")
+        self.task_mngr.set_task_status(proj_id, task_id, "imported " + str(imported_file_counter))
+        self.task_mngr.add_task_results(proj_id, task_id, "imported "+str(imported_file_counter))
+        self.task_mngr.set_task_status(proj_id, task_id, "finished ")
+        print('Finished importing')
 
 
 

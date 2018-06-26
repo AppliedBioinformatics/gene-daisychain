@@ -12,7 +12,6 @@ import socketserver
 from neo4j.v1 import GraphDatabase, basic_auth
 
 class AHGraRAdminServer(socketserver.BaseRequestHandler):
-
     def setup(self):
         # Load AHGraR config file
         self.ahgrar_config = configparser.ConfigParser()
@@ -37,23 +36,29 @@ class AHGraRAdminServer(socketserver.BaseRequestHandler):
 
     # Project management: Create or delete project, return status or list all projects
     def project_management(self, request):
+
         # Split up user request
         # Some commands may contain additional "_", e.g. in file names.
         # These are exchanged to "\t" before being send via the socket connection
         # Here, these tabs are exchanged back to underscores
         user_request = [item.replace("\t", "_") for item in request.split("_")]
+        print(user_request)
         # Create a new project?
         if user_request[0] == "CREA" and len(user_request)==2:
-            create_project = CreateProject(user_request[1], self.ahgrar_config["AHGraR_Server"]["neo4j_path"], self.get_db_conn(), self.send_data)
+            self.ahgrar_config = configparser.ConfigParser()
+            self.ahgrar_config.read('AHGraR_config.txt')
+            print('Creating project within %s'%(self.ahgrar_config["AHGraR_Server"]["neo4j_path"]))
+            create_project = CreateProject(user_request[1], self.ahgrar_config["AHGraR_Server"]["neo4j_path"], self.get_db_driver(), self.send_data)
+            #create_project = CreateProject(user_request[1], self.ahgrar_config["AHGraR_Server"]["neo4j_path"], self.get_db_driver, self.send_data)
             create_project.run()
         # Delete a project?
         if user_request[0] == "DELE" and len(user_request) == 2 and user_request[1].isdigit():
-            delete_project = DeleteProject(user_request[1], self.get_db_conn(), self.send_data)
+            delete_project = DeleteProject(user_request[1], self.get_db_driver(), self.send_data)
             delete_project.run()
         # Retrieve name, id and status of one or all projects
         # ProjectInfo returns info about all or one projects, depending on if a specific project_id was transmitted
         if user_request[0] == "INFO":
-            project_info = ProjectInfo(user_request[1] if len(user_request) == 2 else None, self.get_db_conn(), self.send_data)
+            project_info = ProjectInfo(user_request[1] if len(user_request) == 2 else None, self.get_db_driver(), self.send_data)
             project_info.run()
         # Else Return "-1" to indicate invalid syntax
         else:
@@ -66,46 +71,41 @@ class AHGraRAdminServer(socketserver.BaseRequestHandler):
         # Here, these tabs are exchanged back to underscores
         user_request = [item.replace("\t", "_") for item in request.split("_")]
         # Initialize task manager
-        task_manager = TaskManagement(self.get_db_conn(), self.send_data)
-        print(user_request)
+        task_manager = TaskManagement(self.get_db_driver(), self.send_data)
         # Some queries/user requests are handled by the task_manager.
         # These are: Job status and job deletion queries and retrieval of results
-        if user_request[0] == "TASK" and len(user_request) >= 3:
+        if user_request[0] == "TASK" and len(user_request) >= 4:
             task_manager.evaluate_user_request(user_request[1:])
         elif user_request[0] == "FILE" and 3 <= len(user_request) <= 7:
             # Initialize file manager
-            file_manager = FileManagement(self.get_db_conn(), task_manager, self.send_data)
+            file_manager = FileManagement(self.get_db_driver(), task_manager, self.send_data)
             # Evaluate user request
             file_manager.evaluate_user_request(user_request[1:])
-            # Close file manager connection to main-db
-            file_manager.close_connection()
         elif user_request[0] == "BULD":
             # Initialize build manager
-            build_manager = DBBuilder(self.get_db_conn(), task_manager, self.send_data, self.ahgrar_config)
+            build_manager = DBBuilder(self.get_db_driver(), task_manager, self.send_data, self.ahgrar_config)
             # Evaluate user request
             build_manager.evaluate_user_request(user_request[1:])
-            # Close file manager connection to main-db
-            build_manager.close_connection()
         elif user_request[0] == "DABA":
             # Initialize Database runner, providing start/stop/restart/status functionality
-            db_runner = DBRunner(self.get_db_conn(), self.send_data)
+            db_runner = DBRunner(self.get_db_driver(), self.send_data)
             # Evaluate user request
             db_runner.evaluate_user_request(user_request[1:])
         elif user_request[0] == "QURY":
             # Initialize query manager
-            query_manager = QueryManagement(self.get_db_conn(), self.send_data, self.ahgrar_config)
+            query_manager = QueryManagement(self.get_db_driver(), self.send_data, self.ahgrar_config)
             # Evaluate user request
             query_manager.evaluate_user_request(user_request[1:])
         else:
             self.send_data("-2")
-        # Close task manager connection to main-db
-        task_manager.close_connection()
 
-    def get_db_conn(self):
+    def get_db_driver(self):
         with open("main_db_access", "r") as pw_file:
-            driver = GraphDatabase.driver("bolt://localhost:"+self.ahgrar_config["AHGraR_Server"]["main_db_bolt_port"],
-                                          auth=basic_auth("neo4j",pw_file.read()),encrypted=False)
-        return(driver.session())
+            pw = pw_file.read().rstrip()
+
+        driver = GraphDatabase.driver("bolt://localhost:%s"%(self.ahgrar_config["AHGraR_Server"]["main_db_bolt_port"]), auth=("neo4j", pw))
+
+        return driver
 
     # Send data to gateway
     def send_data(self, reply):

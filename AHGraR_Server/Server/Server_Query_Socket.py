@@ -39,7 +39,7 @@ class AHGraRQueryServer(socketserver.BaseRequestHandler):
         # Retrieve name, id and status of one or all projects
         # ProjectInfo returns info about all or one projects, depending on if a specific project_id was transmitted
         if user_request[0] == "INFO":
-            project_info = ProjectInfo(user_request[1] if len(user_request) == 2 else None, self.get_db_conn(),
+            project_info = ProjectInfo(user_request[1] if len(user_request) == 2 else None, self.get_db_driver(),
                                        self.send_data)
             project_info.run()
         # Else Return "-1" to indicate invalid syntax
@@ -53,25 +53,25 @@ class AHGraRQueryServer(socketserver.BaseRequestHandler):
         # Here, these tabs are exchanged back to underscores
         user_request = [item.replace("\t", "_") for item in request.split("_")]
         # Initialize task manager
-        task_manager = TaskManagement(self.get_db_conn(), self.send_data)
+        task_manager = TaskManagement(self.get_db_driver(), self.send_data)
         print(user_request)
         # Some queries/user requests are handled by the task_manager.
         # These are: Job status and job deletion queries and retrieval of results
         if user_request[0] == "QURY":
             # Initialize query manager
-            query_manager = QueryManagement(self.get_db_conn(), self.send_data, self.ahgrar_config)
+            query_manager = QueryManagement(self.get_db_driver(), self.send_data, self.ahgrar_config)
             # Evaluate user request
             query_manager.evaluate_user_request(user_request[1:])
         else:
             self.send_data("-2")
         # Close task manager connection to main-db
-        task_manager.close_connection()
+        #task_manager.close_connection()
 
-    def get_db_conn(self):
+    def get_db_driver(self):
         with open("main_db_access", "r") as pw_file:
             driver = GraphDatabase.driver("bolt://localhost:"+self.ahgrar_config["AHGraR_Server"]["main_db_bolt_port"],
                                           auth=basic_auth("neo4j",pw_file.read()),encrypted=False)
-        return(driver.session())
+        return(driver)
 
     # Send data to gateway
     def send_data(self, reply):

@@ -6,9 +6,9 @@ import os, subprocess, shutil, time
 
 
 class DeleteProject:
-    def __init__(self, proj_id, main_db_connection, send_data):
+    def __init__(self, proj_id, main_db_driver, send_data):
         self.proj_id = int(proj_id)
-        self.main_db_conn = main_db_connection
+        self.main_db_driver = main_db_driver
         self.send_data = send_data
 
     # Trigger the deletion of a project
@@ -17,6 +17,21 @@ class DeleteProject:
     # 3. Delete files
     # 4. Set project status to deleted
     def run(self):
+        # First, check if project-ID is valid by retrieving the projects graph-db port
+        try:
+            with self.main_db_driver.session() as session_a:
+                proj_bolt_port_nr = int(session_a.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
+                                           "RETURN del_proj.bolt_port",
+                                           {"proj_id": int(self.proj_id)}).single()[0])
+            with self.main_db_driver.session() as session_b: 
+                proj_http_port_nr = int(session_b.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
+                                                          "RETURN del_proj.http_port",
+                                                          {"proj_id": int(self.proj_id)}).single()[0])
+        except:
+            # If project or project port cannot be found, signal failure by sending -1 back to user
+            self.send_data("-1")
+            return
+
         try:
             project_path = os.path.join("Projects", str(self.proj_id))
             shutdown_returncode = subprocess.run([os.path.join(project_path, "proj_graph_db", "bin", "neo4j"), "stop"]).returncode
@@ -31,57 +46,48 @@ class DeleteProject:
             # Delete main db entry for project
             # this includes the entries for files, edits and tasks
             # Delete project file manager and files
-            self.main_db_conn.run(
-                "MATCH (proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
-                "OPTIONAL MATCH (fileMngr)-[:files]->(file:File) "
-                "DETACH DELETE (file) "
-                "DETACH DELETE (fileMngr)", {"proj_id": self.proj_id})
+            with self.main_db_driver.session() as session_c:
+                session_c.run(
+                    "MATCH (proj:Project)-[:has_files]->(fileMngr:File_Manager) WHERE ID(proj)={proj_id} "
+                    "OPTIONAL MATCH (fileMngr)-[:files]->(file:File) "
+                    "DETACH DELETE (file) "
+                    "DETACH DELETE (fileMngr)", {"proj_id": self.proj_id})
 
             # Delete project task manager and tasks
-            self.main_db_conn.run(
-                "MATCH (proj:Project)-[:has_tasks]->(taskMngr:Task_Manager) WHERE ID(proj)={proj_id} "
-                "OPTIONAL MATCH (taskMngr)-[:tasks]->(task:Task) "
-                "DETACH DELETE (task) "
-                "DETACH DELETE (taskMngr)", {"proj_id": self.proj_id})
+            with self.main_db_driver.session() as session_d:
+                session_d.run(
+                    "MATCH (proj:Project)-[:has_tasks]->(taskMngr:Task_Manager) WHERE ID(proj)={proj_id} "
+                    "OPTIONAL MATCH (taskMngr)-[:tasks]->(task:Task) "
+                    "DETACH DELETE (task) "
+                    "DETACH DELETE (taskMngr)", {"proj_id": self.proj_id})
 
             # Delete project edit manager and edits
-            self.main_db_conn.run(
-                "MATCH (proj:Project)-[:has_edits]->(editMngr:Edit_Manager) WHERE ID(proj)={proj_id} "
-                "OPTIONAL MATCH (editMngr)-[:edits]->(edit:Edit) "
-                "DETACH DELETE (edit) "
-                "DETACH DELETE (editMngr)", {"proj_id": self.proj_id})
+            with self.main_db_driver.session() as session_e:
+                session_e.run(
+                    "MATCH (proj:Project)-[:has_edits]->(editMngr:Edit_Manager) WHERE ID(proj)={proj_id} "
+                    "OPTIONAL MATCH (editMngr)-[:edits]->(edit:Edit) "
+                    "DETACH DELETE (edit) "
+                    "DETACH DELETE (editMngr)", {"proj_id": self.proj_id})
 
-            try:
-                proj_bolt_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
-                                                              "RETURN del_proj.bolt_port",
-                                                              {"proj_id": int(self.proj_id)}).single()[0])
-                proj_http_port_nr = int(self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
-                                                              "RETURN del_proj.http_port",
-                                                              {"proj_id": int(self.proj_id)}).single()[0])
-                # Set ports used for project graph db as inactive
-                self.main_db_conn.run(
-                    "MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
-                    "REMOVE projPort.project "
-                    "SET projPort.status='inactive'", {"proj_port": proj_bolt_port_nr})
-
-                self.main_db_conn.run(
-                    "MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
-                    "REMOVE projPort.project "
-                    "SET projPort.status='inactive'", {"proj_port": proj_http_port_nr})
-            except:
-                # If project or project port cannot be found, signal failure by sending -1 back to user
-                pass
+            # Set ports used for project graph db as inactive
+            with self.main_db_driver.session() as session_f:
+                session_f.run("MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
+                        "REMOVE projPort.project "
+                        "SET projPort.status='inactive'", {"proj_port": proj_bolt_port_nr})
+            with self.main_db_driver.session() as session_g:
+                session_g.run("MATCH (:Port_Manager)-[:has_port]->(projPort:Port) WHERE projPort.nr = {proj_port} "
+                                  "REMOVE projPort.project "
+                                  "SET projPort.status='inactive'", {"proj_port": proj_http_port_nr})
 
             # Delete project main db entry
-            self.main_db_conn.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
+            with self.main_db_driver.session() as session_h:
+                session_h.run("MATCH(del_proj:Project) WHERE ID(del_proj) = {proj_id} "
                         "DETACH DELETE del_proj "
                         , {"proj_id": self.proj_id})
 
             # Finally delete project folder
             # Wait 60 seconds for Neo4j shutdown
-            time.sleep(60)
+            time.sleep(20)
             shutil.rmtree(project_path, ignore_errors=True)
         except:
             pass
-        finally:
-            self.main_db_conn.close()

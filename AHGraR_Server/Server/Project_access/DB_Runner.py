@@ -5,8 +5,8 @@ import subprocess
 
 class DBRunner:
 
-    def __init__(self, main_db_connection, send_data):
-        self.main_db_conn = main_db_connection
+    def __init__(self, main_db_driver, send_data):
+        self.main_db_driver = main_db_driver
         self.send_data = send_data
 
     # Reply to request send from a user app
@@ -71,6 +71,7 @@ class DBRunner:
 
     # Change project status
     def set_project_status(self, proj_id, new_status):
-        self.main_db_conn.run(
-            "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
-            , {"proj_id": int(proj_id), "new_status": str(new_status)})
+        with self.main_db_driver.session() as session_a:
+            session_a.run(
+                "MATCH (proj:Project) WHERE ID(proj) = {proj_id} SET proj.status = {new_status}"
+                , {"proj_id": int(proj_id), "new_status": str(new_status)})
