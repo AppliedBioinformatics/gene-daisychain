@@ -10,13 +10,16 @@ class AHGraRClient():
         self.ahgrar_server_query_port = ahgrar_server_query_port
 
     async def handle(self, websocket, path):
-        web_request = await websocket.recv()
+        #web_request = await websocket.recv()
+        web_request = await asyncio.wait_for(websocket.recv(), timeout=5)
+            
         print(web_request)
         connection = socket.create_connection((self.ahgrar_server_ip, self.ahgrar_server_query_port))
         message = str(len(web_request)) + "|" + web_request
+        print('sending %s'%message)
         connection.sendall(message.encode())
         server_reply = self.receive_data(connection)
-        print(server_reply)
+        print('got back %s'%server_reply)
         connection.close()
         await websocket.send(server_reply)
 
@@ -56,6 +59,8 @@ if __name__ == '__main__':
     except OSError:
         print("Config file not found. Exiting.")
         exit(3)
+    print('Running client at %s on %s'%(ahgrar_config['AHGraR_Server']['server_ip'], ahgrar_config['AHGraR_Server']['server_query_port']))
+
     ahgrar_client = AHGraRClient(ahgrar_config['AHGraR_Server']['server_ip'],
                                  ahgrar_config['AHGraR_Server']['server_query_port'])
     start_server = websockets.serve(ahgrar_client.handle, ahgrar_config['AHGraR_Client']['client_ip'],

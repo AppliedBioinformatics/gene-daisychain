@@ -1,0 +1,35 @@
+[AHGraR_Server]
+mcl_path = /usr/local/bin/mcl
+mcxload_path = /home/drsnuggles/UWA/AHGraR/AHGraR_Server/mcl-14-137/src/shmcl/mcxload
+neo4j_path = /mnt/AHGraR_Server/neo4j-community-3.1.1
+ip = 146.118.64.97
+port = 5000
+blast+_path = /usr/bin/
+server_admin_port = 5000
+server_query_port = 7687
+only_local_admin = True
+only_local_query = False
+#server_ip = 146.118.64.97
+server_ip = 146.118.64.97
+main_db_http_port = 5001
+main_db_bolt_port = 5002
+
+proj_db_port = 5001
+proj_db_login = neo4j
+proj_db_pw = beach
+proj_graph_db_ports = 5550-5560
+project_ports = 5550-5560
+
+cpu_cores = 8
+
+[AHGraR_Gateway]
+ip = localhost
+port = 7474
+
+[AHGraR_Client]
+# ip adress to contact the client (can be localhost)
+# client_ip = localhost
+client_ip = *
+client_query_port = 7687
+
+

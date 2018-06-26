@@ -11,7 +11,8 @@ class GatewayServer(socketserver.BaseRequestHandler):
     def setup(self):
         self.ahgrar_config = configparser.ConfigParser()
         try:
-            self.ahgrar_config.read('AHGraR_config_new.txt')
+            #self.ahgrar_config.read('AHGraR_config_new.txt')
+            self.ahgrar_config.read('AHGraR_config.txt')
         except OSError:
             exit(3)
     # Handling user requests
@@ -115,16 +116,19 @@ if __name__ == '__main__':
     # Open config file
     ahgrar_config = configparser.ConfigParser()
     try:
-        ahgrar_config.read('AHGraR_config_new.txt')
+        # KEN
+        ahgrar_config.read('AHGraR_config.txt')
     except OSError:
         print("Config file not found. Exiting.")
         exit(3)
     server_address = ahgrar_config['AHGraR_Server']['ip']
     server_port = int(ahgrar_config['AHGraR_Server']['port'])
+    print('Running %s on %s'%(server_address, server_port))
     # Set up Gateway server
     gateway_address = ahgrar_config['AHGraR_Gateway']['ip']
     gateway_port = int(ahgrar_config['AHGraR_Gateway']['port'])
     gateway_server = GatewayServerThread((gateway_address,gateway_port), GatewayServer)
+    print('Running gateway on %s at %s'%(gateway_address, gateway_port))
     gw_server_thread = threading.Thread(target=gateway_server.serve_forever)
     gw_server_thread.daemon = True
     gw_server_thread.start()
