@@ -128,8 +128,10 @@ class GFF3Parser_v2:
                         # Is sequence from a minus-strand feature?
                         antisense = subfeature.strand == "-"
                         # If antisense, reverse complement the sequence
-                        seq_fragment = subfeature.sequence(sequence, False).seq if not antisense \
-                            else self.reverse_complement(subfeature.sequence(sequence, False).seq)
+                        #seq_fragment = subfeature.sequence(sequence, False).seq if not antisense \
+                            #else self.reverse_complement(subfeature.sequence(sequence, False).seq)
+                        seq_fragment = subfeature.sequence(sequence, False) if not antisense \
+                            else self.reverse_complement(subfeature.sequence(sequence, False))
                         # Include the coding phase, phase is zero if phase field is empty:
                         phase = int(subfeature.frame) if subfeature.frame.isdigit() else 0
                         # If a gene consists of multiple segments they need to be sorted by their start index
