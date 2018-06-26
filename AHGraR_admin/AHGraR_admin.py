@@ -18,7 +18,7 @@ class AHGraRAdmin:
 
     def cmdline_menu(self):
         while True:
-            self.clear_console()
+            #self.clear_console()
             print("Welcome to AHGraR")
             # Print options
             self.print_options()
@@ -70,7 +70,10 @@ class AHGraRAdmin:
         # Add length of message to header
         message = str(len(reply)) + "|" + reply
         # Open up a connection to AHGraR-server main database
-        maindb_conn = socket.create_connection((self.server_app_ip, self.server_app_port))
+        try:
+            maindb_conn = socket.create_connection((self.server_app_ip, self.server_app_port))
+        except ConnectionRefusedError:
+            return 'Error trying to connect to server - is it still booting?'
         # Send message
         try:
             maindb_conn.sendall(message.encode())
@@ -112,7 +115,15 @@ class AHGraRAdmin:
 
     def list_projects(self, show_failed):
         proj_list = self.send_data("PMINFO")
+        if proj_list == '-1':
+            print('No projects found.')
+            return
+        if proj_list == 'CANNOT CONNECT TO SERVER':
+            print('The server has connection issues, please check ports')
+            return
+ 
         proj_list_rows = proj_list.split("\n")
+ 
         proj_list_rows = [item.split("\t") for item in proj_list_rows]
         proj_names = ["Name"]+[item[0] for item in proj_list_rows]
         max_name_length = len(max(proj_names, key=len))
@@ -141,7 +152,7 @@ class AHGraRAdmin:
             return proj_ids[1:]
         # Or a list of all project IDs without INIT_FAILED
         else:
-            return [item[0] for item in zip(proj_ids[1:], proj_status[1:]) if "INIT_FAILED" not in item[1]]
+            return [item[0].strip() for item in zip(proj_ids[1:], proj_status[1:]) if "INIT_FAILED" not in item[1]]
 
 
 
@@ -157,6 +168,7 @@ class AHGraRAdmin:
         # Remove any special characters from future project name
         proj_name = "".join(char for char in proj_name if char.isalnum())
         if proj_name:
+            print("PMCREA_"+proj_name)
             new_proj_id = self.send_data("PMCREA_"+proj_name)
             print("Created new project "+proj_name+ " with ID "+new_proj_id)
         else:
@@ -170,6 +182,7 @@ class AHGraRAdmin:
         print("\n\nEnter ID of project to access files")
         print("Enter '0' to cancel")
         # Loop until a valid project ID was entered or exit with 0
+        print(valid_proj_ids)
         while True:
             proj_id = input("[Project-ID]>: ").strip()
             if proj_id == "0":
@@ -664,6 +677,7 @@ if __name__ == '__main__':
     ahgrar_config.read('AHGraR_config.txt')
     # Initialize new class of AHGraR-admin
     ahgrar_admin = AHGraRAdmin("localhost", ahgrar_config['AHGraR_Server']['server_app_port'])
+    print('Connected to localhost at %s'%ahgrar_config['AHGraR_Server']['server_app_port'])
     ahgrar_admin.cmdline_menu()
 
 
