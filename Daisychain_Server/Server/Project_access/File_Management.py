@@ -1,4 +1,4 @@
-# Provides file management functions to AHGraR-Server
+# Provides file management functions to Daisychain-Server
 # All functions return either a String or Null
 # Functions directly accessible by user send back a string via socket connection
 import os

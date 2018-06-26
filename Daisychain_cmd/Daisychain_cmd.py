@@ -1,4 +1,4 @@
-#AHGraRcmd
+#Daisychaincmd
 import socket,os
 import sqlite3
 import configparser
@@ -109,7 +109,7 @@ def update_jobstatus(proj_id, job_id, new_job_status):
     job_db.close()
 
 def delete_job(proj_id, job_id, delete_from_server, connection=None):
-    # Optionally delete job from AHGraR-server
+    # Optionally delete job from Daisychain-server
     # This does not need to be done when results are fetched
     # as this triggers automatic deletion of the task node
     if delete_from_server:
@@ -155,8 +155,8 @@ def print_joblist(proj_id, connection):
     print(job_list)
     job_db.close()
 
-# Fetch results from AHGraR-server
-# Task is deleted afterwards from AHGraR-server and from the internal DB
+# Fetch results from Daisychain-server
+# Task is deleted afterwards from Daisychain-server and from the internal DB
 def fetch_result(connection, proj_id, job_id):
     send_data(connection, "PATASK_RESU_" + str(proj_id) + "_" + str(job_id))
     task_results = receive_data(connection)
@@ -195,7 +195,7 @@ def project_access(connection, user_input):
             # Open a new connection to continue project access
             # If project access is exited in the next cycle, the main loop closes the connection
             connection = socket.create_connection(
-                (ahgrar_config['AHGraR_Gateway']['ip'], ahgrar_config['AHGraR_Gateway']['port']))
+                (ahgrar_config['Daisychain_Gateway']['ip'], ahgrar_config['Daisychain_Gateway']['port']))
     return
 
 # Functions involving files
@@ -321,8 +321,8 @@ def query_management(connection, accessed_project, user_input):
 
 
 if __name__ == '__main__':
-    print("Welcome to AHGraR")
-    # AHGraRcmd keeps track of all active jobs in a sqlite3 database
+    print("Welcome to Daisychain")
+    # Daisychaincmd keeps track of all active jobs in a sqlite3 database
     # Database assigns task description to an unique id
     # Create database if not yet existing
     if not os.path.isfile("jobs.db"):
@@ -336,7 +336,7 @@ if __name__ == '__main__':
     # Open config file
     ahgrar_config = configparser.ConfigParser()
     try:
-        ahgrar_config.read('AHGraR_config_new.txt')
+        ahgrar_config.read('Daisychain_config_new.txt')
     except OSError:
         print("Config file not found. Exiting.")
         exit(3)
@@ -344,7 +344,7 @@ if __name__ == '__main__':
         user_input = input(">: ").strip()
         if user_input == "exit": break
         connection = socket.create_connection(
-            (ahgrar_config['AHGraR_Gateway']['ip'], ahgrar_config['AHGraR_Gateway']['port']))
+            (ahgrar_config['Daisychain_Gateway']['ip'], ahgrar_config['Daisychain_Gateway']['port']))
         user_input = shlex.split(user_input)
         if user_input[0] == "project": project_management(connection, user_input)
         elif user_input[0] == "access": project_access(connection, user_input)

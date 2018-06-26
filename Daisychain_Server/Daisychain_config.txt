@@ -1,10 +1,10 @@
-[AHGraR_Server]
+[Daisychain_Server]
 mcl_path = /usr/bin/mcl
 mcxload_path = /usr/bin/mcxload
-neo4j_path = /mnt/AHGraR_Server/main_db
+neo4j_path = /mnt/Daisychain_Server/neo4j-community-3.4.0/
+#neo4j_path = /mnt/Daisychain_Server/main_db
 ip = 146.118.64.97
 port = 5000
-# port = 7687
 blast+_path = /usr/bin/
 server_admin_port = 5000
 server_query_port = 7687
@@ -12,12 +12,7 @@ only_local_admin = False
 only_local_query = False
 #server_ip = localhost
 server_ip = 146.118.64.97
-server_app_port = 5000
-# Server address (to receive conneection from the outside)
-server_app_ip = 146.118.64.97
-
 main_db_http_port = 5001
-
 main_db_bolt_port = 5002
 
 proj_db_port = 5001
@@ -29,11 +24,11 @@ project_ports = 5550-5560
 
 cpu_cores = 8
 
-[AHGraR_Gateway]
+[Daisychain_Gateway]
 ip = 146.118.64.101
 port = 7474
 
-[AHGraR_Client]
+[Daisychain_Client]
 # ip adress to contact the client (can be localhost)
 client_ip = 146.118.64.101
 client_query_port = 7687

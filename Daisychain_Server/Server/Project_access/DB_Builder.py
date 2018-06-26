@@ -1,4 +1,4 @@
-# Provides project build functions to AHGraR-Server
+# Provides project build functions to Daisychain-Server
 # All functions return either a String or Null
 # Functions directly accessible by user query always return a string via socket connection
 import os
@@ -109,14 +109,14 @@ class DBBuilder:
             print('Looks like the blastn output in %s exists - skipping this step'%(os.path.join(BlastDB_path, "transcripts.blastn")))
         else:
             self.task_mngr.set_task_status(proj_id, task_id, "Building Blast+ DB")
-            makeblastdb_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "makeblastdb")
+            makeblastdb_path = os.path.join(self.ahgrar_config["Daisychain_Server"]["blast+_path"], "makeblastdb")
 
             subprocess.run(
                 [makeblastdb_path, "-dbtype", "nucl", "-in", os.path.join(BlastDB_path, "transcripts.faa"),
                  "-parse_seqids", "-hash_index", "-out", os.path.join(BlastDB_path, "transcript_db")], check=True)
             self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastN")
-            blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
-            cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
+            blastn_path = os.path.join(self.ahgrar_config["Daisychain_Server"]["blast+_path"], "blastn")
+            cpu_cores = self.ahgrar_config["Daisychain_Server"]["cpu_cores"]
             print("Blastn now")
             subprocess.run(
                 [blastn_path, "-query", os.path.join(BlastDB_path, "transcripts.faa"), "-db",
@@ -124,7 +124,7 @@ class DBBuilder:
                                              "-out", os.path.join(BlastDB_path, "transcripts.blastn"),
                                 "-num_threads", cpu_cores, "-evalue", "1e-5", "-parse_deflines"])
             self.task_mngr.set_task_status(proj_id, task_id, "All vs. all BlastP")
-            blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
+            blastp_path = os.path.join(self.ahgrar_config["Daisychain_Server"]["blast+_path"], "blastp")
         if os.path.exists(os.path.join(BlastDB_path, "translations.blastp")):
             print('Looks like the blastn output in %s exists - skipping this step'%(os.path.join(BlastDB_path, "transcripts.blastn")))
         else:
@@ -166,7 +166,7 @@ class DBBuilder:
         # 0a. Cluster all-vs.-all BlastN results into gene homology groups
         self.task_mngr.set_task_status(proj_id, task_id, "Cluster BlastN results")
         # 1a. Convert blastN ABC file into a network and dictionary file.
-        mcxload_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["mcxload_path"])
+        mcxload_path = os.path.join(self.ahgrar_config["Daisychain_Server"]["mcxload_path"])
         # subprocess.run(
         #     [mcxload_path, "-abc", os.path.join(BlastDB_path, "transcripts.abc"), "--stream-mirror", "--stream-neg-log10",
         #      "-stream-tf",
@@ -177,7 +177,7 @@ class DBBuilder:
              "-o", os.path.join(BlastDB_path, "transcripts.mci"), "-write-tab",
              os.path.join(BlastDB_path, "transcripts.tab")], check=True)
         # 2a. Cluster MCL blastN results
-        mcl_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["mcl_path"])
+        mcl_path = os.path.join(self.ahgrar_config["Daisychain_Server"]["mcl_path"])
         subprocess.run([mcl_path, os.path.join(BlastDB_path, "transcripts.mci"), "-te", "8", "-I", "1.4", "-use-tab",
                         os.path.join(BlastDB_path, "transcripts.tab"), "-o",
                         os.path.join(BlastDB_path, "transcripts_1.4.clstr")], check=True)

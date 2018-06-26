@@ -1,5 +1,5 @@
-# AHGraR Gateway module
-# Connects AHGraRWeb or AHGraRCmd to Server_old module
+# Daisychain Gateway module
+# Connects DaisychainWeb or DaisychainCmd to Server_old module
 # Can handle multiple requests in parallel (not sequential)
 import socketserver
 import threading
@@ -11,8 +11,8 @@ class GatewayServer(socketserver.BaseRequestHandler):
     def setup(self):
         self.ahgrar_config = configparser.ConfigParser()
         try:
-            #self.ahgrar_config.read('AHGraR_config_new.txt')
-            self.ahgrar_config.read('AHGraR_config.txt')
+            #self.ahgrar_config.read('Daisychain_config_new.txt')
+            self.ahgrar_config.read('Daisychain_config.txt')
         except OSError:
             exit(3)
     # Handling user requests
@@ -24,9 +24,9 @@ class GatewayServer(socketserver.BaseRequestHandler):
     def handle(self):
         # Receive command from user app
         user_request = self.receive_data(self.request)
-        # Connect to AHGraR-Server_old
+        # Connect to Daisychain-Server_old
         server_connection = socket.create_connection(
-            (self.ahgrar_config['AHGraR_Server']['ip'], self.ahgrar_config['AHGraR_Server']['port']))
+            (self.ahgrar_config['Daisychain_Server']['ip'], self.ahgrar_config['Daisychain_Server']['port']))
         # And forward user_request
         self.send_data_server(server_connection, user_request)
         # Receive server reply
@@ -117,16 +117,16 @@ if __name__ == '__main__':
     ahgrar_config = configparser.ConfigParser()
     try:
         # KEN
-        ahgrar_config.read('AHGraR_config.txt')
+        ahgrar_config.read('Daisychain_config.txt')
     except OSError:
         print("Config file not found. Exiting.")
         exit(3)
-    server_address = ahgrar_config['AHGraR_Server']['ip']
-    server_port = int(ahgrar_config['AHGraR_Server']['port'])
+    server_address = ahgrar_config['Daisychain_Server']['ip']
+    server_port = int(ahgrar_config['Daisychain_Server']['port'])
     print('Running %s on %s'%(server_address, server_port))
     # Set up Gateway server
-    gateway_address = ahgrar_config['AHGraR_Gateway']['ip']
-    gateway_port = int(ahgrar_config['AHGraR_Gateway']['port'])
+    gateway_address = ahgrar_config['Daisychain_Gateway']['ip']
+    gateway_port = int(ahgrar_config['Daisychain_Gateway']['port'])
     gateway_server = GatewayServerThread((gateway_address,gateway_port), GatewayServer)
     print('Running gateway on %s at %s'%(gateway_address, gateway_port))
     gw_server_thread = threading.Thread(target=gateway_server.serve_forever)

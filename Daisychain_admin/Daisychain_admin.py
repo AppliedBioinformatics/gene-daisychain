@@ -1,5 +1,5 @@
-# Local admin access to AHGraR server
-# Must be run on the same host than AHGraR Server
+# Local admin access to Daisychain server
+# Must be run on the same host than Daisychain Server
 # Provides functionality to create and delete projects
 # Add files to a project and build a projects graph database
 # from these files.
@@ -10,7 +10,7 @@ import time
 import re
 
 
-class AHGraRAdmin:
+class DaisychainAdmin:
 
     def __init__(self, server_app_ip, server_app_port):
         self.server_app_ip = server_app_ip
@@ -19,7 +19,7 @@ class AHGraRAdmin:
     def cmdline_menu(self):
         while True:
             #self.clear_console()
-            print("Welcome to AHGraR")
+            print("Welcome to Daisychain")
             # Print options
             self.print_options()
             # Wait for cmdline input
@@ -69,7 +69,7 @@ class AHGraRAdmin:
     def send_data(self, reply):
         # Add length of message to header
         message = str(len(reply)) + "|" + reply
-        # Open up a connection to AHGraR-server main database
+        # Open up a connection to Daisychain-server main database
         try:
             maindb_conn = socket.create_connection((self.server_app_ip, self.server_app_port))
         except ConnectionRefusedError:
@@ -674,10 +674,10 @@ class AHGraRAdmin:
 if __name__ == '__main__':
     # Load config file
     ahgrar_config = configparser.ConfigParser()
-    ahgrar_config.read('AHGraR_config.txt')
-    # Initialize new class of AHGraR-admin
-    ahgrar_admin = AHGraRAdmin("localhost", ahgrar_config['AHGraR_Server']['server_app_port'])
-    print('Connected to localhost at %s'%ahgrar_config['AHGraR_Server']['server_app_port'])
+    ahgrar_config.read('Daisychain_config.txt')
+    # Initialize new class of Daisychain-admin
+    ahgrar_admin = DaisychainAdmin("localhost", ahgrar_config['Daisychain_Server']['server_app_port'])
+    print('Connected to localhost at %s'%ahgrar_config['Daisychain_Server']['server_app_port'])
     ahgrar_admin.cmdline_menu()
 
 

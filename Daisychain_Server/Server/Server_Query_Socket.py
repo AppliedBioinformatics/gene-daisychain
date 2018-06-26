@@ -6,13 +6,13 @@ import configparser
 import socketserver
 from neo4j.v1 import GraphDatabase, basic_auth
 
-class AHGraRQueryServer(socketserver.BaseRequestHandler):
+class DaisychainQueryServer(socketserver.BaseRequestHandler):
 
     def setup(self):
-        # Load AHGraR config file
+        # Load Daisychain config file
         self.ahgrar_config = configparser.ConfigParser()
         try:
-            self.ahgrar_config.read('AHGraR_config.txt')
+            self.ahgrar_config.read('Daisychain_config.txt')
         except OSError:
             print("Config file not found. Exiting.")
             exit(3)
@@ -69,7 +69,7 @@ class AHGraRQueryServer(socketserver.BaseRequestHandler):
 
     def get_db_driver(self):
         with open("main_db_access", "r") as pw_file:
-            driver = GraphDatabase.driver("bolt://localhost:"+self.ahgrar_config["AHGraR_Server"]["main_db_bolt_port"],
+            driver = GraphDatabase.driver("bolt://localhost:"+self.ahgrar_config["Daisychain_Server"]["main_db_bolt_port"],
                                           auth=basic_auth("neo4j",pw_file.read()),encrypted=False)
         return(driver)
 
@@ -117,5 +117,5 @@ class AHGraRQueryServer(socketserver.BaseRequestHandler):
 
 
 # Create a new thread for every new connection
-class AHGraRQueryServerThread(socketserver.ThreadingMixIn, socketserver.TCPServer):
+class DaisychainQueryServerThread(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass

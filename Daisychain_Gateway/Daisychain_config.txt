@@ -1,7 +1,7 @@
-[AHGraR_Server]
+[Daisychain_Server]
 mcl_path = /usr/local/bin/mcl
-mcxload_path = /home/drsnuggles/UWA/AHGraR/AHGraR_Server/mcl-14-137/src/shmcl/mcxload
-neo4j_path = /mnt/AHGraR_Server/neo4j-community-3.1.1
+mcxload_path = /home/drsnuggles/UWA/Daisychain/Daisychain_Server/mcl-14-137/src/shmcl/mcxload
+neo4j_path = /mnt/Daisychain_Server/neo4j-community-3.1.1
 ip = 146.118.64.97
 port = 5000
 blast+_path = /usr/bin/
@@ -22,11 +22,11 @@ project_ports = 5550-5560
 
 cpu_cores = 8
 
-[AHGraR_Gateway]
+[Daisychain_Gateway]
 ip = localhost
 port = 7474
 
-[AHGraR_Client]
+[Daisychain_Client]
 # ip adress to contact the client (can be localhost)
 # client_ip = localhost
 client_ip = *

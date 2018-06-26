@@ -1,10 +1,10 @@
-# AHGraR Server module
+# Daisychain Server module
 # Performs computational tasks
-# Only connected to AHGraR gateway module, not directly to user app
+# Only connected to Daisychain gateway module, not directly to user app
 # Can handle multiple requests in parallel (not sequential)
 import configparser
-from Server.Server_Admin_Socket import AHGraRAdminServer,AHGraRAdminServerThread
-from Server.Server_Query_Socket import AHGraRQueryServerThread,AHGraRQueryServer
+from Server.Server_Admin_Socket import DaisychainAdminServer,DaisychainAdminServerThread
+from Server.Server_Query_Socket import DaisychainQueryServerThread,DaisychainQueryServer
 import threading
 import shutil
 import os
@@ -17,32 +17,32 @@ from neo4j.v1 import GraphDatabase, basic_auth
 
 
 if __name__ == '__main__':
-    # Main function to start up the Server-side of AHGraR
+    # Main function to start up the Server-side of Daisychain
     # One Neo4j instance is used as internal database to manage individual projects ("main db")
     # Each project has an independent Neo4j instance to host project data
     # The main db can only be access from localhost
     # Load config file
     ahgrar_config = configparser.ConfigParser()
-    ahgrar_config.read('AHGraR_config.txt')
+    ahgrar_config.read('Daisychain_config.txt')
     # Check paths
     try:
         pass
         # Check path to MCL
-        #print(ahgrar_config['AHGraR_Server']['mcl_path'])
-        #if not os.path.isfile(ahgrar_config['AHGraR_Server']['mcl_path']):
+        #print(ahgrar_config['Daisychain_Server']['mcl_path'])
+        #if not os.path.isfile(ahgrar_config['Daisychain_Server']['mcl_path']):
         #    print("Invalid MCL path")
         #    exit(3)
         ## Check path to Neo4j
         ## Look for Neo4j binary to ensure that neo4j_path is pointing to the uppermost directory
-        #if not os.path.isfile(os.path.join(ahgrar_config['AHGraR_Server']['neo4j_path'], "bin", "neo4j")):
+        #if not os.path.isfile(os.path.join(ahgrar_config['Daisychain_Server']['neo4j_path'], "bin", "neo4j")):
         #    print("Invalid Neo4j path")
         #    exit(3)
         ## Check path to blast+
         ## Look for blastn binary and makeblastdb
-        #if not os.path.isfile(os.path.join(ahgrar_config['AHGraR_Server']['blast+_path'], "blastn")):
+        #if not os.path.isfile(os.path.join(ahgrar_config['Daisychain_Server']['blast+_path'], "blastn")):
         #    print("Invalid blast+ path - can't find blastn")
         #    exit(3)
-        #if not os.path.isfile(os.path.join(ahgrar_config['AHGraR_Server']['blast+_path'], "makeblastdb")):
+        #if not os.path.isfile(os.path.join(ahgrar_config['Daisychain_Server']['blast+_path'], "makeblastdb")):
         #    print("Invalid blast+ path - can't find makeblastdb")
         #    exit(3)
     except KeyError as e:
@@ -53,10 +53,10 @@ if __name__ == '__main__':
     if not os.path.exists("main_db"):
         # If not, initiate a new Neo4j instance as main db
         print("Main DB does not exist\nCreating a new main DB instance")
-        print(ahgrar_config['AHGraR_Server']['neo4j_path'])
+        print(ahgrar_config['Daisychain_Server']['neo4j_path'])
         # Create a new Neo4j copy
         try:
-            shutil.copytree(ahgrar_config['AHGraR_Server']['neo4j_path'], "main_db")
+            shutil.copytree(ahgrar_config['Daisychain_Server']['neo4j_path'], "main_db")
         except (KeyError, OSError):
             print("Error while initializing main db")
             print("Could not create database copy")
@@ -68,9 +68,9 @@ if __name__ == '__main__':
             with open(os.path.join("main_db", "conf", "neo4j.conf"), "r") as conf_file:
                 for line in conf_file:
                     if line == "#dbms.connector.bolt.listen_address=:7687\n":
-                        neo4j_conf_content.append("dbms.connector.bolt.listen_address=:" + ahgrar_config['AHGraR_Server']['main_db_bolt_port'] + "\n")
+                        neo4j_conf_content.append("dbms.connector.bolt.listen_address=:" + ahgrar_config['Daisychain_Server']['main_db_bolt_port'] + "\n")
                     elif line == "#dbms.connector.http.listen_address=:7474\n":
-                        neo4j_conf_content.append("dbms.connector.http.listen_address=:" + ahgrar_config['AHGraR_Server']['main_db_http_port'] + "\n")
+                        neo4j_conf_content.append("dbms.connector.http.listen_address=:" + ahgrar_config['Daisychain_Server']['main_db_http_port'] + "\n")
                     elif line == "dbms.connector.https.enabled=true\n":
                         neo4j_conf_content.append("dbms.connector.https.enabled=false\n")
                     else:
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     # Update ports usable for project graph dbs
     # Retrieve ports from config file
     try:
-        port_list = ahgrar_config['AHGraR_Server']['project_ports']
+        port_list = ahgrar_config['Daisychain_Server']['project_ports']
     except KeyError:
         print("Config file error: Can not retrieve list of ports for projects")
         exit(3)
@@ -133,11 +133,11 @@ if __name__ == '__main__':
             if not port.isdigit():
                 continue
             port_numbers.append(int(port))
-    # Open connection to AHGraR-DB
+    # Open connection to Daisychain-DB
     print("Importing available project ports")
     with open("main_db_access", "r") as pw_file:
         pw = pw_file.read().rstrip()
-    main_db_conn = GraphDatabase.driver("bolt://localhost:%s"%ahgrar_config["AHGraR_Server"]["main_db_bolt_port"], auth=("neo4j", pw))
+    main_db_conn = GraphDatabase.driver("bolt://localhost:%s"%ahgrar_config["Daisychain_Server"]["main_db_bolt_port"], auth=("neo4j", pw))
     sess = main_db_conn.session()
     # All ports are child nodes of Port_Manager-node
     sess.run("MERGE (:Port_Manager)")
@@ -157,19 +157,19 @@ if __name__ == '__main__':
     sess.close()
     # Start to listen for connections for socket connnections
     try:
-        server_admin_listen = 'localhost' if ahgrar_config['AHGraR_Server']['only_local_admin'] == "True" else '0.0.0.0'
-        server_query_listen = 'localhost' if ahgrar_config['AHGraR_Server']['only_local_query'] == "True" else '0.0.0.0'
-        server_admin_port = int(ahgrar_config['AHGraR_Server']['server_admin_port'])
-        server_query_port = int(ahgrar_config['AHGraR_Server']['server_query_port'])
+        server_admin_listen = 'localhost' if ahgrar_config['Daisychain_Server']['only_local_admin'] == "True" else '0.0.0.0'
+        server_query_listen = 'localhost' if ahgrar_config['Daisychain_Server']['only_local_query'] == "True" else '0.0.0.0'
+        server_admin_port = int(ahgrar_config['Daisychain_Server']['server_admin_port'])
+        server_query_port = int(ahgrar_config['Daisychain_Server']['server_query_port'])
     except KeyError:
         print("Config file error: Can not retrieve server listening address and/or port")
         exit(3)
     # Fire up socket for admin connections
-    admin_socket = AHGraRAdminServerThread((server_admin_listen,server_admin_port), AHGraRAdminServer)
+    admin_socket = DaisychainAdminServerThread((server_admin_listen,server_admin_port), DaisychainAdminServer)
     admin_socket_thread = threading.Thread(target=admin_socket.serve_forever, daemon=True)
     admin_socket_thread.start()
     # Fire up socket for query connections
-    query_socket = AHGraRQueryServerThread((server_query_listen, server_query_port), AHGraRQueryServer)
+    query_socket = DaisychainQueryServerThread((server_query_listen, server_query_port), DaisychainQueryServer)
     query_socket_thread= threading.Thread(target=query_socket.serve_forever, daemon=True)
     query_socket_thread.start()
     print("Listening for admin connections at "+server_admin_listen+":"+str(server_admin_port))

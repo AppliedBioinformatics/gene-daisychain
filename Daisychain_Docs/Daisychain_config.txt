@@ -1,17 +1,17 @@
-# AHGraR config file
-# Combines all configurable options for AHGraR server and AHGraR web
-[AHGraR_Server]
+# Daisychain config file
+# Combines all configurable options for Daisychain server and Daisychain web
+[Daisychain_Server]
 # Local paths on server to MCL, blast+ and the folder containing the (empty) Neo4j database
 # Path to MCL binary
 mcxload_path = /usr/bin/mcxload
 mcl_path = /usr/bin/mcl
 # Path to Neo4j parent directory
-neo4j_path = /mnt/AHGraR_2.0/neo4j-community-3.1.1
+neo4j_path = /mnt/Daisychain_2.0/neo4j-community-3.1.1
 # Path to blast+ binaries
 blast+_path = /mnt/oliver/ncbi-blast-2.6.0+/bin
 # The server accepts connection from AHGRaR-admin (and any other admin application) on this port:
 server_admin_port = 5000
-# The server accepts connections form AHGraR-Query (and any other query-only applications) on this port:
+# The server accepts connections form Daisychain-Query (and any other query-only applications) on this port:
 server_query_port = 7687
 # Accept only local connections to admin port?
 only_local_admin = True
@@ -20,7 +20,7 @@ only_local_query = False
 # ip adress to contact the server (can be localhost)
 server_ip = 146.118.99.191
 # The server needs two internal ports for internal access to project information stored
-# in the AHGraR-main DB
+# in the Daisychain-main DB
 # One is a HTTP port (unused, but required to be set by Neo4j)
 # The other is a BOLT port
 main_db_http_port = 5001
@@ -36,7 +36,7 @@ project_ports = 5550-5560
 # Number of CPU cores to be used on server
 cpu_cores = 8
 
-[AHGraR_Client]
+[Daisychain_Client]
 # ip adress to contact the client (can be localhost)
 client_ip = 146.118.99.190
 client_query_port = 7687

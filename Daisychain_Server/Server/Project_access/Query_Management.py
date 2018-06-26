@@ -1,9 +1,9 @@
-# Provides database query functionality to AHGraR-server
+# Provides database query functionality to Daisychain-server
 # Connects to a project-specific graphDB (not the Main-DB!)
 # This database can only by accessed from localhost on the server-side
 # User name is neo4j, the password is stored in file "access" in project folder
 # Class returns query results as returned by cypher without much editing
-# Any postprocessing is performed by AHGraR-cmd or AHGraR-web
+# Any postprocessing is performed by Daisychain-cmd or Daisychain-web
 # The following functionalities are provided:
 # Search for a gene and/or protein: Query must contain the project ID, everything else is optional:
 # Species, Protein/Gene?, Name. Species and Name must not match over the entire field, e.g.
@@ -94,7 +94,7 @@ class QueryManagement:
         query_seq = ''.join(newq)
         print('query seq is', query_seq)
         BlastDB_path = os.path.join("Projects", str(proj_id), "BlastDB")
-        cpu_cores = self.ahgrar_config["AHGraR_Server"]["cpu_cores"]
+        cpu_cores = self.ahgrar_config["Daisychain_Server"]["cpu_cores"]
         project_db_driver = self.get_project_db_driver(proj_id)
         # Detect whether we are dealing with a nucleotide or protein sequence
         is_nucleotide = True
@@ -106,7 +106,7 @@ class QueryManagement:
         with open(os.path.join(BlastDB_path, "query_seq.faa"), "w") as tmp_fasta_file:
             tmp_fasta_file.write(">query_seq\n" + query_seq)
         if is_nucleotide:
-            blastn_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastn")
+            blastn_path = os.path.join(self.ahgrar_config["Daisychain_Server"]["blast+_path"], "blastn")
             subprocess.run([blastn_path, "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
                             os.path.join(BlastDB_path, "transcript_db"), "-outfmt", "6 sseqid",
                             "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", evalue,
@@ -125,7 +125,7 @@ class QueryManagement:
                     {"query_species": query_species.lower(), "gene_id_list": gene_ids[:20],
                      "query_contig": query_contig.lower()})
         else: # If not nucleotide i.e. proteins eq
-            blastp_path = os.path.join(self.ahgrar_config["AHGraR_Server"]["blast+_path"], "blastp")
+            blastp_path = os.path.join(self.ahgrar_config["Daisychain_Server"]["blast+_path"], "blastp")
             subprocess.run([blastp_path, "-query", os.path.join(BlastDB_path, "query_seq.faa"), "-db",
                             os.path.join(BlastDB_path, "translation_db"), "-outfmt", "6 sseqid",
                             "-out", os.path.join(BlastDB_path, "query_res.tab"), "-evalue", evalue,
@@ -159,7 +159,7 @@ class QueryManagement:
         print("Gene nodes: " + str(len(gene_node_hits)))
         print("Gene-gene NB relations: " + str(len(gene_node_nb_rel)))
         print("Gene-gene hmlg relations: " + str(len(gene_node_hmlg_rel)))
-        # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
+        # Reformat the node and edge data for either Daisychain-web or Daisychain-cmd
         # Close connection to the project-db
         project_db_driver.close()
         if return_format == "CMD":
@@ -215,7 +215,7 @@ class QueryManagement:
         # Connect to the project-db
         project_db_driver = self.get_project_db_driver(user_request[0])
         # Determine requested return format
-        # Format is either optimized for AHGraR-cmd or AHGraR-web
+        # Format is either optimized for Daisychain-cmd or Daisychain-web
         return_format = user_request[1]
         if not return_format in ["CMD", "WEB"]:
             self.send_data("-9")
@@ -507,7 +507,7 @@ class QueryManagement:
         # Close connection to the project-db
         project_db_driver.close()
 
-    # Reformat node and edge data to fit the format expected by AHGraR-cmd
+    # Reformat node and edge data to fit the format expected by Daisychain-cmd
     def send_data_cmd(self, gene_node_hits, protein_node_hits, gene_node_rel, protein_node_rel,
      protein_gene_node_rel):
         # Transfer gene node and protein node dicts into list structures
@@ -531,7 +531,7 @@ class QueryManagement:
             reply += "\t".join(str(x) for x in gene_prot_rel) + "\n"
         self.send_data(reply)
 
-    # Reformat node and edge data to fit the format expected by AHGraR-web
+    # Reformat node and edge data to fit the format expected by Daisychain-web
     # Each node and each edge gets an unique and reproducible ID
     def send_data_web(self, gene_node_hits, protein_node_hits, gene_node_nb_rel,gene_node_hmlg_rel, protein_node_hmlg_rel,
                       gene_prot_coding_rel):
@@ -617,7 +617,7 @@ class QueryManagement:
         # Connect to the project-db
         project_db_driver = self.get_project_db_driver(user_request[0])
         # Determine requested return format
-        # Format is either optimized for AHGraR-cmd or AHGraR-web
+        # Format is either optimized for Daisychain-cmd or Daisychain-web
         return_format = user_request[1]
         if not return_format in ["CMD", "WEB"]:
             self.send_data("-9")
@@ -782,7 +782,7 @@ class QueryManagement:
 
         #print("Prot-prot relations: "+str(len(protein_node_rel)))
         #print("Gene-prot relations: "+str(len(protein_gene_node_rel)))
-        # Reformat the node and edge data for either AHGraR-web or AHGraR-cmd
+        # Reformat the node and edge data for either Daisychain-web or Daisychain-cmd
         # Close connection to the project-db
         project_db_driver.close()
         if return_format == "CMD":

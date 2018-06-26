@@ -1,7 +1,7 @@
 # This class provides the functionality to create a project and is part of the project management package
-# 1. Add project to AHGraR DB
+# 1. Add project to Daisychain DB
 # 2. Trigger the project creation function
-# 3. Mark project in AHGraR DB as successfully created (or not)
+# 3. Mark project in Daisychain DB as successfully created (or not)
 import os
 import shutil
 

@@ -11,12 +11,12 @@ import configparser
 import socketserver
 from neo4j.v1 import GraphDatabase, basic_auth
 
-class AHGraRAdminServer(socketserver.BaseRequestHandler):
+class DaisychainAdminServer(socketserver.BaseRequestHandler):
     def setup(self):
-        # Load AHGraR config file
+        # Load Daisychain config file
         self.ahgrar_config = configparser.ConfigParser()
         try:
-            self.ahgrar_config.read('AHGraR_config.txt')
+            self.ahgrar_config.read('Daisychain_config.txt')
         except OSError:
             print("Config file not found. Exiting.")
             exit(3)
@@ -46,10 +46,10 @@ class AHGraRAdminServer(socketserver.BaseRequestHandler):
         # Create a new project?
         if user_request[0] == "CREA" and len(user_request)==2:
             self.ahgrar_config = configparser.ConfigParser()
-            self.ahgrar_config.read('AHGraR_config.txt')
-            print('Creating project within %s'%(self.ahgrar_config["AHGraR_Server"]["neo4j_path"]))
-            create_project = CreateProject(user_request[1], self.ahgrar_config["AHGraR_Server"]["neo4j_path"], self.get_db_driver(), self.send_data)
-            #create_project = CreateProject(user_request[1], self.ahgrar_config["AHGraR_Server"]["neo4j_path"], self.get_db_driver, self.send_data)
+            self.ahgrar_config.read('Daisychain_config.txt')
+            print('Creating project within %s'%(self.ahgrar_config["Daisychain_Server"]["neo4j_path"]))
+            create_project = CreateProject(user_request[1], self.ahgrar_config["Daisychain_Server"]["neo4j_path"], self.get_db_driver(), self.send_data)
+            #create_project = CreateProject(user_request[1], self.ahgrar_config["Daisychain_Server"]["neo4j_path"], self.get_db_driver, self.send_data)
             create_project.run()
         # Delete a project?
         if user_request[0] == "DELE" and len(user_request) == 2 and user_request[1].isdigit():
@@ -103,7 +103,7 @@ class AHGraRAdminServer(socketserver.BaseRequestHandler):
         with open("main_db_access", "r") as pw_file:
             pw = pw_file.read().rstrip()
 
-        driver = GraphDatabase.driver("bolt://localhost:%s"%(self.ahgrar_config["AHGraR_Server"]["main_db_bolt_port"]), auth=("neo4j", pw))
+        driver = GraphDatabase.driver("bolt://localhost:%s"%(self.ahgrar_config["Daisychain_Server"]["main_db_bolt_port"]), auth=("neo4j", pw))
 
         return driver
 
@@ -151,5 +151,5 @@ class AHGraRAdminServer(socketserver.BaseRequestHandler):
 
 
 # Create a new thread for every new connection
-class AHGraRAdminServerThread(socketserver.ThreadingMixIn, socketserver.TCPServer):
+class DaisychainAdminServerThread(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass

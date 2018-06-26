@@ -1,5 +1,5 @@
-# Provides task management functions to AHGraR-Server
-# send_data function is handed over from AHGraR_Server
+# Provides task management functions to Daisychain-Server
+# send_data function is handed over from Daisychain_Server
 # Functions directly accessible by user query always return a string
 # Some functions are used to evaluate user requests, some
 # are for internal use

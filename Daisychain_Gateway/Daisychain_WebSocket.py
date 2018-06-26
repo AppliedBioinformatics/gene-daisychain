@@ -1,5 +1,5 @@
-# Backend for AHGraR-Web
-# Accepts websocket communication from webservice and sends and receives data to AHGraR-Server
+# Backend for Daisychain-Web
+# Accepts websocket communication from webservice and sends and receives data to Daisychain-Server
 # Also responsible for serving the HTTP port
 import asyncio
 import websockets
@@ -9,7 +9,7 @@ import threading
 from concurrent.futures import as_completed
 
 
-class AHGraRClient(threading.Thread):
+class DaisychainClient(threading.Thread):
     def __init__(self, ahgrar_server_ip, ahgrar_server_query_port):
         threading.Thread.__init__(self)
         self.ahgrar_server_ip = ahgrar_server_ip
@@ -79,14 +79,14 @@ class AHGraRClient(threading.Thread):
 if __name__ == '__main__':
     ahgrar_config = configparser.ConfigParser()
     try:
-        ahgrar_config.read('AHGraR_config.txt')
+        ahgrar_config.read('Daisychain_config.txt')
     except OSError:
         print("Config file not found. Exiting.")
         exit(3)
-    ahgrar_client = AHGraRClient(ahgrar_config['AHGraR_Server']['server_ip'],
-                                 ahgrar_config['AHGraR_Server']['server_query_port'])
-    ahgrar_websocket = websockets.serve(ahgrar_client.handle, ahgrar_config['AHGraR_Client']['client_ip'],
-                                    ahgrar_config['AHGraR_Client']['client_query_port'])
+    ahgrar_client = DaisychainClient(ahgrar_config['Daisychain_Server']['server_ip'],
+                                 ahgrar_config['Daisychain_Server']['server_query_port'])
+    ahgrar_websocket = websockets.serve(ahgrar_client.handle, ahgrar_config['Daisychain_Client']['client_ip'],
+                                    ahgrar_config['Daisychain_Client']['client_query_port'])
     asyncio.get_event_loop().run_until_complete(ahgrar_websocket)
     asyncio.get_event_loop().run_forever()
     print("Type 'exit' to shutdown websocket")

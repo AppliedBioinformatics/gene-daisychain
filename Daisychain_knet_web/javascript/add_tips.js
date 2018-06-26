@@ -1,4 +1,4 @@
-// AHGraR-specific function
+// Daisychain-specific function
 // Adds example data into search field
 function addExampleQuery()
 {

@@ -3,7 +3,7 @@ import websockets
 import configparser
 import socket
 
-class AHGraRClient():
+class DaisychainClient():
 
     def __init__(self, ahgrar_server_ip, ahgrar_server_query_port):
         self.ahgrar_server_ip = ahgrar_server_ip
@@ -55,15 +55,15 @@ class AHGraRClient():
 if __name__ == '__main__':
     ahgrar_config = configparser.ConfigParser()
     try:
-        ahgrar_config.read('AHGraR_config.txt')
+        ahgrar_config.read('Daisychain_config.txt')
     except OSError:
         print("Config file not found. Exiting.")
         exit(3)
-    print('Running client at %s on %s'%(ahgrar_config['AHGraR_Server']['server_ip'], ahgrar_config['AHGraR_Server']['server_query_port']))
+    print('Running client at %s on %s'%(ahgrar_config['Daisychain_Server']['server_ip'], ahgrar_config['Daisychain_Server']['server_query_port']))
 
-    ahgrar_client = AHGraRClient(ahgrar_config['AHGraR_Server']['server_ip'],
-                                 ahgrar_config['AHGraR_Server']['server_query_port'])
-    start_server = websockets.serve(ahgrar_client.handle, ahgrar_config['AHGraR_Client']['client_ip'],
-                                    ahgrar_config['AHGraR_Client']['client_query_port'])
+    ahgrar_client = DaisychainClient(ahgrar_config['Daisychain_Server']['server_ip'],
+                                 ahgrar_config['Daisychain_Server']['server_query_port'])
+    start_server = websockets.serve(ahgrar_client.handle, ahgrar_config['Daisychain_Client']['client_ip'],
+                                    ahgrar_config['Daisychain_Client']['client_query_port'])
     asyncio.get_event_loop().run_until_complete(start_server)
     asyncio.get_event_loop().run_forever()
