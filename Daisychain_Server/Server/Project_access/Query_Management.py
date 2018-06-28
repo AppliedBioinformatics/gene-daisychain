@@ -233,7 +233,7 @@ class QueryManagement:
             relationship_type = "5_NB"
         if relationship_type == "3NB":
             relationship_type = "3_NB"
-        if not relationship_type in ["5_NB", "3_NB", "HOMOLOG", "CODING"]:
+        if not relationship_type in ["5_NB", "3_NB", "HOMOLOG", "CODING", "53NB"]:
             self.send_data("-12")
         # Collect nodes and relationships in two lists
         gene_node_hits = {}
@@ -313,56 +313,56 @@ class QueryManagement:
 
 
         # Search for a "5_NB" pr "3_NB" relationship between gene node and gene node
-        if relationship_type in ["5_NB", "3_NB"]and node_type == "Gene":
-            with project_db_driver.session() as session_i:
-                query_hits = session_i.run("MATCH(gene:Gene)-[rel:`"+relationship_type+"`]->(targetGene:Gene) "
-                                             "WHERE gene.geneId = {geneId} "
-                                             "OPTIONAL MATCH (targetGene)-[targetGene_rel]->(secondary_node) "
-                                             "RETURN gene, rel, targetGene, targetGene_rel, "
-                                             "secondary_node.geneId, secondary_node.proteinId",
-                                             {"geneId": node_id} )
-            for record in query_hits:
-                gene_node_hits[record["targetGene"]["geneId"]] = \
-                    [record["targetGene"][item] for item in ["species", "contig",
-                                                   "start", "stop", "name", "descr", "nt_seq"]]
-                if relationship_type == "5_NB":
-                    gene_node_nb_rel.append((record["gene"]["geneId"], "5_NB", record["targetGene"]["geneId"]))
-                    #gene_node_nb_rel.append((record["targetGene"]["geneId"], "3_NB", record["gene"]["geneId"]))
-                else:
-                    gene_node_nb_rel.append((record["gene"]["geneId"], "3_NB", record["targetGene"]["geneId"]))
-                    #gene_node_nb_rel.append((record["targetGene"]["geneId"], "5_NB", record["gene"]["geneId"]))
-                # Now add secondary relations of new nodes to list of relations
+        if relationship_type in ["53NB"] and node_type == "Gene":
+            for reltype in ['3_NB', '5_NB']:
+                with project_db_driver.session() as session_i:
+                    query_hits = session_i.run("MATCH(gene:Gene)-[rel:`"+reltype+"`]->(targetGene:Gene) "
+                                                "WHERE gene.geneId = {geneId} "
+                                                "OPTIONAL MATCH (targetGene)-[targetGene_rel]->(secondary_node) "
+                                                "RETURN gene, rel, targetGene, targetGene_rel, "
+                                                "secondary_node.geneId, secondary_node.proteinId",
+                                                {"geneId": node_id} )
+                for record in query_hits:
+                    gene_node_hits[record["targetGene"]["geneId"]] = \
+                        [record["targetGene"][item] for item in ["species", "contig",
+                                                    "start", "stop", "name", "descr", "nt_seq"]]
+                    if reltype == "5_NB":
+                        gene_node_nb_rel.append((record["gene"]["geneId"], "5_NB", record["targetGene"]["geneId"]))
+                        #gene_node_nb_rel.append((record["targetGene"]["geneId"], "3_NB", record["gene"]["geneId"]))
+                    else:
+                        gene_node_nb_rel.append((record["gene"]["geneId"], "3_NB", record["targetGene"]["geneId"]))
+                        #gene_node_nb_rel.append((record["targetGene"]["geneId"], "5_NB", record["gene"]["geneId"]))
+                    # Now add secondary relations of new nodes to list of relations
 
-                try:
-                    target_gene_rel_type = record["targetGene_rel"].type
-                    print(target_gene_rel_type)
-                except:
-                    target_gene_rel_type = "None"
-                if target_gene_rel_type == "5_NB":
-                    gene_node_nb_rel.append(
-                        (record["targetGene"]["geneId"], "5_NB", record["secondary_node.geneId"]))
-                    gene_node_nb_rel.append(
-                        (record["secondary_node.geneId"], "3_NB", record["targetGene"]["geneId"]))
-                if target_gene_rel_type == "3_NB":
-                    gene_node_nb_rel.append(
-                        (record["targetGene"]["geneId"], "3_NB", record["secondary_node.geneId"]))
-                    gene_node_nb_rel.append(
-                        (record["secondary_node.geneId"], "5_NB", record["targetGene"]["geneId"]))
-                if target_gene_rel_type == "HOMOLOG":
-                    gene_node_hmlg_rel.append((record["targetGene"]["geneId"],
-                                               "HOMOLOG",
-                                               record["targetGene_rel"]["clstr_sens"],
-                                               record["targetGene_rel"]["perc_match"],
-                                               record["secondary_node.geneId"]))
-                    gene_node_hmlg_rel.append((record["secondary_node.geneId"],
-                                               "HOMOLOG",
-                                               record["targetGene_rel"]["clstr_sens"],
-                                               record["targetGene_rel"]["perc_match"],
-                                               record["targetGene"]["geneId"]))
-                if target_gene_rel_type == "CODING":
-                    gene_protein_coding_rel.append((record["targetGene"]["geneId"],
-                                                    "CODING",
-                                                    record["secondary_node.proteinId"]))
+                    try:
+                        target_gene_rel_type = record["targetGene_rel"].type
+                    except:
+                        target_gene_rel_type = "None"
+                    if target_gene_rel_type == "5_NB":
+                        gene_node_nb_rel.append(
+                            (record["targetGene"]["geneId"], "5_NB", record["secondary_node.geneId"]))
+                        gene_node_nb_rel.append(
+                            (record["secondary_node.geneId"], "3_NB", record["targetGene"]["geneId"]))
+                    if target_gene_rel_type == "3_NB":
+                        gene_node_nb_rel.append(
+                            (record["targetGene"]["geneId"], "3_NB", record["secondary_node.geneId"]))
+                        gene_node_nb_rel.append(
+                            (record["secondary_node.geneId"], "5_NB", record["targetGene"]["geneId"]))
+                    if target_gene_rel_type == "HOMOLOG":
+                        gene_node_hmlg_rel.append((record["targetGene"]["geneId"],
+                                                "HOMOLOG",
+                                                record["targetGene_rel"]["clstr_sens"],
+                                                record["targetGene_rel"]["perc_match"],
+                                                record["secondary_node.geneId"]))
+                        gene_node_hmlg_rel.append((record["secondary_node.geneId"],
+                                                "HOMOLOG",
+                                                record["targetGene_rel"]["clstr_sens"],
+                                                record["targetGene_rel"]["perc_match"],
+                                                record["targetGene"]["geneId"]))
+                    if target_gene_rel_type == "CODING":
+                        gene_protein_coding_rel.append((record["targetGene"]["geneId"],
+                                                        "CODING",
+                                                        record["secondary_node.proteinId"]))
 
         # # Search for a "CODING" relationship between a gene node and a protein node
         # if relationship_type == "CODING" and node_type == "Gene":
