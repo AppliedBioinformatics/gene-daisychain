@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title>Daisychain with KnetMaps.js, Bootstrap and jsTree</title>
+      <meta charset="utf-8">
+      <!-- Load jquery required by Bootstrap and KnetMaps.js -->
+      <script src="libs/jquery-1.11.2.min.js"></script>
+      <!-- Bootstrap -->
+      <!-- Define screen width and initial scale-->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!--Load Bootstrap CSS and JS-->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+      <div class='container'>
+      <div class='jumbotron'>
+        <h1>Daisychain tutorial</h1>
+        <p>More and more genome annotations are being released, and each annotation introduces new gene names. Daisychain helps researchers working on particular candidate genes in one annotation to quickly find the orthologs of that gene, and the neighbours of the orthologs, in other annotations.</p>
+      </div>
+      </div>
+      <div class='container'>
+        <h2>1. Data entry</h2>
+      </div>
+      <img class='img-fluid' src='./image/step1.png'>
+      <div class='container'>
+        <p>This is the starting page. Here you can choose a project, think of that as a collection of annotations. If you want to, you can choose to load only a specific annotation or a specific contig.</p>
+        <p>You can also enter two types of queries. One is the query by keyword, which is currently a gene name. Click on the button 'Add example keyword' to get an example gene ID. You can also search by sequence, which we need in FASTA format. You can click on 'Add example query' to load an example FASTA record. Click on either 'Search by keyword' or 'Search by BLAST' to get results.</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+        <img class='img-fluid' src='./image/step2.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>I have opted to search for the keyword 'BnaA01g00070D'. You can see that a new section named 'Search results' popped up - this organises your search results in a tree form. When you click on the small triangle next to 'Search results', or on the big 'Toggle results' button the entire tree will unfold:</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+        <img class='img-fluid' src='./image/step3.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>You can click on any of the elements to select which part of the results you want to have loaded in the graph view:</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+      <img class='img-fluid' src='./image/step4.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>After selecting which results you want, click the 'Show graph' button and the graph view will load:</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+      <img class='img-fluid' src='./image/step5.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>On the bottom you can see that we have five annotations loaded here, and the big circle is the only gene we are currently looking at - BnaA01g00070D. If you right-mouse click and hold on the gene, you will get the context menu:</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+      <img class='img-fluid' src='./image/step6.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>This is where the real magic begins, Most users will be after the homologs of this gene, so click on 'Show homologs', and the system will load all known homologs in the other annotations.</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+      <img class='img-fluid' src='./image/step7.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>The system has loaded the homologs, but it's a bit crowded! By clicking on the 'Re-run the layout' button (the arrow in a circle) on the top left we get a better view. The red arrow in the next picture shows the button too. You can also use your mouse wheel to zoom in or out.</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+      <img class='img-fluid' src='./image/step8.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>Now we see many homologs, and we see that they come from different annotations based on the colour of their circle. For example, purple genes come from the <i>B. napus</i> ZS11 annotation - BnC01g0452190.1 in this case. By clicking on one of the bottom five squares we can remove or reintroduce genes from specific annotations. If I click on the blue square labeled 'Brassicanapus_Darmorv8.1' I will remove genes from that annotation.</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+      <img class='img-fluid' src='./image/step9.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>I have used a red arrow to show where I clicked. As you can see we 'lost' some genes now, these were the Brassicanapus_Darmorv8.1 genes. If you click the button again they will reappear.</p>
+        <p>Lastly, you can also look at the 3'/5' neighbours in each annotation, by right-clicking and holding, and then selecting "Show 5'/3'". Using the left mouse button and holding you can move each gene around, which I have done in the next screenshot.</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+      <img class='img-fluid' src='./image/step10.png'>
+      <div class='container'>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+        <p>That's already mostly it! The other options all come from KnetMiner and allow you to use a different graph layout, and let you customise the label sizes, or export the whole picture into a png image or a text-based representation in JSON format. Happy gene hunting!</p>
+      <hr style="margin-bottom:100px !important; margin-top:100px !important; " />
+      </div>
+
+      </div>
+
+  </body>
+</html>
