@@ -27,7 +27,7 @@ class DaisychainAdmin:
             # Check if a number between 0-5 was entered
             # If so, perform an action
             # If not, show options again
-            if not user_input.isdigit() or int(user_input) not in range(0, 8):
+            if not user_input.isdigit() or int(user_input) not in range(0, 9):
                 continue
             # Else, perform an action
             if user_input == "0":
@@ -38,7 +38,8 @@ class DaisychainAdmin:
                        "4": self.build_project_db,
                        "5": self.delete_project,
                        "6": self.query,
-                       "7": self.show_tasks}
+                       "7": self.show_tasks,
+                       "8": self.local_synteny}
             self.clear_console()
             if user_input == "1":
                 actions[user_input](True)
@@ -57,6 +58,7 @@ class DaisychainAdmin:
         print("(5) to delete a project")
         print("(6) to test queries")
         print("(7) to show active tasks")
+        print("(8) to calculate local synteny for a project")
         print("(0) to exit")
 
     def query(self):
@@ -154,6 +156,19 @@ class DaisychainAdmin:
         else:
             return [item[0].strip() for item in zip(proj_ids[1:], proj_status[1:]) if "INIT_FAILED" not in item[1]]
 
+    def local_synteny(self):
+        print("\n\nEnter ID of project to calculate local synteny for")
+        print("Enter '0' to cancel")
+        valid_proj_ids = self.list_projects(False)
+        while True:
+            proj_id = input("[Project-ID]>: ").strip()
+            if proj_id == "0":
+                return
+            if proj_id in valid_proj_ids:
+                break
+        print('Calculating local synteny for %s'%(proj_id))
+        self.send_data("PABULD_LS_%s"%(proj_id))
+
 
 
     def create_project(self):
@@ -182,7 +197,6 @@ class DaisychainAdmin:
         print("\n\nEnter ID of project to access files")
         print("Enter '0' to cancel")
         # Loop until a valid project ID was entered or exit with 0
-        print(valid_proj_ids)
         while True:
             proj_id = input("[Project-ID]>: ").strip()
             if proj_id == "0":
