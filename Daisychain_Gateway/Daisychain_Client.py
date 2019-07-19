@@ -18,6 +18,7 @@ class DaisychainClient():
         message = str(len(web_request)) + "|" + web_request
         print('sending %s'%message)
         connection.sendall(message.encode())
+        print('Sent, now receiving')
         server_reply = self.receive_data(connection)
         print('got back %s'%server_reply)
         connection.close()
@@ -36,6 +37,9 @@ class DaisychainClient():
             incoming_data = connection.recv(1).decode()
             if incoming_data == "|":
                 break
+            elif incoming_data == '':
+                print('Error in receiving data, server down?')
+                return
             else:
                 msg_header += incoming_data
         # Store length of the actual message

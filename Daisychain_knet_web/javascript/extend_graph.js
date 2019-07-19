@@ -33,6 +33,7 @@ function addPath(node, rel_type)
         });
         new_edge_data.forEach(function(val)
         {
+            console.log("Adding edge: "+ val.data); 
             new_edge = cy.add({group: "edges","data":val.data});
         });
         // Add qtips

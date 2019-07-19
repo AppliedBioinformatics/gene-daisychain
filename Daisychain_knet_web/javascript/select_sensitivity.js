@@ -1,4 +1,4 @@
-// Daisychain-specific function
+// AHGraR-specific function
 // Hides or shows HOMOLOG edges depending on selected sensitivity value
 function changeSensitivity()
 {

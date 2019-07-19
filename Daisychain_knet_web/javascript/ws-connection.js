@@ -1,4 +1,4 @@
-// Create a WebSocket connection to Daisychain-client
+// Create a WebSocket connection to AHGraR-client
 function get_wsconn(){
   // Do we support websockets?
   if (!('WebSocket' in window) ){

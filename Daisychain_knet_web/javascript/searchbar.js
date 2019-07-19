@@ -55,6 +55,8 @@
     // Load project-specific list of species
     LoadSpeciesList();
     //update_color_legend();
+    var blast_window = document.getElementById("tbfasta");
+    blast_window.value = "";
  };
  // Load list of species for this project
  function LoadSpeciesList()
@@ -127,8 +129,11 @@
     // Change global variable
     species = select_spec_menu.options[select_spec_menu.selectedIndex].value;
     console.log("New Species selection: "+species);
+
+    document.getElementById("main_form").style.display="block";
+    document.getElementById("loading").style.display="none";
     // Load species-specific list of chromosomes
-    LoadChromosomeList();
+    // LoadChromosomeList();
  };
  // Fill species select menu with available species
  // Data comes from websocket "SL" command
@@ -181,7 +186,8 @@
     // Project ID and assembly selection are global variables,
     // retrieve contig selection and keyword(s)
     var select_chrom_menu = document.getElementById("select_chromosome");
-    var contig = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
+    //var contig = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
+    var contig = '*';
     var keyword = document.getElementById("keyword").value;
     // Trim string, i.e. remove leadind and trailing white spaces
     keyword = $.trim(keyword);
@@ -260,7 +266,8 @@
     // Project ID and assembly selection are global variables,
     // retrieve contig selection and keyword(s)
     var select_chrom_menu = document.getElementById("select_chromosome");
-    var contig = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
+    //var contig = select_chrom_menu.options[select_chrom_menu.selectedIndex].value;
+    var contig = '*';
     var fasta_seq = document.getElementById("tbfasta").value;
     var eval_cutoff = document.getElementById("blastsens").value;
     // Trim string, i.e. remove leadind and trailing white spaces
@@ -428,3 +435,4 @@
      alert('You have selected no results.');
    }  
  }
+

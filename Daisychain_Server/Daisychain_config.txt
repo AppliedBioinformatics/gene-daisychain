@@ -2,10 +2,10 @@
 mcl_path = /usr/bin/mcl
 mcxload_path = /usr/bin/mcxload
 neo4j_path = /mnt/Daisychain_Server/neo4j-community-3.4.0/
-#neo4j_path = /mnt/Daisychain_Server/main_db
 ip = 146.118.64.97
 port = 5000
 blast+_path = /usr/bin/
+diamond_path = /mnt/diamond/diamond
 server_admin_port = 5000
 server_query_port = 7687
 only_local_admin = False

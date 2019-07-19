@@ -18,12 +18,12 @@
       https://github.com/Rothamsted/knetmaps.js/blob/master/docs/QuickStart_Guide.md-->
       <link href="css/index-style.css" rel="stylesheet" /> <!-- page stylesheet-->
       <link href="css/knet-style.css" rel="stylesheet" /> <!-- Network Viewer stylesheet -->
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+      <link href="css/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
       <link href="css/maskloader.css" rel="stylesheet">
       <script src="libs/cytoscapejs_2.4.0/cytoscape.min.js"></script>
       <script src="libs/jquery-ui.js"></script>
       <script src="libs/cytoscape-cxtmenu.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
+      <script src="libs/jquery.qtip.min.js"></script>
       <script src="libs/cytoscape-qtip.js"></script>
       <script src="libs/jquery.maskloader.js"></script>
       <!-- Layouts -->
@@ -38,8 +38,8 @@
       <script src="javascript/knet-container.js"></script>
       <script src="javascript/knet-toggleFullScreen.js"></script>
       <script src="javascript/knet-generator.js"></script>
-      <!-- Code specific for Daisychain that interacts with KnetMaps-->
-      <script src="javascript/knet-itemInfoDaisychain.js"></script>
+      <!-- Code specific for AHGraR that interacts with KnetMaps-->
+      <script src="javascript/knet-itemInfoAHGraR.js"></script>
       <script src="javascript/select_sensitivity.js"></script>
       <script src="javascript/extend_graph.js"></script>
       <script src="javascript/color_mapper.js"></script>
@@ -66,11 +66,10 @@
       </div>
     </div>
     <div class="container-fluid" style="background-color:white;" id='main_form'>
-    <div class="row">
-    <div class="col-sm-12" style="background-color:transparent;background-image: linear-gradient(to right, rgb(155, 226, 255) 0%, rgb(73, 209, 71) 100%);">
+    <div class="row" style="background-color:transparent;background-image: linear-gradient(to right, rgb(155, 226, 255) 0%, rgb(73, 209, 71) 100%);">
       <h1>Daisychain</h1>
       <p>Linking different annotations for similar or identical species or cultivars</p>
-    </div>
+      <p><a href='help.html'>Help</a></p>
     </div>
     <div class="row" style = "padding:5px">
     <div class="col-sm-8 well" style="background-color:white;border-radius:10px;">
@@ -83,9 +82,6 @@
             <label for="select_species">Assembly:</label>
             <select class="form-control" id="select_species" onChange="javascript:changeSpecies();">
             </select>
-            <label for="select_chromosome">Contig:</label>
-            <select class="form-control" id="select_chromosome">
-            </select>
         </div>
     </form>
     </div>
@@ -93,10 +89,11 @@
     <p>You can search the project either by keyword or by FASTA sequence, please see the examples below.</p>
     <div class="row" style="padding:5px">
     <div class="col-sm-4 well" style="background-color:white;border-radius:10px;">
-    <form class="form">
+    <form class="form" onSubmit='return false;'>
         <div class="input-group">
             <label for="keyword">Search by keyword(s):</label>
             <input id="keyword" type="text" class="form-control" name="keyword" placeholder="Keyword(s)">
+	    <small class="form-text text-muted">Keywords are gene IDs or names.</small>
         </div>
         <div>
         <label class="radio-inline"><input checked type="radio" id="radio_all" name="radio">Match all keywords</label>
@@ -142,7 +139,6 @@
     <div class="row">
     <div class="col-sm-12 collapse" id="knet-maps-row" style="background-color:white;">
       <p>Right-click and hold on any gene-node to learn more about that gene, including its homologs, its 3'/5' neighbours, and more!</p>
-
       <div id="knet-maps">
                 <div id="itemInfo" class="infoDiv" style="display:none;"><!-- Item Info pane -->
                     <table id="itemInfo_Table" class="infoTable" cellspacing=1>
@@ -166,7 +162,7 @@
     </div>
     </div>
   <footer class='page-footer' style="background-color:white;border-radius:10px;">
-    A project from the <a href='http://appliedbioinformatics.com.au/'>Applied Bioinformatics group</a>. Code for the graphical miner from <a href='https://github.com/Rothamsted/knetminer'>KnetMiner</a> under <a href='https://github.com/AppliedBioinformatics/gene-daisychain/blob/master/LICENSE'>GNU Lesser General Public License v3.0</a>. Code hosted on <a href='https://github.com/appliedbioinformatics/gene-daisychain'>GitHub</a>.
+    A project from the <a href='http://appliedbioinformatics.com.au/'>Applied Bioinformatics group</a>. Code for the graphical miner from <a href='https://github.com/Rothamsted/knetminer'>KnetMiner</a> under GNU Lesser General Public License v3.0. Code hosted on <a href='https://github.com/appliedbioinformatics/gene-daisychain'>GitHub</a>.
   </footer>
   </div>
   <script>
