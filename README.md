@@ -15,7 +15,7 @@ This will display all genes with similar gene IDs:
 
 Selecting this gene and clicking on 'Show graph' will reveal the gene-view, where the user can right-mouse click on genes to see more options:
 
-![image](https://user-images.githubusercontent.com/413885/143526398-d828bbb6-c8b9-4eb3-9567-0b568b574c4a.png)
+![image](https://user-images.githubusercontent.com/413885/143526789-2d68b41b-ac1b-4c9c-9c46-6d55c70130d7.png)
 
 Selecting 'Show homologs' will then display all homologs for the current gene:
 
