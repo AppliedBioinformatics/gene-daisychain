@@ -96,6 +96,7 @@ You can use the admin menu to check on the status of the database via the (1) op
 
 ![image](https://user-images.githubusercontent.com/413885/143821641-f81ad349-81c3-4d3c-b630-9520bdbb52fd.png)
 
+While the clustering is running, this status window will display INIT_SUCCESS.
 
 There is E. coli example input data in the folder *example* in this repo. Building this database should only take 5 minutes. 
 
