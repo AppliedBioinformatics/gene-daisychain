@@ -49,15 +49,50 @@ This is the web server running on *client*. There's a bash script in Daisychain_
     bash start_server.sh
 
 
-### Talking to all these
+### Setting up a new database
 
 The script Daisychain_admin/Daisychain_admin.py is used to build new databases. Run this (with the correct config file):
 
     python3 Daisychain_admin/Daisychain_admin.py 
     
-Press 1 to see all databases, press 2 to create new databases, etc.
+Press 1 to see all databases, press 2 to create new databases, :
 
-There is E. coli example input data in the folder *example* in this repo. Building this database should only take 5 minutes.
+![image](https://user-images.githubusercontent.com/413885/143820165-2cb48294-b219-48be-a4bb-a4b1164f79f6.png)
+
+Press (2) to make a new project, give it a name, then (3) to import data into this project. Here is an example CSV for two assemblies that step (3) will take:
+
+<pre>
+Brassica napus,ZS11,genome,/some/location/brassica_napus/Brassica_napus_ZS11_genome_assemblyV201608.fa
+Brassica napus,ZS11,annotation,/some/location/brassica_napus/Brassica_napus_ZS11_GenesetV201608_head.gff
+Brassica napus,Darmorv5,genome,/some/location/brassica_napus/Brassica_napus_v4.1.chromosomes.fa
+Brassica napus,Darmorv5,annotation,/some/location/brassica_napus/Brassica_napus.annotation_v5_head.gff3
+</pre>
+
+Copy-paste the paste to this CSV, and the clustering and import step will begin. The running server will print status updates, example:
+
+<pre>
+Importing now
+Brassica napus,ZS11,genome,/some/location/brassica_napus/Brassica_napus_ZS11_genome_assemblyV201608.fa
+Importing now
+Brassica napus,ZS11,annotation,/some/location/brassica_napus/Brassica_napus_ZS11_GenesetV201608_head.gff
+Importing now
+
+Finished importing
+</pre>
+
+Once `Finished importing` has printed, we can build the database. Go to the admin script and press (4), to build a projects database. Choose the right project ID. It will print how many genomes and annotations it has found (2 in the above example).
+
+One can then choose whether admin should guess as much as possible from the gff, or set fields to manual: 
+
+![image](https://user-images.githubusercontent.com/413885/143820636-5157a55d-a334-43f6-b53c-fcdab389b5b4.png)
+
+(a)utomatic mode works with many gffs. After a few seconds, the parser will print potential annotations it has found:
+
+![image](https://user-images.githubusercontent.com/413885/143820727-e814a761-b4e4-452a-a4e6-4a7b37c862c3.png)
+
+Choose one that makes sense via 1, 2, 3, etc., and proceed through all assemblies in this way. Then wait for the clustering to end, the Server window will provide constant updates.
+
+There is E. coli example input data in the folder *example* in this repo. Building this database should only take 5 minutes. 
 
 
 
