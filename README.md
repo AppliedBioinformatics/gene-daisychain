@@ -92,6 +92,11 @@ One can then choose whether admin should guess as much as possible from the gff,
 
 Choose one that makes sense via 1, 2, 3, etc., and proceed through all assemblies in this way. Then wait for the clustering to end, the Server window will provide constant updates.
 
+You can use the admin menu to check on the status of the database via the (1) option, List available projects, it should look like this once it's finished:
+
+![image](https://user-images.githubusercontent.com/413885/143821641-f81ad349-81c3-4d3c-b630-9520bdbb52fd.png)
+
+
 There is E. coli example input data in the folder *example* in this repo. Building this database should only take 5 minutes. 
 
 
