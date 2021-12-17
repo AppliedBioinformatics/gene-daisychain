@@ -1,7 +1,7 @@
 # gene-daisychain
 Linking several gene annotations in an easy to use web interface. It's a neo4j graph database with a web interface which stores different and connects annotations using MCL.
 
-The web interface uses a JavaScript library from KnetMiner: https://github.com/Rothamsted/knetminer, https://knetminer.rothamsted.ac.uk/KnetMiner/, https://www.sciencedirect.com/science/article/pii/S2212066116300308
+The web interface uses a JavaScript library from KnetMiner: https://github.com/Rothamsted/knetminer, https://knetminer.com, https://onlinelibrary.wiley.com/doi/10.1111/pbi.13583
 
 ## Usage
 
